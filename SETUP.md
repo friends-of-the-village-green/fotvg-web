@@ -1,4 +1,4 @@
-# FOTVG Website — Setup Runbook (Windows)
+# FotVG Website — Setup Runbook (Windows)
 
 **Assumes:** Windows 10 (version 1809 or later) or Windows 11, 64-bit. Commands are
 PowerShell unless stated otherwise. You do not need WSL.
@@ -31,8 +31,8 @@ when the GitHub Team nonprofit plan is approved.
 ## Phase 0 — Accounts and ownership 👤
 
 ### 0.1 — Organizational email
-A role address on FOTVG's own domain (`web@…` or `admin@…`), not a personal Gmail. If
-FOTVG doesn't have Google Workspace, they likely qualify for Google for Nonprofits at no
+A role address on FotVG's own domain (`web@…` or `admin@…`), not a personal Gmail. If
+FotVG doesn't have Google Workspace, they likely qualify for Google for Nonprofits at no
 cost. Every account eventually registers to this address.
 
 You can proceed without it — just plan to add it as a co-owner everywhere later.
@@ -63,18 +63,24 @@ Once the email exists: org → **People → Invite member** → invite it → th
 Access → Change role** to Owner. Two owners is the minimum for an organization that
 should outlive you.
 
-### 0.5 — Sanity organization and project transfer ⚠️
+### 0.5 — Sanity organization and project ⚠️ *(revised 9 Aug 2026)*
 
-Sanity projects are assigned to an individual when created, so yours currently belongs
-to you personally. Fix this *before* applying for the nonprofit plan, so the plan
-attaches to FOTVG rather than to you.
+~~Transfer the existing project into a new organization.~~ No longer needed. The
+"Friends of the Village Green" organization already exists, and **no project has been
+created yet** — so create the project *inside* that organization and there is nothing to
+transfer. See decision 016.
 
 1. Go to **manage.sanity.io**
-2. Top-left dropdown → **Create new organization** → name it "Friends of the Village Green"
-3. Open your project → **Settings** tab → scroll to **Danger zone** → **Transfer ownership**
-4. Select the new organization → confirm
+2. Top-left dropdown → select **Friends of the Village Green** — do this *first*, and
+   confirm it is showing before you continue. A project created while your personal
+   organization is selected belongs to you, not FotVG.
+3. **Create new project** → name it `FotVG Website` → dataset **production**, visibility
+   **public**
+4. Open the project → **Settings** → copy the **Project ID** (a short string like
+   `7x3k9abc`) and put it in the password vault and in `docs/hosting.md`
 
-The transfer doesn't change project settings or tokens, so nothing breaks.
+The project ID is not a secret — it ships in the browser bundle of every Sanity-backed
+site. Guard the *tokens*, not the ID.
 
 ### 0.6 — Nonprofit applications
 File all three now; approvals take days to weeks.
@@ -86,14 +92,14 @@ File all three now; approvals take days to weeks.
 | Sanity | sanity.io/docs/platform-management/non-profit-plan | Growth-tier features free, 25 users |
 
 All three want 501(c)(3) documentation. GitHub's terms also exclude political and
-religiously affiliated organizations — worth confirming FOTVG's status with the board
+religiously affiliated organizations — worth confirming FotVG's status with the board
 while you're collecting the determination letter.
 
 ### 0.7 — Domain audit ⚠️
 Answer these into `docs/hosting.md` before touching any DNS:
 - Where is the domain registered, and who holds that login?
 - Is auto-renew on? On whose card?
-- **Are there MX records?** If FOTVG's email runs through this domain, a nameserver
+- **Are there MX records?** If FotVG's email runs through this domain, a nameserver
   change breaks their email. Screenshot the current DNS zone before any change.
 
 ### 0.8 — Donation platform
@@ -229,7 +235,7 @@ PS> git config --global init.defaultBranch main
 `core.longpaths` prevents failures from deeply nested `node_modules` paths exceeding the
 legacy 260-character limit.
 
-You'll override the email inside the FOTVG repo in Phase 2 once the role address exists.
+You'll override the email inside the FotVG repo in Phase 2 once the role address exists.
 
 ### 1.7 — Install the CLI tools
 
@@ -379,7 +385,7 @@ PS> git push
 
 ## Phase 3 — Netlify (prototype on your personal account) 🤝
 
-You're prototyping on your existing Netlify account and moving to FOTVG's later. That's
+You're prototyping on your existing Netlify account and moving to FotVG's later. That's
 fine — the repo is the asset, and re-creating a Netlify site takes five minutes.
 
 ### 3.1 — Connect the site 👤
@@ -395,8 +401,12 @@ Build settings:
 - Build command: `npm run build`
 - Publish directory: `dist`
 
-Then rename the site to something unmistakably temporary — **fotvg-preview** — so nobody
-mistakes it for the real thing and the good name stays free.
+Then rename the site to something unmistakably temporary so nobody mistakes it for the
+real thing and the good name stays free.
+
+**Done, 9 Aug 2026:** the site is `fotvg-webtest.netlify.app`, connected to the repo.
+That hostname is already set as `site:` in `astro.config.mjs`. Anywhere this document
+said `fotvg-preview`, read `fotvg-webtest`.
 
 ### 3.2 — Keep it out of search results 👤
 
@@ -431,15 +441,15 @@ PS> [Environment]::SetEnvironmentVariable("NETLIFY_AUTH_TOKEN","your-token-here"
 ```
 
 Open a new terminal for it to take effect. ⚠️ Netlify tokens are **account-scoped** —
-during the prototype phase, one token reaches FOTVG, garden, and nursery alike. The rule
+during the prototype phase, one token reaches FotVG, garden, and nursery alike. The rule
 in `CLAUDE.md` stands: never `netlify deploy --prod`.
 
 ### 3.4 — What not to do during prototyping ⚠️
 
-- **Don't attach FOTVG's real domain** to your personal Netlify team. Prototype on the
+- **Don't attach FotVG's real domain** to your personal Netlify team. Prototype on the
   `.netlify.app` subdomain only.
 - **Don't publicize a working contact form.** Submissions land in *your* Netlify
-  account, not FOTVG's.
+  account, not FotVG's.
 - **Don't grant Netlify blanket repository access** (see 3.1).
 
 **Phase 3 is done when** a pull request produces a working preview URL.
@@ -448,26 +458,20 @@ in `CLAUDE.md` stands: never `netlify deploy --prod`.
 
 ## Phase 4 — Sanity 🤝
 
-### 4.1 — Initialize against the existing project 👤
+### 4.1 — Initialize against the existing project 👤 *(revised 9 Aug 2026)*
 
-Your project already exists, so **don't** use `--create-project`:
+The Studio is already scaffolded in `studio/` and lives in this repo. What it does *not*
+have is a project to talk to. Create the project first (§0.5), then point the Studio at
+it by putting the project ID in `studio/sanity.cli.ts` and `studio/sanity.config.ts`.
 
-```
-PS> cd C:\dev\fotvg-web
-PS> mkdir studio
-PS> cd studio
-PS> npx sanity@latest init
-```
-
-When prompted, **select the existing "Friends of the Village Green" project** and the
-`production` dataset. Choose the clean template with no predefined schemas.
-
-Keep the Studio inside this same repo — one repo, one history, one place to look.
+Do **not** re-run `sanity init` — it would overwrite the scaffold.
 
 ### 4.2 — Build schema v1 🤖
 
-Five document types, per the `sanity-content-model` skill: `siteSettings`, `page`,
-`event`, `newsPost`, `person`. Resist adding more until real content demands it.
+**Six** document types, per the `sanity-content-model` skill: `siteSettings`, `page`,
+`program`, `event`, `newsPost`, `person`. `program` was added by decision 011 — the three
+program areas each need a page, a slug, and prose of their own, and `event` references it.
+Resist adding a seventh until real content demands it.
 
 ### 4.3 — Deploy the Studio 👤
 
@@ -484,7 +488,7 @@ never consumes Netlify build credits.
 At manage.sanity.io → your project → **API → CORS origins**, add:
 - `http://localhost:4321`
 - Your Netlify production URL
-- Your Netlify preview wildcard (`https://*--fotvg-preview.netlify.app`)
+- Your Netlify preview wildcard (`https://*--fotvg-webtest.netlify.app`)
 
 ### 4.5 — Read token 👤
 
@@ -540,7 +544,7 @@ Hand these to Claude Code roughly in order, one branch and PR each:
 1. `BaseLayout.astro` — meta tags, Open Graph, skip link, header, footer
 2. Design tokens in `global.css`
 3. Header with accessible mobile navigation
-4. Home page — what FOTVG is, next events, donate CTA
+4. Home page — what FotVG is, next events, donate CTA
 5. `/events` listing and `/events/[slug]` detail pages
 6. Standing pages — About, What We Do, Get Involved, Donate, Contact
 7. Contact form with Netlify Forms, honeypot, spam filtering
@@ -551,16 +555,16 @@ Run the `accessibility` checklist before merging each one.
 
 ---
 
-## Phase 6 — Switchover to FOTVG's Netlify account 👤
+## Phase 6 — Switchover to FotVG's Netlify account 👤
 
-When FOTVG's own Netlify team exists:
+When FotVG's own Netlify team exists:
 
 1. Accept an owner invite to the new team
 2. Connect the **same** GitHub repo as a new site — select-repositories only, again
 3. Re-enter the three environment variables from `docs/hosting.md`
 4. Create a new build hook — ⚠️ **update the Sanity webhook to the new URL.** Easy to
    forget; the symptom is silently stale content.
-5. Point form notifications at FOTVG's address
+5. Point form notifications at FotVG's address
 6. Verify a PR builds a preview and a merge builds production
 7. Remove the `robots.txt` disallow
 8. Point DNS at the new site — only now, and only after rereading the MX warning in 0.7
@@ -582,7 +586,7 @@ stand the site up from scratch.
 - [ ] `docs/runbook.md` written in plain language, with screenshots
 - [ ] Uptime monitoring on production (UptimeRobot free tier)
 - [ ] Google Search Console verified
-- [ ] **A real FOTVG volunteer has added an event to the Studio, unassisted, while you
+- [ ] **A real FotVG volunteer has added an event to the Studio, unassisted, while you
       watched without helping**
 
 That last one is the item that actually predicts whether this site is still being

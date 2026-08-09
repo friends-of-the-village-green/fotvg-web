@@ -1,4 +1,4 @@
-# FOTVG Website — Starter Kit
+# FotVG Website — Starter Kit
 
 Project memory, agent skills, and setup runbook for the Friends of the Village Green
 website (Astro + Sanity + Netlify).

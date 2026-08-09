@@ -1,9 +1,9 @@
 ---
 name: astro-conventions
-description: Code structure, styling, performance, and component conventions for the FOTVG Astro site. Use this skill whenever creating or modifying anything under src/ — pages, layouts, components, styles, or config. Also use it when adding a dependency, setting up routing, handling images, or making decisions about client-side JavaScript. If the task involves writing frontend code for this project, read this first.
+description: Code structure, styling, performance, and component conventions for the FotVG Astro site. Use this skill whenever creating or modifying anything under src/ — pages, layouts, components, styles, or config. Also use it when adding a dependency, setting up routing, handling images, or making decisions about client-side JavaScript. If the task involves writing frontend code for this project, read this first.
 ---
 
-# FOTVG Astro Conventions
+# FotVG Astro Conventions
 
 ## Philosophy
 
@@ -91,7 +91,7 @@ be `loading="eager"` and `fetchpriority="high"`).
 
 ## Routing and URLs
 
-- Lowercase, hyphenated slugs: `/get-involved`, `/events/spring-plant-sale`
+- Lowercase, hyphenated slugs: `/get-involved`, `/events/secret-garden-tour-2026`
 - No trailing-slash inconsistency — pick one in `astro.config.mjs` and stick to it
 - Event detail pages: `/events/[slug]`
 - Past events remain accessible at their URL forever. Never delete a page that has been

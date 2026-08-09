@@ -6,6 +6,20 @@ dist/
 # dependencies
 node_modules/
 
+# Source material — never commit
+fotvg-drive-folders/
+*.docx
+*.xlsx
+*.doc
+*.xls
+
+# Mock-ups — held out of git pending a decision, see decision 017.
+# They embed real event photographs as base64. Attribution is unconfirmed and the
+# children's permissions are not yet in writing, and git history is permanent.
+# The files live locally in docs/mockups/ and the decisions they produced are
+# recorded in docs/decisions.md, which is the durable record.
+docs/mockups/
+
 # logs
 npm-debug.log*
 yarn-debug.log*

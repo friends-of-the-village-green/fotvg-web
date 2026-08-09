@@ -1,13 +1,13 @@
 ---
 name: accessibility
-description: WCAG 2.2 AA review checklist and remediation patterns for the FOTVG site. Use this skill before finishing any change that touches markup, styling, forms, images, navigation, or interactive behaviour — and whenever the user mentions accessibility, screen readers, contrast, keyboard navigation, or ADA compliance. Run the checklist as a final pass on any PR that changes what a visitor sees. If you have written HTML or CSS in this session, use this skill before declaring the work done.
+description: WCAG 2.2 AA review checklist and remediation patterns for the FotVG site. Use this skill before finishing any change that touches markup, styling, forms, images, navigation, or interactive behaviour — and whenever the user mentions accessibility, screen readers, contrast, keyboard navigation, or ADA compliance. Run the checklist as a final pass on any PR that changes what a visitor sees. If you have written HTML or CSS in this session, use this skill before declaring the work done.
 ---
 
-# Accessibility Review — FOTVG
+# Accessibility Review — FotVG
 
 ## Why this matters here specifically
 
-FOTVG serves a community that skews older. Some visitors will have low vision, tremor,
+FotVG serves a community that skews older. Some visitors will have low vision, tremor,
 or be navigating on a phone in bright sunlight. Beyond that, public-facing nonprofit
 sites in the US receive accessibility demand letters with some regularity, and
 retrofitting is far more expensive than building correctly.

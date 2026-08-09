@@ -1,9 +1,9 @@
 ---
 name: sanity-content-model
-description: Conventions for FOTVG's Sanity schema, GROQ queries, image handling, and Studio configuration. Use this skill whenever touching anything in studio/, writing or modifying a GROQ query, adding or changing a document type or field, rendering Portable Text, working with Sanity images, or wiring content into Astro pages. Also use it when the user asks to "add a content type", "let editors change X", or anything that implies the editing interface. If the change affects what an editor sees in the Studio, this skill applies.
+description: Conventions for FotVG's Sanity schema, GROQ queries, image handling, and Studio configuration. Use this skill whenever touching anything in studio/, writing or modifying a GROQ query, adding or changing a document type or field, rendering Portable Text, working with Sanity images, or wiring content into Astro pages. Also use it when the user asks to "add a content type", "let editors change X", or anything that implies the editing interface. If the change affects what an editor sees in the Studio, this skill applies.
 ---
 
-# FOTVG Sanity Conventions
+# FotVG Sanity Conventions
 
 ## The governing principle
 
@@ -22,7 +22,7 @@ Keep this list current. If you add a type, update `docs/content-model.md` too.
 |---|---|---|
 | `siteSettings` | Singleton. Org name, contact email, social links, donate URL | 1 |
 | `page` | Standing pages: About, What We Do, Donate, Contact | 5–10 |
-| `event` | Work parties, plant sales, talks | Ongoing |
+| `event` | Concerts, luncheons, lectures, work parties, garden tours, sales | Ongoing |
 | `newsPost` | Short updates and recaps | Ongoing |
 | `person` | Board members and named volunteers | ~10 |
 

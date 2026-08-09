@@ -1,9 +1,9 @@
 ---
 name: netlify-ops
-description: Deploy workflow, environment variables, build-credit discipline, rollback, and DNS for the FOTVG site on Netlify. Use this skill whenever the task involves deploying, build failures, environment variables or secrets, build hooks, webhooks from Sanity, redirects, headers, custom domains, or anything that could trigger a production build. Also use it before adding any automation that causes builds. If the word "deploy", "publish", "live", or "production" appears in the request, read this first.
+description: Deploy workflow, environment variables, build-credit discipline, rollback, and DNS for the FotVG site on Netlify. Use this skill whenever the task involves deploying, build failures, environment variables or secrets, build hooks, webhooks from Sanity, redirects, headers, custom domains, or anything that could trigger a production build. Also use it before adding any automation that causes builds. If the word "deploy", "publish", "live", or "production" appears in the request, read this first.
 ---
 
-# Netlify Operations — FOTVG
+# Netlify Operations — FotVG
 
 ## Deploy model
 
@@ -40,7 +40,7 @@ Rules:
 - Check Netlify → Billing → Usage before assuming there is headroom.
 
 If usage is trending toward the cap, the first lever is reducing build frequency, not
-upgrading the plan — FOTVG has no budget.
+upgrading the plan — FotVG has no budget.
 
 ## Secrets and environment variables
 
@@ -120,7 +120,7 @@ sites accumulate links in printed flyers and old Facebook posts that must keep w
 Form submissions are handled by Netlify and appear in the UI under Forms. Configure:
 - Spam filtering on
 - A honeypot field in the markup
-- Email notification to FOTVG's role address, not an individual's personal inbox
+- Email notification to FotVG's role address, not an individual's personal inbox
 
 Check the current plan's form handling terms before assuming unlimited submissions.
 
