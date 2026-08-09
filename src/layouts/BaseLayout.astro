@@ -1,0 +1,81 @@
+---
+/**
+ * The only page shell on this site.
+ *
+ * Everything a page must not be allowed to forget lives here: the title, the
+ * description, the canonical URL, the Open Graph tags, the skip link, the
+ * header and the footer. A page supplies a title and a description and gets
+ * the rest for free.
+ *
+ * Most of this site's traffic arrives from links shared on Facebook and
+ * Nextdoor, so the Open Graph tags are not an afterthought — they are how a
+ * neighbor decides whether to tap.
+ */
+import '../styles/global.css'
+import SiteHeader from '../components/SiteHeader.astro'
+import SiteFooter from '../components/SiteFooter.astro'
+import { site } from '../lib/site.js'
+
+const {
+  title,
+  description,
+  /** Absolute or site-relative path to a share image. Omitted if not given —
+   *  a broken og:image is worse than none. There is no default image yet. */
+  shareImage,
+} = Astro.props
+
+/* astro.config.mjs sets build.format: 'file', so at build time the pathname
+   here is '/index.html' or '/404.html' — not the URL a visitor sees. Strip the
+   extension before using it for anything public, or the canonical tag and the
+   Open Graph URL advertise an address with .html on the end. */
+const pathname = Astro.url.pathname
+  .replace(/index\.html$/, '')
+  .replace(/\.html$/, '')
+
+/* Astro.site is set in astro.config.mjs. It is the test domain today and
+   becomes fotvg.org at switchover — decision 015. Canonical URLs and the
+   sitemap both follow it, so it is the one thing that must change then. */
+const canonical = new URL(pathname, Astro.site)
+const shareImageUrl = shareImage ? new URL(shareImage, Astro.site) : null
+
+/* The home page title stands alone. Every other page is suffixed, so a
+   browser tab or a search result says which site it belongs to. */
+const isHome = pathname === '/'
+const fullTitle = isHome ? title : `${title} · ${site.name}`
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {shareImageUrl && <meta property="og:image" content={shareImageUrl} />}
+    <meta name="twitter:card" content={shareImageUrl ? 'summary_large_image' : 'summary'} />
+
+    {/* TK — favicon.ico, favicon.svg and apple-touch-icon.png. There is no
+        logo asset yet. Ask the board whether one exists before drawing one. */}
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <SiteHeader />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>
