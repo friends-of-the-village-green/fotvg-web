@@ -1,0 +1,4 @@
+# TEMPORARY — remove at switchover to FOTVG's Netlify account.
+# See SETUP.md Phase 6, step 7.
+User-agent: *
+Disallow: /
