@@ -1,6 +1,31 @@
 import {defineField, defineType} from 'sanity'
 
 /**
+ * Shared settings for every date field on this site.
+ *
+ * `displayTimeZone` is the important one. Without it, the Studio shows and
+ * interprets times in whatever timezone the editor's computer is set to. Enter
+ * a 6:30pm concert from a laptop still on Mountain time and it is stored as
+ * 5:30pm Pacific, silently, with nothing on screen to suggest anything is
+ * wrong. Pinning the display to Pacific means what an editor types is what the
+ * website shows, wherever they happen to be.
+ *
+ * `allowTimeZoneSwitch: false` removes the control that would let someone undo
+ * that by accident. Every event on this site happens in Kingston; there is no
+ * case where another timezone is the right answer.
+ *
+ * The format shown to editors is set here too, and the field descriptions
+ * spell it out — the input is strict, and its placeholder vanishes the moment
+ * you start typing, which leaves you guessing.
+ */
+const DATE_OPTIONS = {
+  dateFormat: 'YYYY-MM-DD',
+  timeFormat: 'h:mm a',
+  displayTimeZone: 'America/Los_Angeles',
+  allowTimeZoneSwitch: false,
+}
+
+/**
  * An event, in both of its phases.
  *
  * An event is announced, it happens, and then it is written up with
@@ -62,8 +87,11 @@ export const event = defineType({
       title: 'Starts',
       type: 'datetime',
       group: 'before',
-      description: 'Date and start time. Times are Pacific.',
-      options: {dateFormat: 'YYYY-MM-DD', timeFormat: 'h:mm a'},
+      description:
+        'Type it as 2026-10-06 9:00 am — year first, then a space, then the ' +
+        'time with am or pm. Or click the calendar icon and pick it, which is ' +
+        'easier. All times are Pacific.',
+      options: DATE_OPTIONS,
       validation: (Rule) => Rule.required(),
     }),
 
@@ -73,10 +101,11 @@ export const event = defineType({
       type: 'datetime',
       group: 'before',
       description:
-        'Optional. Use it for an end time on the day, or for the last day of a ' +
-        'multi-day event. For something that repeats weekly, make one event per ' +
-        'occurrence — it is easier to read and easier to cancel one of them.',
-      options: {dateFormat: 'YYYY-MM-DD', timeFormat: 'h:mm a'},
+        'Optional, same format as above — 2026-10-06 4:00 pm. Use it for an end ' +
+        'time on the day, or for the last day of a multi-day event. For ' +
+        'something that repeats weekly, make one event per occurrence — it is ' +
+        'easier to read and easier to cancel one of them.',
+      options: DATE_OPTIONS,
       validation: (Rule) =>
         Rule.min(Rule.valueOfField('startDate')).warning(
           'The end is before the start. Check the dates.',

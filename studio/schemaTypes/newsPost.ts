@@ -33,8 +33,15 @@ export const newsPost = defineType({
       name: 'publishedAt',
       title: 'Date',
       type: 'datetime',
-      description: 'The date this goes out. Used to order the news list.',
-      options: {dateFormat: 'YYYY-MM-DD', timeFormat: 'h:mm a'},
+      description:
+        'The date this goes out, used to order the news list. Type it as ' +
+        '2026-10-06 9:00 am, or click the calendar icon. Times are Pacific.',
+      options: {
+        dateFormat: 'YYYY-MM-DD',
+        timeFormat: 'h:mm a',
+        displayTimeZone: 'America/Los_Angeles',
+        allowTimeZoneSwitch: false,
+      },
       initialValue: () => new Date().toISOString(),
       validation: (Rule) => Rule.required(),
     }),
