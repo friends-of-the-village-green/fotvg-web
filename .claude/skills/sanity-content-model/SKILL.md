@@ -21,10 +21,17 @@ Keep this list current. If you add a type, update `docs/content-model.md` too.
 | Type | Purpose | Roughly how many |
 |---|---|---|
 | `siteSettings` | Singleton. Org name, contact email, social links, donate URL | 1 |
-| `page` | Standing pages: About, What We Do, Donate, Contact | 5–10 |
-| `event` | Concerts, luncheons, lectures, work parties, garden tours, sales | Ongoing |
-| `newsPost` | Short updates and recaps | Ongoing |
+| `page` | Standing pages: About, Get Involved, Contact | 5–10 |
+| `program` | The program areas FotVG supports, each with its own page | 3 today |
+| `event` | Concerts, work parties, garden tours, classes, sales — announcement *and* write-up in one document | Ongoing |
+| `newsPost` | Short updates not tied to an event | Ongoing |
 | `person` | Board members and named volunteers | ~10 |
+
+Plus two shared objects: `blockContent` (rich text) and `figure` (a photograph with
+required alt text, optional caption, and photographer credit).
+
+Note on `event`: it does **not** cover senior luncheons or Village Green Woods trail
+work. FotVG neither runs nor funds those — see `docs/organization.md`.
 
 Do not add types beyond this without discussing it. In particular, resist: categories,
 tags, taxonomies, reusable content blocks, and page builders. Each one multiplies the

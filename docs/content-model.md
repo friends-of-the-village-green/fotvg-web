@@ -57,8 +57,24 @@ If a piece of news *is* about an event, it belongs in that event's recap instead
 
 ## person
 Board members and named volunteers.
-Fields: name, role, bio (short), photo + alt.
+Fields: name, role, bio (short), photo, order (to put officers first).
 Only include people who have agreed to appear.
+
+---
+
+## Shared objects
+
+Not document types — building blocks the types above reuse.
+
+**`blockContent`** is the rich text field. Deliberately small: paragraphs, two heading
+levels, bulleted and numbered lists, bold, italic, link. No colour, no font size, no
+alignment, no h1. Those controls let an editor produce a page the design cannot render
+or that fails a contrast check, and neither failure is visible to the person who caused
+it.
+
+**`figure`** is a photograph: the image, plus **alt text (required)**, an optional
+caption, and the photographer's name. Alt text is required everywhere with no exception —
+when it is optional, editors skip it and the accessibility debt builds silently.
 
 ---
 
