@@ -1,0 +1,78 @@
+---
+/**
+ * A photograph from Sanity.
+ *
+ * Three things this component exists to guarantee, because each of them is
+ * easy to forget once and then forget everywhere:
+ *
+ * 1. `width` and `height` are always set, so the page does not jump as images
+ *    load. Cumulative layout shift on this site should be zero.
+ * 2. A `srcset` is always produced. Volunteer photographs are routinely 4000px
+ *    originals, and sending one of those to a phone burns bandwidth quota to
+ *    show something the screen cannot resolve.
+ * 3. `auto('format')` is always applied, so browsers that can take WebP or
+ *    AVIF get it.
+ *
+ * Alt text comes from the image's own `alt` field, which the schema makes
+ * required. If it is somehow missing, the image is treated as decorative
+ * (alt="") rather than being given a made-up description — a wrong description
+ * is worse for a screen reader user than none.
+ */
+import {urlFor} from '../lib/sanity.js'
+
+const {
+  image,
+  /** Rendered width in CSS pixels at the largest breakpoint. Drives srcset. */
+  width = 800,
+  /** Force an aspect ratio, e.g. 3/2. Defaults to the photo's own. */
+  aspect,
+  /** The `sizes` attribute. Get this roughly right; it saves real bandwidth. */
+  sizes = '(min-width: 52rem) 50vw, 100vw',
+  /** The hero image should be 'eager'. Everything else stays lazy. */
+  loading = 'lazy',
+  class: className,
+} = Astro.props
+
+const asset = image?.asset
+
+/* No image, or an unresolved reference — render nothing rather than a broken
+   box. Pages should degrade when content is missing. */
+const ratio =
+  aspect ||
+  (asset?.metadata?.dimensions?.width && asset?.metadata?.dimensions?.height
+    ? asset.metadata.dimensions.width / asset.metadata.dimensions.height
+    : 3 / 2)
+
+const height = Math.round(width / ratio)
+
+/* Only offer widths we would actually use — no point serving 1600px to a
+   layout that never exceeds 800. */
+const candidates = [400, 800, 1200, 1600].filter((w) => w <= width * 2)
+const widths = candidates.length > 0 ? candidates : [width]
+
+const build = (w) =>
+  urlFor(image)
+    .width(w)
+    .height(Math.round(w / ratio))
+    .fit('crop')
+    .auto('format')
+    .url()
+
+const src = build(width)
+const srcset = widths.map((w) => `${build(w)} ${w}w`).join(', ')
+---
+
+{asset && (
+  <img
+    class={className}
+    src={src}
+    srcset={srcset}
+    sizes={sizes}
+    width={width}
+    height={height}
+    alt={image.alt || ''}
+    loading={loading}
+    decoding={loading === 'eager' ? 'sync' : 'async'}
+    fetchpriority={loading === 'eager' ? 'high' : undefined}
+  />
+)}

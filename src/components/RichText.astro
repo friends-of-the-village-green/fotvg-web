@@ -1,0 +1,62 @@
+---
+/**
+ * Renders a Portable Text field from Sanity.
+ *
+ * Handles the empty case first. A half-filled draft, or a field an editor
+ * never got to, should render nothing — not crash the build. A build that
+ * fails because someone saved an event without a description is a build that
+ * takes the whole site down for a mistake that is not one.
+ */
+import {PortableText} from 'astro-portabletext'
+
+const {value, class: className} = Astro.props
+
+const hasContent = Array.isArray(value) && value.length > 0
+---
+
+{hasContent && (
+  <div class:list={['rich-text', className]}>
+    <PortableText value={value} />
+  </div>
+)}
+
+<style>
+  /* Descendant selectors, because the markup comes from the Portable Text
+     renderer rather than from this file and Astro's scoping cannot reach it
+     any other way. `:global` inside `.rich-text` keeps that contained. */
+  .rich-text :global(p),
+  .rich-text :global(ul),
+  .rich-text :global(ol) {
+    margin-top: var(--space-m);
+    max-width: var(--width-prose);
+  }
+
+  .rich-text :global(h2),
+  .rich-text :global(h3) {
+    margin-top: var(--space-l);
+    max-width: var(--width-prose);
+  }
+
+  .rich-text :global(h2) { font-size: clamp(1.5rem, 3.5vw, 2rem); }
+  .rich-text :global(h3) { font-size: 1.3rem; }
+
+  .rich-text :global(ul),
+  .rich-text :global(ol) {
+    padding-left: 1.5rem;
+  }
+
+  .rich-text :global(ul) { list-style: disc; }
+  .rich-text :global(ol) { list-style: decimal; }
+
+  .rich-text :global(li) { margin-top: var(--space-2xs); }
+
+  /* Links keep their underline. Colour alone is not enough to distinguish a
+     link from body text — WCAG 1.4.1. */
+  .rich-text :global(a) {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+
+  .rich-text :global(strong) { font-weight: 700; }
+</style>

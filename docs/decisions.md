@@ -264,3 +264,43 @@ banner comment at the top of each file records where the originals live.
 settled *and* someone actually needs the photographs in git — which is unlikely, since by
 then the pictures will be in Sanity where they belong.
 
+
+## 018 — Three dependencies for the Sanity read path
+**Date:** 2026-08-09
+**Decision:** Add `@sanity/client`, `@sanity/image-url`, and `astro-portabletext`.
+**What each does, and what would replace it:**
+- `@sanity/client` — fetches content over GROQ. If it were ever abandoned, the same
+  queries work as plain HTTP GETs against `https://<projectId>.api.sanity.io`; the client
+  is convenience, not a lock-in. Perhaps thirty lines to replace.
+- `@sanity/image-url` — turns an image reference into a CDN URL with width, crop and
+  format applied. Replaceable by hand-building the URL, but the hotspot and crop maths
+  is fiddly enough that hand-rolling it would be a false economy.
+- `astro-portabletext` — renders Sanity's rich text to HTML. The most replaceable of the
+  three: Portable Text is a documented JSON shape and a small serializer is a known
+  quantity if the package goes stale.
+**Why these are acceptable when the standing rule is to resist dependencies:** all three
+are first-party or near-first-party to a service the project has already committed to,
+and the alternative is reimplementing the same logic with fewer eyes on it. The project's
+conventions list all three as reasonable in advance.
+**Tradeoff:** four direct dependencies now instead of one. Each is an upgrade obligation.
+**Revisit if:** we leave Sanity, at which point all three go together.
+
+## 019 — The project ID lives in the repository; there is no read token
+**Date:** 2026-08-09
+**Decision:** `src/lib/sanity.js` defaults to project `nd22vlzw`, dataset `production`,
+with environment variables able to override. No API token is used anywhere.
+**Why this is safe:** the `production` dataset is **public** — verified on 9 August 2026
+by an unauthenticated query returning HTTP 200. Anyone can already read this content;
+it is a public website. A Sanity project ID is not a credential, and ships in the browser
+bundle of every Sanity-backed site. The thing that would be a secret is a token, and
+there is no token because a public dataset needs none.
+**Why a default rather than a required variable:** an unset environment variable in
+Netlify would fail the build and take the live site down, in exchange for protecting a
+value that was never sensitive. A site that builds with no configuration at all is one
+fewer thing for a volunteer to get wrong.
+**Two console steps this removes**, both of which `SETUP.md` still described: no read
+token to create and store, and no CORS origins to configure — CORS governs browser
+requests, and this site fetches at build time from Node.
+**Revisit if:** the dataset is ever made private, which would require a viewer-scope
+token in Netlify's environment variables and a `.env` for local builds. Never a write
+token.
