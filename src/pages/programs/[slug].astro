@@ -6,9 +6,9 @@
  * applications are written per program, so each gets a real page with its
  * mission, vision and prose rather than a line on the home page.
  *
- * With no programs in Sanity yet, getStaticPaths returns nothing and no pages
- * are built. That is fine and deliberate: the build succeeds, and the pages
- * appear on the next build after the content is entered.
+ * getStaticPaths builds one page per published program. If the dataset has
+ * none, it builds nothing and the site still compiles — a build should not
+ * fail because content has not been entered yet.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import RichText from '../../components/RichText.astro'
@@ -56,7 +56,6 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
             aspect={3 / 2}
             sizes="(min-width: 68rem) 68rem, 100vw"
             loading="eager"
-            class="hero-image"
           />
           {(program.image.caption || program.image.credit) && (
             <figcaption>
@@ -116,9 +115,10 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
     margin: 0;
   }
 
-  .hero-image {
-    width: 100%;
-    height: auto;
+  /* :global, because the <img> is rendered by SanityImage and this file's
+     scoped styles cannot reach it. Sizing lives in that component; only the
+     decoration is ours. */
+  .hero-figure :global(img) {
     border: 1px solid var(--color-rule);
     background: var(--color-bg-alt);
   }
