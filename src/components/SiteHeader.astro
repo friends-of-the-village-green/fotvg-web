@@ -1,0 +1,107 @@
+---
+/**
+ * Site header: wordmark and main navigation.
+ *
+ * No mobile menu toggle, and no JavaScript. There are one or two links. They
+ * wrap onto a second line on a narrow screen, which is fine and costs nothing.
+ * If the navigation grows past about five items, revisit — a details/summary
+ * disclosure would still be cheaper than a script.
+ */
+import { site, mainNav } from '../lib/site.js'
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="/">
+      <b>{site.name}</b>
+      <i>{site.location}</i>
+    </a>
+
+    {mainNav.length > 0 && (
+      <nav aria-label="Main">
+        <ul>
+          {mainNav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+
+          {/* Rendered only once there is a real Square link to point at.
+              See src/lib/site.js. */}
+          {site.donateUrl && (
+            <li><a class="nav-donate" href={site.donateUrl}>Donate</a></li>
+          )}
+        </ul>
+      </nav>
+    )}
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .site-header .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s) var(--space-xl);
+    padding-block: 1.15rem;
+  }
+
+  .wordmark {
+    text-decoration: none;
+    font-family: var(--font-display);
+    line-height: 1.05;
+  }
+
+  .wordmark b {
+    display: block;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 4.5vw, 1.75rem);
+    letter-spacing: -0.01em;
+  }
+
+  .wordmark i {
+    display: block;
+    font-style: normal;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-top: var(--space-2xs);
+  }
+
+  nav ul {
+    /* The reset only strips bullets from ul[class], and this one has none. */
+    list-style: none;
+    padding: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-l);
+  }
+
+  nav a {
+    /* 44px minimum tap target, WCAG 2.5.8. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  nav a:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .nav-donate {
+    color: var(--color-accent);
+  }
+</style>

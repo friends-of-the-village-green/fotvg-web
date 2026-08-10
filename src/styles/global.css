@@ -1,0 +1,294 @@
+/* ==========================================================================
+   FotVG design tokens and base styles
+   ==========================================================================
+
+   The visual language here comes from mock-up 2, "The Evidence", which the
+   board chose on 9 August 2026 (docs/decisions.md, decision 010): a deep
+   forest-green band, serif headlines, brass accents, generous type.
+
+   The token names differ from the mock-up's. The mock-up used a print
+   metaphor — --ink, --ground, --band. Readable if you know it, opaque if you
+   don't, and this file has to make sense to a volunteer who has not seen it
+   before. The mapping, if you are porting a section across from the mock-up:
+
+     mock-up          here
+     --ground         --color-bg
+     --ground-2       --color-bg-alt
+     --ink            --color-text
+     --ink-2          --color-text-muted
+     --rule           --color-rule
+     --band           --color-band
+     --band-ink       --color-band-text
+     --band-ink-2     --color-band-text-muted
+     --band-accent    --color-band-accent
+     --accent         --color-accent
+     --accent-soft    --color-accent-soft
+
+   Two deliberate changes from the mock-up, both explained where they occur:
+   the dark-mode rule color, and the focus outline color.
+
+   Everything is one file on purpose. One place to look. Do not split it into
+   partials until it is long enough that not splitting it hurts more.
+   ========================================================================== */
+
+:root {
+  /* --- Color: light -------------------------------------------------- */
+  --color-bg:               #fcfdfb;  /* page background, a warm off-white */
+  --color-bg-alt:           #eef1ec;  /* alternating section bands */
+  --color-text:             #171a17;  /* body text            — 15.1:1 on bg */
+  --color-text-muted:       #4e564e;  /* secondary text       —  7.1:1 on bg */
+  --color-rule:             #d5dbd3;  /* hairline dividers */
+
+  /* The dark green band: hero, donate section. Its own little palette,
+     because text on it needs light colors and the page's do not work. */
+  --color-band:             #123328;
+  --color-band-text:        #edf1ea;  /* 12.0:1 on band */
+  --color-band-text-muted:  #adc0b3;  /*  7.2:1 on band */
+  --color-band-accent:      #d9b65f;  /*  7.0:1 on band — brass */
+
+  /* Brass again, darkened enough to be legible on the light background.
+     Do not use --color-band-accent on light; it is 1.8:1 and unreadable. */
+  --color-accent:           #7a5d18;  /* 5.7:1 on bg */
+  --color-accent-soft:      #f2ecdc;  /* tinted background for code, callouts */
+
+  /* Focus ring. Deliberately NOT the brass used in the mock-up: on the light
+     background that was 1.8:1, below the 3:1 that WCAG 1.4.11 requires of a
+     focus indicator. This is 5.7:1. Sections on the dark band override it
+     below, where the brass is the legible one. */
+  --color-focus:            #7a5d18;
+
+  /* --- Type ----------------------------------------------------------- */
+  /* System fonts only. No webfont, no Google Fonts request — a third-party
+     connection and a render blocker for very little gain. Constantia is the
+     Windows serif; the rest of the stack covers everyone else. */
+  --font-body:    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: Constantia, "Iowan Old Style", "Hoefler Text", Georgia,
+                  "Times New Roman", serif;
+  --font-mono:    ui-monospace, Consolas, "SF Mono", monospace;
+
+  /* --- Space ----------------------------------------------------------- */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-s:   0.75rem;
+  --space-m:   1rem;
+  --space-l:   1.75rem;
+  --space-xl:  3rem;
+
+  /* Section padding and gutters scale with the viewport rather than
+     stepping at a breakpoint. clamp(min, preferred, max). */
+  --space-section: clamp(3rem, 8vw, 5.5rem);
+  --gutter:        1.5rem;
+
+  /* --- Measure --------------------------------------------------------- */
+  --width-page:   68rem;   /* outer container */
+  --width-prose:  38rem;   /* ~68 characters — do not let text run wider */
+}
+
+/* Dark mode follows the reader's operating system setting. There is no
+   toggle, and adding one would mean shipping JavaScript for a preference the
+   OS already knows. Only the colors change; type and spacing do not. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:              #0d100e;
+    --color-bg-alt:          #161a17;
+    --color-text:            #eaeee9;  /* 16.3:1 on bg */
+    --color-text-muted:      #9ba69c;  /*  7.6:1 on bg */
+
+    /* Lighter than the mock-up's #2a322b, which came out at 1.5:1 against the
+       dark background — the section dividers were effectively invisible. */
+    --color-rule:            #3a443c;
+
+    --color-band:            #14392c;
+    --color-band-accent:     #e2c576;
+    --color-accent:          #d9b65f;  /* 9.8:1 on the dark bg */
+    --color-accent-soft:     #232016;
+    --color-focus:           #d9b65f;
+  }
+}
+
+/* ==========================================================================
+   Reset — the small amount of it that earns its place
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body,
+h1, h2, h3, h4,
+p, figure, blockquote,
+dl, dd,
+ul, ol { margin: 0; }
+
+ul[class],
+ol[class] { list-style: none; padding: 0; }
+
+img,
+picture,
+svg { display: block; max-width: 100%; }
+
+input,
+button,
+textarea,
+select { font: inherit; color: inherit; }
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  /* Anchor links land below the sticky-free header with room to breathe,
+     and honor a reader who has asked for less motion. */
+  scroll-padding-top: 2rem;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+
+  /* 18px floor. This audience skews older and the board reads the site on
+     phones — see CLAUDE.md. Do not reduce it. */
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: inherit; }
+
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.4rem, 8vw, 4.6rem); line-height: 1.03; letter-spacing: -0.025em; }
+h2 { font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.08; }
+h3 { font-size: clamp(1.4rem, 3.5vw, 1.75rem); line-height: 1.15; letter-spacing: -0.015em; }
+
+/* ==========================================================================
+   Layout helpers
+   ========================================================================== */
+
+/* The one container. Everything sits inside a .wrap. */
+.wrap {
+  max-width: var(--width-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.prose { max-width: var(--width-prose); }
+
+section { padding-block: var(--space-section); }
+
+/* A section on the dark green band. Flips the text colors and the focus ring
+   for everything inside it, so components do not each need to know. */
+.band {
+  background: var(--color-band);
+  color: var(--color-band-text);
+  --color-text: var(--color-band-text);
+  --color-text-muted: var(--color-band-text-muted);
+  --color-accent: var(--color-band-accent);
+  --color-focus: var(--color-band-accent);
+}
+
+/* Small uppercase label above a heading. */
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 0.9rem;
+}
+
+/* Skip link. First focusable thing on every page — see BaseLayout.astro. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 20;
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: var(--space-s) var(--space-m);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+
+  /* 48px, comfortably above the 44px minimum in WCAG 2.5.8. This audience
+     taps with thumbs on phones in the rain. */
+  min-height: 48px;
+  padding: var(--space-s) 1.6rem;
+
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--color-band-accent);
+  color: #16241d;                        /* 8.3:1 on the brass */
+  border: 2px solid var(--color-band-accent);
+}
+
+.button:hover {
+  background: transparent;
+  color: var(--color-band-accent);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--color-band-text);
+  border-color: var(--color-band-text-muted);
+}
+
+.button--ghost:hover {
+  background: var(--color-band-text);
+  color: var(--color-band);
+  border-color: var(--color-band-text);
+}
+
+/* ==========================================================================
+   Placeholder marker
+   ==========================================================================
+   [TK] marks copy or a link the board still has to settle. Loud on purpose —
+   if one of these reaches the live site, it should be embarrassing rather
+   than invisible. Search for "tk" before any launch.
+   ========================================================================== */
+
+.tk {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  padding: 0.05rem 0.3rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

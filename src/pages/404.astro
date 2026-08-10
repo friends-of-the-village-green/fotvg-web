@@ -1,0 +1,52 @@
+---
+/**
+ * 404.
+ *
+ * Community organizations get more of these than most sites: links live on in
+ * printed flyers, Facebook posts from two summers ago, and the church bulletin.
+ * So this page apologizes briefly and then helps, rather than being a joke.
+ *
+ * Related rule in the astro-conventions skill: never delete a page that has
+ * been public. Retire it in place. This page is for the ones we cannot fix.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page isn't here. Links to the Friends of the Village Green site sometimes change; here is the way back."
+>
+  <section>
+    <div class="wrap prose">
+      <h1>That page isn't here</h1>
+
+      <p>
+        It may have moved, or the link may be an old one — printed flyers and
+        Facebook posts outlast web addresses.
+      </p>
+
+      <p>
+        <a href="/">Go to the home page</a>, and if you were looking for
+        something in particular, tell us and we'll point you at it.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    /* Smaller than a home-page hero. This is an apology, not an announcement. */
+    font-size: clamp(1.9rem, 5vw, 2.9rem);
+  }
+
+  p {
+    margin-top: var(--space-m);
+    color: var(--color-text-muted);
+  }
+
+  a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-underline-offset: 4px;
+  }
+</style>

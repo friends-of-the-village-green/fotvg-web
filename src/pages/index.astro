@@ -1,17 +1,185 @@
 ---
+/**
+ * Home page.
+ *
+ * This is the foundation pass, not the finished page. It carries the hero, the
+ * "what we support" section, and the disambiguation card — the parts whose
+ * copy the board has already reviewed and which need nothing from Sanity.
+ *
+ * Still to come, once the schema exists: the "next event" strip, the recap
+ * bands under "What we've done", the upcoming events list, and the donate
+ * band. Their copy is settled in docs/mockups/2-the-evidence-v2.html.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Disambiguation from '../components/Disambiguation.astro'
 
+/* The four cards under "What we support". The first three are the program
+   areas and will become links to their own pages (decision 011) once those
+   pages exist — the `program` document type carries the slug. The fourth is
+   not a program, which is why it is written differently and stays unlinked. */
+const supported = [
+  {
+    name: 'Village Green Arts Program',
+    text: 'Arts and humanities. Sunday Sounds concerts, Music at the Green through the summer, and the rotating exhibitions in the Grand Hallway Gallery.',
+  },
+  {
+    name: 'Greenworks',
+    text: 'Community gardening, the natural sciences and the natural world. The garden and its rental beds, the orchard, and the classes and workshops that go with them. The 2026 beds sold out.',
+  },
+  {
+    name: 'Community building',
+    text: 'Community projects that raise money and bring people together — the NU2u rummage sale and the Secret Garden Tour.',
+  },
+  {
+    name: 'And, we hope, more',
+    text: 'We want to facilitate and support more activities and more community engagement, to meet the needs of a changing and growing Kingston.',
+  },
+]
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Friends of the Village Green · Kingston, Washington"
+  description="An all-volunteer group in Kingston, Washington. We help pay for the arts program, the Greenworks community garden, and community projects at the Village Green."
+>
+  <section class="hero band">
+    {/* No photograph yet. The hero image comes from Sanity, and the
+        attribution on the July batch is not confirmed (decision 013). Until
+        then this is the mock-up's no-photo treatment, which is the reason it
+        exists. */}
+    <div class="hero-texture" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <p class="hero-label">Village Green Community Center · Kingston</p>
+
+      <h1>What we help make happen.</h1>
+
+      <p class="hero-lede">
+        <b>Friends of the Village Green</b> is an <b>all-volunteer</b> group. We
+        support some of what goes on at the Village Green Community Center — the
+        arts program, the Greenworks community garden, and community projects
+        like the Secret Garden Tour. We don't run or fund everything that
+        happens here, and we hope to support more as Kingston grows.
+      </p>
+    </div>
+  </section>
+
+  <section id="support">
+    <div class="wrap">
+      <div class="prose">
+        <p class="eyebrow">Where the money goes</p>
+        <h2>What we support</h2>
+        <p class="section-lede">
+          Three ongoing program areas at the moment. Plenty else goes on at the
+          Village Green that we have no hand in — these are the ones we help pay
+          for and put volunteers behind.
+        </p>
+      </div>
+
+      {/* A list, so a screen reader announces how many there are. role="list"
+          is needed because list-style: none removes list semantics in Safari. */}
+      <ul class="supported" role="list">
+        {supported.map((item) => (
+          <li class="supported-item">
+            <h3>{item.name}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="disambiguation-section">
+    <div class="wrap">
+      <Disambiguation />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+  }
+
+  /* Stands in for the photograph. A wash of brass light from the top right
+     and a fine diagonal weave, so the band reads as a surface rather than a
+     flat rectangle. */
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 90% at 78% 15%, rgba(217, 182, 95, 0.22), transparent 60%),
+      repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 22px);
+  }
+
+  .hero .wrap {
+    position: relative;   /* above the texture */
+    padding-block: clamp(4rem, 14vw, 8rem);
+  }
+
+  .hero-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-band-accent);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    max-width: 16ch;
+  }
+
+  .hero-lede {
+    margin-top: var(--space-l);
+    max-width: 34rem;
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+    color: var(--color-band-text-muted);
+  }
+
+  .hero-lede b {
+    color: var(--color-band-text);
+    font-weight: 600;
+  }
+
+  /* ---------- what we support ---------- */
+  .section-lede {
+    margin-top: 0.9rem;
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+  }
+
+  .supported {
+    display: grid;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+  }
+
+  @media (min-width: 46rem) {
+    .supported {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 3rem;
+    }
+  }
+
+  .supported-item {
+    border-top: 2px solid var(--color-accent);
+    padding-top: var(--space-m);
+  }
+
+  .supported-item h3 {
+    font-size: 1.3rem;
+  }
+
+  .supported-item p {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+  }
+
+  /* ---------- disambiguation ---------- */
+  /* Tighter than a full section — it is a note, not a chapter, and it sits
+     directly above the footer. */
+  .disambiguation-section {
+    padding-block: 0 var(--space-section);
+  }
+</style>
