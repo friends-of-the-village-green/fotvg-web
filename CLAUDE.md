@@ -65,7 +65,6 @@ build step without saying out loud what it costs in long-term maintenance.
 | Content | Sanity (nonprofit plan) | Studio lives in `studio/`, deployed to Sanity's own hosting |
 | Hosting | Netlify | Free/public-good plan — deploy budget is constrained, see below |
 | Forms | Netlify Forms | Honeypot + spam filtering required |
-| Search | Pagefind | Static index built at build time |
 | Donations | External Square link | Square is already FotVG's card processor. No card data ever touches this site |
 | Images | Sanity asset pipeline | Use `@sanity/image-url`, never raw asset URLs |
 
@@ -192,6 +191,8 @@ members. Never write "become a member" or "join FotVG". The calls to action are
 - `docs/runbook.md` — operational procedures (deploy, rollback, backup, restore).
 - `docs/content-model.md` — the Sanity schema and what each field is for.
 - `docs/hosting.md` — account ownership, plan tiers, DNS, who holds what credential.
+- `docs/launch-checklist.md` — everything that must be true before `fotvg.org` points
+  here. Add to it whenever you leave something for later.
 
 ## Source material
 

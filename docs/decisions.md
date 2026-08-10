@@ -304,3 +304,49 @@ requests, and this site fetches at build time from Node.
 **Revisit if:** the dataset is ever made private, which would require a viewer-scope
 token in Netlify's environment variables and a `.env` for local builds. Never a write
 token.
+
+## 020 — No search
+**Date:** 2026-08-10
+**Decision:** Pagefind is dropped. The site has no search.
+**Why:** John's call, and the right one. The site is about ten pages plus a growing list
+of events. Everything is reachable in two clicks from the home page, and the events list
+is short enough to read. A search box on a site this size mostly advertises that the
+navigation failed. It is also a build step, an index to keep current, and another thing
+a future maintainer has to understand.
+**Removed from:** the stack table in `CLAUDE.md`, the dependency list in the
+`astro-conventions` skill, and Phase 8 of `SETUP.md`. Carrying an unimplemented
+commitment in the docs is worse than not having it — it reads as an oversight to whoever
+picks this up next.
+**Revisit if:** the event archive grows past roughly fifty write-ups, at which point
+finding "that concert two summers ago" stops being easy by eye.
+
+## 021 — A typographic tab icon, not a logo
+**Date:** 2026-08-10
+**Decision:** The board declined a logo or emblem — the site's identity is the
+organization's name set in type, which is why the header is text. For the browser tab,
+`public/favicon.svg` sets the abbreviation in the site's serif, brass on the forest
+green of the hero band, on two lines.
+**Why two lines:** a favicon is often painted at 16 pixels. Five characters on one line
+at that size is a smudge; two short lines keep the strokes thick enough to read.
+**What it replaced:** the Astro scaffold's own favicon, which had been live on the test
+site the whole time. FotVG's website was showing Astro's logo in every visitor's browser
+tab and bookmark.
+**How to change it:** `public/favicon.svg` is the source. `favicon.ico` and
+`apple-touch-icon.png` are generated from it — regenerate both if it changes, or the tab
+and the iOS home-screen icon will disagree.
+**Revisit if:** the board ever commissions a mark. This is a stand-in that does not
+pretend otherwise.
+
+## 022 — The home page photograph is chosen by hand
+**Date:** 2026-08-10
+**Decision:** The large photograph on the home page comes from a `heroImage` field on
+Site settings, picked deliberately, rather than being pulled automatically from the
+newest event write-up.
+**Why:** John's call. The automatic version is tempting — it keeps the page fresh with
+no effort — but it hands the most prominent image on the site to whichever event was
+written up most recently, including one with a mediocre photograph or an awkward crop.
+The first thing a visitor or a grant reviewer sees is worth a deliberate choice.
+**Tradeoff:** it goes stale if nobody changes it. That is a smaller risk than the
+alternative, and the runbook can carry a reminder.
+**Fallback:** with no photograph set, the hero falls back to the plain green panel from
+mock-up 2. Tidy, and much less inviting — which is the correct incentive.

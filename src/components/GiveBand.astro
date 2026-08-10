@@ -13,13 +13,28 @@ const {site} = Astro.props
 
 const hasDonate = Boolean(site.donateUrl)
 const hasEmail = Boolean(site.email)
+
+/**
+ * While the Square link is still being chased, the Donate half renders with a
+ * dead placeholder in place of the button, so the section can be reviewed at
+ * full height instead of collapsing to half a band.
+ *
+ * It is deliberately not a link. Not a `<a href="#">`, not a disabled-looking
+ * anchor that still does something — a plain element that cannot be clicked,
+ * carrying a [TK] marker, so nobody can mistake it for a working donate flow
+ * or ship it by accident.
+ *
+ * ⚠️ THIS MUST NOT REACH THE PUBLIC SITE. Search the repository for "TK"
+ * before the switchover to fotvg.org.
+ */
+const showDonatePlaceholder = !hasDonate
 ---
 
-{(hasDonate || hasEmail) && (
+{(hasDonate || showDonatePlaceholder || hasEmail) && (
   <section id="give" class="band">
     <div class="wrap">
       <div class="give-grid">
-        {hasDonate && (
+        {(hasDonate || showDonatePlaceholder) && (
           <div>
             <p class="eyebrow">Money</p>
             <h2>Donate</h2>
@@ -29,13 +44,24 @@ const hasEmail = Boolean(site.email)
               organization — no paid staff, no office, no one drawing a salary —
               so what you give goes to the program.
             </p>
-            <a class="button" href={site.donateUrl}>
-              Donate
-              <span aria-hidden="true">↗</span>
-              <span class="visually-hidden">(opens Square, our card processor)</span>
-            </a>
+
+            {hasDonate ? (
+              <a class="button" href={site.donateUrl}>
+                Donate
+                <span aria-hidden="true">↗</span>
+                <span class="visually-hidden">(opens Square, our card processor)</span>
+              </a>
+            ) : (
+              <p class="button button--placeholder" aria-disabled="true">
+                Donate — link pending
+              </p>
+            )}
+
             <p class="fine">
               Donations are handled by Square.
+              {showDonatePlaceholder && (
+                <span class="tk">[TK: Square donation URL — button is not live]</span>
+              )}
               <span class="tk">[TK: confirm tax-deductibility wording with the board]</span>
             </p>
           </div>
@@ -86,5 +112,16 @@ const hasEmail = Boolean(site.email)
 
   .fine {
     font-size: 0.84rem;
+  }
+
+  /* Looks like the button so the layout can be judged, but is plainly not one:
+     outlined rather than filled, dimmed, and with the cursor a browser uses
+     for something unavailable. */
+  .button--placeholder {
+    background: transparent;
+    color: var(--color-band-text-muted);
+    border: 2px dashed var(--color-band-text-muted);
+    cursor: not-allowed;
+    margin-top: 1.4rem;
   }
 </style>

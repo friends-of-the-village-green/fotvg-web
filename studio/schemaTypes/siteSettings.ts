@@ -100,13 +100,29 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: 'heroImage',
+      title: 'Home page photograph',
+      type: 'figure',
+      description:
+        'The large photograph across the top of the home page. Chosen by hand ' +
+        'rather than picked automatically from the newest event, so the board ' +
+        'controls the first thing a visitor sees. Landscape, and the wider the ' +
+        'better — it is cropped to a broad band on a big screen. Leave it empty ' +
+        'and the header falls back to a plain green panel, which is tidy but ' +
+        'much less inviting.',
+    }),
+
+    defineField({
       name: 'shareImage',
       title: 'Default sharing image',
       type: 'figure',
       description:
         'Shown when a link to this site is posted on Facebook or Nextdoor and ' +
-        'the page has no picture of its own. Landscape, and at least 1200 ' +
-        'pixels wide.',
+        'the page has no picture of its own. Event and program pages use their ' +
+        'own photograph, so this is the fallback for the home page and anything ' +
+        'without one. Landscape, at least 1200 pixels wide, and it gets cropped ' +
+        'to a wide letterbox — so pick something that survives losing the top ' +
+        'and bottom, and avoid anything with small text in it.',
     }),
   ],
 

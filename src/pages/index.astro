@@ -19,6 +19,7 @@ import EventRow from '../components/EventRow.astro'
 import GiveBand from '../components/GiveBand.astro'
 import NextEventStrip from '../components/NextEventStrip.astro'
 import RecapBand from '../components/RecapBand.astro'
+import SanityImage from '../components/SanityImage.astro'
 import {client} from '../lib/sanity.js'
 import {getSiteSettings} from '../lib/content.js'
 import {
@@ -46,10 +47,28 @@ const upcomingShown = upcoming.slice(0, 6)
   description="An all-volunteer group in Kingston, Washington. We help pay for the arts program, the Greenworks community garden, and community projects at the Village Green."
 >
   <section class="hero band">
-    {/* The hero photograph comes from Sanity once attribution on the July
-        batch is confirmed (decision 013). Until then this is mock-up 2's
-        no-photo treatment, which is the reason it exists. */}
-    <div class="hero-texture" aria-hidden="true"></div>
+    {/* Chosen by hand in Site settings, not picked automatically from the
+        newest event — the board wanted control over the first thing a visitor
+        sees. With none set, this falls back to mock-up 2's no-photo treatment,
+        which is the reason that treatment exists. */}
+    {site.heroImage?.asset ? (
+      <>
+        {/* Wrapped, because scoped styles here cannot reach an <img> that
+            SanityImage renders. The wrapper is ours, so we can position it. */}
+        <div class="hero-photo">
+          <SanityImage
+            image={site.heroImage}
+            width={1600}
+            aspect={16 / 9}
+            sizes="100vw"
+            loading="eager"
+          />
+        </div>
+        <div class="hero-scrim" aria-hidden="true"></div>
+      </>
+    ) : (
+      <div class="hero-texture" aria-hidden="true"></div>
+    )}
 
     <div class="wrap">
       <p class="hero-label">Village Green Community Center · Kingston</p>
@@ -154,6 +173,33 @@ const upcomingShown = upcoming.slice(0, 6)
     background:
       radial-gradient(120% 90% at 78% 15%, rgba(217, 182, 95, 0.22), transparent 60%),
       repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 22px);
+  }
+
+  .hero-photo {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Overrides SanityImage's own width/height, which suit an image in the flow
+     rather than one filling a band. `object-position` sits the crop slightly
+     low, keeping faces in frame when the band is short on a phone. */
+  .hero-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+
+  /* Without this the headline sits on the photograph and neither is legible.
+     Weighted to the left, where the text is, so the right of the picture stays
+     visible. The colour is the band green at high opacity, so the hero still
+     reads as one panel rather than a photo with a grey sheet over it. */
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(9, 26, 20, 0.92) 0%, rgba(9, 26, 20, 0.78) 45%, rgba(9, 26, 20, 0.45) 100%),
+      linear-gradient(to top, rgba(9, 26, 20, 0.7), transparent 55%);
   }
 
   .hero .wrap {

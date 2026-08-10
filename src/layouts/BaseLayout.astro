@@ -15,6 +15,7 @@ import '../styles/global.css'
 import SiteHeader from '../components/SiteHeader.astro'
 import SiteFooter from '../components/SiteFooter.astro'
 import {getNav, getSiteSettings} from '../lib/content.js'
+import {urlFor} from '../lib/sanity.js'
 
 /* Fetched once for the whole build, not once per page — see lib/content.js. */
 const site = await getSiteSettings()
@@ -23,8 +24,11 @@ const nav = await getNav()
 const {
   title,
   description,
-  /** Absolute or site-relative path to a share image. Omitted if not given —
-   *  a broken og:image is worse than none. There is no default image yet. */
+  /**
+   * A Sanity image to use as the link preview — pass the page's own
+   * photograph. Falls back to the default set in Site settings. Omitted
+   * entirely if neither exists; a broken og:image is worse than none.
+   */
   shareImage,
 } = Astro.props
 
@@ -40,7 +44,24 @@ const pathname = Astro.url.pathname
    becomes fotvg.org at switchover — decision 015. Canonical URLs and the
    sitemap both follow it, so it is the one thing that must change then. */
 const canonical = new URL(pathname, Astro.site)
-const shareImageUrl = shareImage ? new URL(shareImage, Astro.site) : null
+
+/**
+ * The link preview image.
+ *
+ * Most of this site's traffic arrives from links shared on Facebook and
+ * Nextdoor, where the picture is most of what decides whether a neighbor taps.
+ * A page's own photograph beats a generic one, so an event or program passes
+ * its image and only falls back to the site default.
+ *
+ * 1200x630 is the size the social networks crop to. Producing it here means
+ * editors never have to think about dimensions — they upload a photograph and
+ * the right shape is derived.
+ */
+const ogImage = shareImage?.asset ? shareImage : site.shareImage?.asset ? site.shareImage : null
+
+const shareImageUrl = ogImage
+  ? urlFor(ogImage).width(1200).height(630).fit('crop').auto('format').url()
+  : null
 
 /* The home page title stands alone. Every other page is suffixed, so a
    browser tab or a search result says which site it belongs to. */
@@ -62,11 +83,21 @@ const fullTitle = isHome ? title : `${title} · ${site.name}`
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {shareImageUrl && <meta property="og:image" content={shareImageUrl} />}
+    {shareImageUrl && (
+      <>
+        <meta property="og:image" content={shareImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {ogImage.alt && <meta property="og:image:alt" content={ogImage.alt} />}
+      </>
+    )}
     <meta name="twitter:card" content={shareImageUrl ? 'summary_large_image' : 'summary'} />
 
-    {/* TK — favicon.ico, favicon.svg and apple-touch-icon.png. There is no
-        logo asset yet. Ask the board whether one exists before drawing one. */}
+    {/* The board decided against a logo, so the tab icon is the abbreviation
+        set in type. See public/favicon.svg. */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta name="generator" content={Astro.generator} />
   </head>
