@@ -3,4 +3,23 @@
   publish = "dist"
 
 [build.environment]
+  # Keep in step with .nvmrc, so a local build and a Netlify build agree.
   NODE_VERSION = "24"
+
+# Sensible defaults. None of these need thinking about again unless something
+# on the site starts needing to be embedded in another page, at which point
+# X-Frame-Options is the one that will be in the way.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Astro fingerprints these filenames, so a given URL's contents never change
+# and it is safe to cache them for a year. Saves repeat visitors on a rural
+# connection re-downloading the CSS every time.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

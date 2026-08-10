@@ -17,6 +17,7 @@ should be useful to someone attempting a password reset.
 | Netlify (prototype) | John, personal account | Free | John | Site `fotvg-webtest.netlify.app`, connected to the `fotvg-web` repo. **Temporary.** Build credits come out of John's personal allowance. Open-source/public-good application: not yet filed as of 9 Aug 2026. |
 | Netlify (production) | not created yet | | | To be created under a FotVG account at switchover, then pointed at `fotvg.org`. See decision 015. |
 | Sanity | John, personal account | **Growth Trial — expires ~27 Aug 2026** | John | Organization "FotVG", org ID `o7rU0mAV3`. Project **FotVG Website**, project ID `nd22vlzw`, dataset `production`. Created 9 Aug 2026. Nonprofit application not yet submitted — form link in hand, to be submitted by Kathleen or Betsy **before the trial expires**. At expiry the project drops to the free plan; nothing is lost. |
+| Sanity Studio | (same Sanity project) | — | John; **Kathleen (`president@`) and Betsy (`vicepresident@`) invited as project Editors, 9 Aug 2026** — role addresses rather than personal ones, so access travels with the office as the board turns over | Deployed 9 Aug 2026 to **https://fotvg.sanity.studio**, app ID `llg85ofl96ybrc4e2d0yr0lj`. Hosted by Sanity, not Netlify, so it costs no build credits. **Does not update itself when the schema changes** — see `docs/runbook.md`. |
 | Donation platform | | | | Where does the money land? |
 | Password vault | | | | Which board members have access? |
 
