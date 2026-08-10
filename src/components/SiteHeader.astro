@@ -2,33 +2,34 @@
 /**
  * Site header: wordmark and main navigation.
  *
- * No mobile menu toggle, and no JavaScript. There are one or two links. They
+ * No mobile menu toggle, and no JavaScript. There are at most four links; they
  * wrap onto a second line on a narrow screen, which is fine and costs nothing.
- * If the navigation grows past about five items, revisit — a details/summary
+ * If the navigation ever grows past about five items, a details/summary
  * disclosure would still be cheaper than a script.
+ *
+ * The nav is built in lib/content.js from content that actually exists, so
+ * there is never a link here pointing at a section that did not render.
  */
-import { site, mainNav } from '../lib/site.js'
+const {site, nav = []} = Astro.props
 ---
 
 <header class="site-header">
   <div class="wrap">
     <a class="wordmark" href="/">
       <b>{site.name}</b>
-      <i>{site.location}</i>
+      <i>{site.tagline}</i>
     </a>
 
-    {mainNav.length > 0 && (
+    {nav.length > 0 && (
       <nav aria-label="Main">
         <ul>
-          {mainNav.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} class:list={[item.isDonate && 'nav-donate']}>
+                {item.label}
+              </a>
+            </li>
           ))}
-
-          {/* Rendered only once there is a real Square link to point at.
-              See src/lib/site.js. */}
-          {site.donateUrl && (
-            <li><a class="nav-donate" href={site.donateUrl}>Donate</a></li>
-          )}
         </ul>
       </nav>
     )}

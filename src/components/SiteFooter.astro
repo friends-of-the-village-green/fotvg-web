@@ -6,7 +6,13 @@
  * quietly. It does not anymore — Betsy asked for it to be louder, so it is now
  * a card in the page flow (see Disambiguation.astro and decision 010).
  */
-import { site } from '../lib/site.js'
+const {site} = Astro.props
+
+const socialLabels = {
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  youtube: 'YouTube',
+}
 ---
 
 <footer class="site-footer">
@@ -21,6 +27,16 @@ import { site } from '../lib/site.js'
       <span aria-hidden="true"> · </span>
       Washington nonprofit corporation, founded {site.founded}
     </p>
+
+    {site.socialLinks.length > 0 && (
+      <ul class="social" role="list">
+        {site.socialLinks.map((link) => (
+          <li>
+            <a href={link.url}>{socialLabels[link.platform] || link.platform}</a>
+          </li>
+        ))}
+      </ul>
+    )}
   </div>
 </footer>
 
@@ -38,5 +54,22 @@ import { site } from '../lib/site.js'
 
   .meta {
     margin-top: var(--space-2xs);
+  }
+
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    margin-top: var(--space-m);
+  }
+
+  .social a {
+    /* 44px tap target, and enough space between them that a thumb does not
+       hit the wrong one. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    text-underline-offset: 3px;
   }
 </style>

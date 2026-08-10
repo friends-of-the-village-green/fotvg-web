@@ -118,6 +118,21 @@ export const allEventSlugsQuery = `
   *[_type == "event" && defined(slug.current)].slug.current
 `
 
+/**
+ * Which home-page sections have anything in them.
+ *
+ * The navigation is built from this. A menu item pointing at a section that
+ * did not render is a link that silently does nothing — worse for someone
+ * using a screen reader than not offering the link at all.
+ */
+export const homeSectionsQuery = `{
+  "hasRecaps": count(*[_type == "event" && defined(slug.current)
+    && coalesce(endDate, startDate) < now() && defined(recap)]) > 0,
+  "hasUpcoming": count(*[_type == "event" && defined(slug.current)
+    && coalesce(endDate, startDate) >= now()]) > 0,
+  "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0
+}`
+
 /* ------------------------------------------------------------- news, pages */
 
 export const recentNewsQuery = `

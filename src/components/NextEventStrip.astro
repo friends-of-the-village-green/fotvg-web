@@ -1,0 +1,62 @@
+---
+/**
+ * The one-line "next thing happening" strip under the hero.
+ *
+ * The most common reason a neighbor opens this site is to find out what is on
+ * and when. Answering that above the fold, before they have to scroll or
+ * choose a menu item, is most of the job.
+ */
+import {formatDateAndTime, toDateAttribute} from '../lib/dates.js'
+
+const {event} = Astro.props
+---
+
+<div class="next-strip">
+  <div class="wrap">
+    <span class="label">Next</span>
+    <span class="what">
+      <a href={`/events/${event.slug}`}>{event.title}</a>
+    </span>
+    <span class="when">
+      <time datetime={toDateAttribute(event.startDate)}>
+        {formatDateAndTime(event.startDate)}
+      </time>
+    </span>
+  </div>
+</div>
+
+<style>
+  .next-strip {
+    background: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .next-strip .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-m);
+    padding-block: var(--space-m);
+  }
+
+  .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .what {
+    font-size: 1.02rem;
+  }
+
+  .what a {
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+
+  .when {
+    color: var(--color-text-muted);
+  }
+</style>

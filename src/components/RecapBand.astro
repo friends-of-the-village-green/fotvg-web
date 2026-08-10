@@ -1,0 +1,161 @@
+---
+/**
+ * A past event, written up, with its photographs. The most important thing on
+ * the site: this is what a grant reviewer reads as evidence that FotVG does
+ * what it says it does (decision 008).
+ *
+ * SOURCE ORDER MATTERS HERE — decision 014. The heading and date come *first
+ * in the markup*, before the photographs. On a phone the bands stack, and
+ * mock-up 2 had the photo block first, so you met the Greenworks pictures
+ * while still reading the Music at the Green write-up and the association
+ * broke. Betsy found it on her own phone.
+ *
+ * Desktop puts the photographs on the left for alternate bands using CSS
+ * `order`, never by reordering the DOM. Screen readers follow source order at
+ * every width, so this is an accessibility fix as much as a layout one.
+ */
+import SanityImage from './SanityImage.astro'
+import RichText from './RichText.astro'
+import {formatEventDate, toDateAttribute} from '../lib/dates.js'
+
+const {event, flip = false} = Astro.props
+
+/* The lead photograph, then up to two more as a pair beneath it. Six to twelve
+   photographs live on the event's own page; three is what a band can carry
+   without becoming a wall. */
+const gallery = event.gallery || []
+const lead = event.image?.asset ? event.image : gallery[0]
+const rest = (event.image?.asset ? gallery : gallery.slice(1)).slice(0, 2)
+
+const credits = [...new Set([lead, ...rest].filter(Boolean).map((i) => i?.credit).filter(Boolean))]
+---
+
+<article class:list={['recap', flip && 'flip']}>
+  <div class="recap-text">
+    <p class="recap-when">
+      <time datetime={toDateAttribute(event.startDate)}>
+        {formatEventDate(event.startDate)}
+      </time>
+      {event.program && (
+        <>
+          <span aria-hidden="true"> · </span>
+          <a href={`/programs/${event.program.slug}`}>{event.program.name}</a>
+        </>
+      )}
+    </p>
+
+    <h3><a href={`/events/${event.slug}`}>{event.title}</a></h3>
+
+    <RichText value={event.recap} />
+
+    <p>
+      <a class="readon" href={`/events/${event.slug}`}>
+        Read the write-up<span class="visually-hidden"> of {event.title}</span>
+      </a>
+    </p>
+  </div>
+
+  {lead && (
+    <div class="recap-media">
+      <SanityImage image={lead} width={800} aspect={3 / 2} sizes="(min-width: 52rem) 40vw, 100vw" />
+
+      {rest.length > 0 && (
+        <div class="recap-pair">
+          {rest.map((photo) => (
+            <SanityImage image={photo} width={400} aspect={1} sizes="(min-width: 52rem) 20vw, 50vw" />
+          ))}
+        </div>
+      )}
+
+      {credits.length > 0 && (
+        <p class="credit">{credits.length === 1 ? 'Photo' : 'Photos'}: {credits.join(', ')}</p>
+      )}
+    </div>
+  )}
+</article>
+
+<style>
+  .recap {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+
+  .recap + .recap {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+
+  @media (min-width: 52rem) {
+    .recap {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: var(--space-xl);
+    }
+
+    /* Photographs on the left by default; `flip` leaves them on the right.
+       `order` only — the DOM stays in reading order at every width. */
+    .recap-media {
+      order: -1;
+    }
+
+    .recap.flip .recap-media {
+      order: 0;
+    }
+  }
+
+  .recap-when {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .recap-when a {
+    color: var(--color-accent);
+    font-weight: 700;
+    text-underline-offset: 3px;
+  }
+
+  .recap h3 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+  }
+
+  .recap h3 a {
+    text-decoration: none;
+  }
+
+  .recap h3 a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .readon {
+    display: inline-block;
+    margin-top: var(--space-m);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--color-accent);
+    text-underline-offset: 4px;
+  }
+
+  .recap-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-s);
+    margin-top: var(--space-s);
+  }
+
+  .recap-media :global(img) {
+    border: 1px solid var(--color-rule);
+    background: var(--color-bg-alt);
+  }
+
+  .credit {
+    margin-top: var(--space-xs);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+</style>

@@ -1,0 +1,274 @@
+---
+/**
+ * An event page — both phases of the same document.
+ *
+ * Before it happens: what, when, where, and how to come.
+ * After: the write-up and the photographs.
+ *
+ * These URLs are permanent. Printed flyers, Facebook posts and the monthly
+ * newsletter point at them for years, so a past event keeps its page rather
+ * than being tidied away (decision 008).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import RichText from '../../components/RichText.astro'
+import SanityImage from '../../components/SanityImage.astro'
+import {client} from '../../lib/sanity.js'
+import {allEventSlugsQuery, eventBySlugQuery} from '../../lib/queries.js'
+import {formatDateAndTime, isPast, toDateAttribute} from '../../lib/dates.js'
+
+export async function getStaticPaths() {
+  const slugs = await client.fetch(allEventSlugsQuery)
+
+  return slugs.map((slug) => ({params: {slug}}))
+}
+
+const {slug} = Astro.params
+const event = await client.fetch(eventBySlugQuery, {slug})
+
+if (!event) {
+  throw new Error(`No event found for slug "${slug}".`)
+}
+
+const past = isPast(event)
+const gallery = event.gallery || []
+const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
+---
+
+<BaseLayout
+  title={event.title}
+  description={event.seoDescription || event.summary}
+>
+  <article>
+    <section class="intro">
+      <div class="wrap">
+        <p class="eyebrow">
+          {past ? 'What we have done' : 'Coming up'}
+          {event.program && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <a href={`/programs/${event.program.slug}`}>{event.program.name}</a>
+            </>
+          )}
+        </p>
+
+        <h1>{event.title}</h1>
+
+        {event.cancelled && (
+          <p class="cancelled">
+            This event has been cancelled.
+          </p>
+        )}
+
+        <dl class="facts">
+          <div>
+            <dt>When</dt>
+            <dd>
+              <time datetime={toDateAttribute(event.startDate)}>
+                {formatDateAndTime(event.startDate)}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>Where</dt>
+            <dd>{event.location}</dd>
+          </div>
+        </dl>
+
+        <p class="summary">{event.summary}</p>
+
+        {!past && !event.cancelled && event.signupUrl && (
+          <a class="button" href={event.signupUrl}>Sign up</a>
+        )}
+      </div>
+    </section>
+
+    {event.image?.asset && (
+      <div class="wrap">
+        <figure>
+          <SanityImage
+            image={event.image}
+            width={1200}
+            aspect={3 / 2}
+            sizes="(min-width: 68rem) 68rem, 100vw"
+            loading="eager"
+          />
+          {event.image.credit && (
+            <figcaption>Photo: {event.image.credit}</figcaption>
+          )}
+        </figure>
+      </div>
+    )}
+
+    <section>
+      <div class="wrap">
+        <RichText value={event.body} />
+
+        {hasRecap && (
+          <div class="recap">
+            <h2>How it went</h2>
+            <RichText value={event.recap} />
+          </div>
+        )}
+      </div>
+    </section>
+
+    {gallery.length > 0 && (
+      <section class="gallery-section">
+        <div class="wrap">
+          <h2>Photographs</h2>
+
+          <ul class="gallery" role="list">
+            {gallery.map((photo) => (
+              <li>
+                <figure>
+                  <SanityImage
+                    image={photo}
+                    width={800}
+                    aspect={3 / 2}
+                    sizes="(min-width: 52rem) 33vw, (min-width: 36rem) 50vw, 100vw"
+                  />
+                  {(photo.caption || photo.credit) && (
+                    <figcaption>
+                      {photo.caption}
+                      {photo.caption && photo.credit && <span aria-hidden="true"> · </span>}
+                      {photo.credit && `Photo: ${photo.credit}`}
+                    </figcaption>
+                  )}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <div class="wrap back">
+      <p><a href="/events">All events</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .intro {
+    padding-block: var(--space-section) var(--space-l);
+  }
+
+  .intro h1 {
+    max-width: 20ch;
+  }
+
+  .eyebrow a {
+    color: var(--color-accent);
+    text-underline-offset: 3px;
+  }
+
+  /* Cancellation says so in words. Never colour or a strikethrough alone —
+     WCAG 1.4.1, and a struck-through heading is not announced as cancelled. */
+  .cancelled {
+    margin-top: var(--space-m);
+    padding: var(--space-s) var(--space-m);
+    border-left: 4px solid var(--color-accent);
+    background: var(--color-accent-soft);
+    font-weight: 700;
+    max-width: var(--width-prose);
+  }
+
+  .facts {
+    display: grid;
+    gap: var(--space-m) var(--space-xl);
+    margin-top: var(--space-l);
+  }
+
+  @media (min-width: 36rem) {
+    .facts {
+      grid-template-columns: repeat(2, auto);
+      justify-content: start;
+    }
+  }
+
+  dt {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  dd {
+    margin: var(--space-2xs) 0 0;
+    font-size: 1.05rem;
+  }
+
+  .summary {
+    margin-top: var(--space-l);
+    max-width: var(--width-prose);
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+    color: var(--color-text-muted);
+  }
+
+  .button {
+    /* The band's brass reads poorly on the light page background, so on this
+       page the button uses the darkened accent instead. */
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .button:hover {
+    background: transparent;
+    color: var(--color-accent);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    border: 1px solid var(--color-rule);
+    background: var(--color-bg-alt);
+  }
+
+  figcaption {
+    margin-top: var(--space-xs);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+  }
+
+  .recap {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-l);
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .recap h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+  }
+
+  .gallery-section {
+    background: var(--color-bg-alt);
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--space-l);
+    margin-top: var(--space-l);
+  }
+
+  @media (min-width: 36rem) {
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 52rem) {
+    .gallery { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .back {
+    padding-block: var(--space-xl);
+  }
+
+  .back a {
+    font-weight: 700;
+    color: var(--color-accent);
+    text-underline-offset: 4px;
+  }
+</style>
