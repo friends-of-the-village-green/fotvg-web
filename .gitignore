@@ -13,12 +13,17 @@ fotvg-drive-folders/
 *.doc
 *.xls
 
-# Mock-ups — held out of git pending a decision, see decision 017.
-# They embed real event photographs as base64. Attribution is unconfirmed and the
-# children's permissions are not yet in writing, and git history is permanent.
-# The files live locally in docs/mockups/ and the decisions they produced are
-# recorded in docs/decisions.md, which is the durable record.
-docs/mockups/
+# Mock-ups — see decision 017.
+# The originals embed real event photographs as base64. Attribution is unconfirmed,
+# the children's permissions are not in writing, and git history is permanent — so
+# they stay out of this public repository and live on John's machine and in FotVG's
+# Drive. The *-no-photos.html copies keep the markup and alt text with the images
+# replaced by grey placeholders, and those are safe to commit.
+#
+# Ignore the contents rather than the directory itself: git cannot re-include a
+# file whose parent directory is excluded, so the negation below only works this way.
+docs/mockups/*
+!docs/mockups/*-no-photos.html
 
 # logs
 npm-debug.log*
