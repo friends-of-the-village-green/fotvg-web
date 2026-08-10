@@ -2,39 +2,43 @@
 /**
  * Home page.
  *
- * This is the foundation pass, not the finished page. It carries the hero, the
- * "what we support" section, and the disambiguation card — the parts whose
- * copy the board has already reviewed and which need nothing from Sanity.
+ * Section order follows mock-up 2 (decision 010): the hero, the next thing
+ * happening, what we have done, what is on, what we support, and how to give.
  *
- * Still to come, once the schema exists: the "next event" strip, the recap
- * bands under "What we've done", the upcoming events list, and the donate
- * band. Their copy is settled in docs/mockups/2-the-evidence-v2.html.
+ * Past write-ups come before upcoming events on purpose. The board's reason
+ * for wanting them is grant applications, and a reviewer arriving from an
+ * application should meet the evidence first (decision 008).
+ *
+ * Every section below the hero renders only if it has content. An empty
+ * heading with nothing under it reads as a broken site, and this one gets
+ * shown to funders.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Disambiguation from '../components/Disambiguation.astro'
+import EventRow from '../components/EventRow.astro'
+import GiveBand from '../components/GiveBand.astro'
+import NextEventStrip from '../components/NextEventStrip.astro'
+import RecapBand from '../components/RecapBand.astro'
+import {client} from '../lib/sanity.js'
+import {getSiteSettings} from '../lib/content.js'
+import {
+  allProgramsQuery,
+  nextEventQuery,
+  recentRecapsQuery,
+  upcomingEventsQuery,
+} from '../lib/queries.js'
 
-/* The four cards under "What we support". The first three are the program
-   areas and will become links to their own pages (decision 011) once those
-   pages exist — the `program` document type carries the slug. The fourth is
-   not a program, which is why it is written differently and stays unlinked. */
-const supported = [
-  {
-    name: 'Village Green Arts Program',
-    text: 'Arts and humanities. Sunday Sounds concerts, Music at the Green through the summer, and the rotating exhibitions in the Grand Hallway Gallery.',
-  },
-  {
-    name: 'Greenworks',
-    text: 'Community gardening, the natural sciences and the natural world. The garden and its rental beds, the orchard, and the classes and workshops that go with them. The 2026 beds sold out.',
-  },
-  {
-    name: 'Community building',
-    text: 'Community projects that raise money and bring people together — the NU2u rummage sale and the Secret Garden Tour.',
-  },
-  {
-    name: 'And, we hope, more',
-    text: 'We want to facilitate and support more activities and more community engagement, to meet the needs of a changing and growing Kingston.',
-  },
-]
+const site = await getSiteSettings()
+
+const [programs, nextEvent, recaps, upcoming] = await Promise.all([
+  client.fetch(allProgramsQuery),
+  client.fetch(nextEventQuery),
+  client.fetch(recentRecapsQuery, {limit: 3}),
+  client.fetch(upcomingEventsQuery),
+])
+
+/* Six rows is enough for a home page. The full list lives at /events. */
+const upcomingShown = upcoming.slice(0, 6)
 ---
 
 <BaseLayout
@@ -42,10 +46,9 @@ const supported = [
   description="An all-volunteer group in Kingston, Washington. We help pay for the arts program, the Greenworks community garden, and community projects at the Village Green."
 >
   <section class="hero band">
-    {/* No photograph yet. The hero image comes from Sanity, and the
-        attribution on the July batch is not confirmed (decision 013). Until
-        then this is the mock-up's no-photo treatment, which is the reason it
-        exists. */}
+    {/* The hero photograph comes from Sanity once attribution on the July
+        batch is confirmed (decision 013). Until then this is mock-up 2's
+        no-photo treatment, which is the reason it exists. */}
     <div class="hero-texture" aria-hidden="true"></div>
 
     <div class="wrap">
@@ -63,30 +66,74 @@ const supported = [
     </div>
   </section>
 
-  <section id="support">
-    <div class="wrap">
-      <div class="prose">
-        <p class="eyebrow">Where the money goes</p>
-        <h2>What we support</h2>
-        <p class="section-lede">
-          Three ongoing program areas at the moment. Plenty else goes on at the
-          Village Green that we have no hand in — these are the ones we help pay
-          for and put volunteers behind.
-        </p>
-      </div>
+  {nextEvent && <NextEventStrip event={nextEvent} />}
 
-      {/* A list, so a screen reader announces how many there are. role="list"
-          is needed because list-style: none removes list semantics in Safari. */}
-      <ul class="supported" role="list">
-        {supported.map((item) => (
-          <li class="supported-item">
-            <h3>{item.name}</h3>
-            <p>{item.text}</p>
-          </li>
+  {recaps.length > 0 && (
+    <section id="done">
+      <div class="wrap">
+        <div class="sec-head prose">
+          <p class="eyebrow">What we have been doing</p>
+          <h2>What we've done</h2>
+          <p class="section-lede">
+            We write up every event afterwards and put the photographs with it.
+            This is the part of the site we care most about — it is the plainest
+            answer to "what did the money do."
+          </p>
+        </div>
+
+        {recaps.map((event, i) => (
+          <RecapBand event={event} flip={i % 2 === 1} />
         ))}
-      </ul>
-    </div>
-  </section>
+
+        <p class="more"><a href="/events">See everything we've done</a></p>
+      </div>
+    </section>
+  )}
+
+  {upcomingShown.length > 0 && (
+    <section id="upcoming" class="upcoming">
+      <div class="wrap">
+        <div class="sec-head prose">
+          <p class="eyebrow">Coming up</p>
+          <h2>What's on</h2>
+        </div>
+
+        <ul class="event-list" role="list">
+          {upcomingShown.map((event) => <EventRow event={event} />)}
+        </ul>
+
+        {upcoming.length > upcomingShown.length && (
+          <p class="more"><a href="/events">See all upcoming events</a></p>
+        )}
+      </div>
+    </section>
+  )}
+
+  {programs.length > 0 && (
+    <section id="support">
+      <div class="wrap">
+        <div class="sec-head prose">
+          <p class="eyebrow">Where the money goes</p>
+          <h2>What we support</h2>
+          <p class="section-lede">
+            Plenty goes on at the Village Green that we have no hand in — these
+            are the ones we help pay for and put volunteers behind.
+          </p>
+        </div>
+
+        <ul class="supported" role="list">
+          {programs.map((program) => (
+            <li class="supported-item">
+              <h3><a href={`/programs/${program.slug}`}>{program.name}</a></h3>
+              <p>{program.summary}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <GiveBand site={site} />
 
   <section class="disambiguation-section">
     <div class="wrap">
@@ -101,9 +148,6 @@ const supported = [
     position: relative;
   }
 
-  /* Stands in for the photograph. A wash of brass light from the top right
-     and a fine diagonal weave, so the band reads as a surface rather than a
-     flat rectangle. */
   .hero-texture {
     position: absolute;
     inset: 0;
@@ -113,7 +157,7 @@ const supported = [
   }
 
   .hero .wrap {
-    position: relative;   /* above the texture */
+    position: relative;
     padding-block: clamp(4rem, 14vw, 8rem);
   }
 
@@ -141,13 +185,38 @@ const supported = [
     font-weight: 600;
   }
 
-  /* ---------- what we support ---------- */
+  /* ---------- shared section furniture ---------- */
+  .sec-head {
+    margin-bottom: 2.5rem;
+  }
+
   .section-lede {
     margin-top: 0.9rem;
     color: var(--color-text-muted);
     font-size: 1.05rem;
   }
 
+  .more {
+    margin-top: var(--space-l);
+    font-weight: 700;
+  }
+
+  .more a {
+    color: var(--color-accent);
+    text-underline-offset: 4px;
+  }
+
+  /* ---------- what's on ---------- */
+  .upcoming {
+    background: var(--color-bg-alt);
+  }
+
+  .event-list {
+    display: grid;
+    gap: 0;
+  }
+
+  /* ---------- what we support ---------- */
   .supported {
     display: grid;
     gap: var(--space-xl);
@@ -170,6 +239,16 @@ const supported = [
     font-size: 1.3rem;
   }
 
+  .supported-item h3 a {
+    text-decoration: none;
+  }
+
+  .supported-item h3 a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
   .supported-item p {
     margin-top: var(--space-xs);
     color: var(--color-text-muted);
@@ -177,9 +256,7 @@ const supported = [
   }
 
   /* ---------- disambiguation ---------- */
-  /* Tighter than a full section — it is a note, not a chapter, and it sits
-     directly above the footer. */
   .disambiguation-section {
-    padding-block: 0 var(--space-section);
+    padding-block: var(--space-section);
   }
 </style>

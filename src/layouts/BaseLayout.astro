@@ -14,7 +14,11 @@
 import '../styles/global.css'
 import SiteHeader from '../components/SiteHeader.astro'
 import SiteFooter from '../components/SiteFooter.astro'
-import { site } from '../lib/site.js'
+import {getNav, getSiteSettings} from '../lib/content.js'
+
+/* Fetched once for the whole build, not once per page — see lib/content.js. */
+const site = await getSiteSettings()
+const nav = await getNav()
 
 const {
   title,
@@ -70,12 +74,12 @@ const fullTitle = isHome ? title : `${title} · ${site.name}`
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <SiteHeader />
+    <SiteHeader site={site} nav={nav} />
 
     <main id="main">
       <slot />
     </main>
 
-    <SiteFooter />
+    <SiteFooter site={site} />
   </body>
 </html>

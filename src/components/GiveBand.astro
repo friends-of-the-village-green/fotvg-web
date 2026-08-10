@@ -1,0 +1,90 @@
+---
+/**
+ * Donate and Volunteer, on the dark green band.
+ *
+ * The Donate half renders only when there is a real Square link in Site
+ * settings. A button that goes nowhere is worse than no button — it costs the
+ * click *and* the trust. Same for the volunteer email.
+ *
+ * No card details ever touch this site; Square handles the whole transaction
+ * (decision 007).
+ */
+const {site} = Astro.props
+
+const hasDonate = Boolean(site.donateUrl)
+const hasEmail = Boolean(site.email)
+---
+
+{(hasDonate || hasEmail) && (
+  <section id="give" class="band">
+    <div class="wrap">
+      <div class="give-grid">
+        {hasDonate && (
+          <div>
+            <p class="eyebrow">Money</p>
+            <h2>Donate</h2>
+            <p>
+              A donation pays a musician, buys seed and timber for a garden bed,
+              or helps put on the rummage sale. We are an all-volunteer
+              organization — no paid staff, no office, no one drawing a salary —
+              so what you give goes to the program.
+            </p>
+            <a class="button" href={site.donateUrl}>
+              Donate
+              <span aria-hidden="true">↗</span>
+              <span class="visually-hidden">(opens Square, our card processor)</span>
+            </a>
+            <p class="fine">
+              Donations are handled by Square.
+              <span class="tk">[TK: confirm tax-deductibility wording with the board]</span>
+            </p>
+          </div>
+        )}
+
+        {hasEmail && (
+          <div>
+            <p class="eyebrow">Time</p>
+            <h2>Volunteer</h2>
+            <p>
+              Wednesday mornings in the garden. An hour on the front table at
+              Discover Kingston. Sorting donations for the rummage sale. Setting
+              out chairs before a concert, and stacking them after. Tell us what
+              you'd enjoy and we'll find you something.
+            </p>
+            <a class="button button--ghost" href={`mailto:${site.email}?subject=Volunteering`}>
+              Email us about volunteering
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .give-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .give-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    margin-top: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .fine {
+    font-size: 0.84rem;
+  }
+</style>

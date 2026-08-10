@@ -1,0 +1,118 @@
+---
+/**
+ * One row in a list of upcoming events.
+ *
+ * A cancelled event keeps its row and says so plainly, rather than
+ * disappearing. Somebody is holding a flyer, and "cancelled" is the single
+ * most useful thing the site can tell them.
+ */
+import {formatShortDate, formatTime, toDateAttribute} from '../lib/dates.js'
+
+const {event} = Astro.props
+
+const time = formatTime(event.startDate)
+---
+
+<li class:list={['event-row', event.cancelled && 'is-cancelled']}>
+  <a class="event-link" href={`/events/${event.slug}`}>
+    <span class="event-date">
+      <time datetime={toDateAttribute(event.startDate)}>
+        {formatShortDate(event.startDate)}
+      </time>
+      {time && <span aria-hidden="true"> · </span>}
+      {time}
+    </span>
+
+    <span class="event-body">
+      <span class="event-title">
+        {event.cancelled && <span class="cancelled-flag">Cancelled: </span>}
+        {event.title}
+      </span>
+      {event.summary && <span class="event-note">{event.summary}</span>}
+    </span>
+
+    <span class="event-where">{event.location}</span>
+  </a>
+</li>
+
+<style>
+  .event-row {
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .event-row:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .event-link {
+    display: grid;
+    gap: var(--space-2xs) var(--space-xl);
+    padding-block: var(--space-l);
+    text-decoration: none;
+    align-items: baseline;
+  }
+
+  @media (min-width: 44rem) {
+    .event-link {
+      grid-template-columns: 11rem 1fr auto;
+    }
+  }
+
+  .event-date {
+    display: block;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 700;
+
+    /* Digits line up column-wise, so a list of dates reads as a column
+       rather than a ragged edge. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .event-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .event-link:hover .event-title {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .event-note {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-2xs);
+  }
+
+  .event-where {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* Cancellation is stated in words, never by styling alone — struck-through
+     text is not announced by most screen readers, and a colour change is
+     invisible to plenty of people. WCAG 1.4.1. */
+  .cancelled-flag {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .is-cancelled .event-title {
+    color: var(--color-text-muted);
+  }
+</style>
