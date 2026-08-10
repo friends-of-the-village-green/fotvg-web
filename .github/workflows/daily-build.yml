@@ -1,0 +1,87 @@
+# Rebuild the website once a day.
+#
+# WHY THIS EXISTS
+#
+# Two things need a build that no code change triggers:
+#
+#   1. Content. An editor publishes in Sanity; the site is static and only
+#      shows what was there at the last build.
+#   2. The passage of time. The queries in src/lib/queries.js compare event
+#      dates against now(), which is evaluated when the site is built. Without
+#      a rebuild, a concert that finished last night stays in "What's on"
+#      forever and never appears under "What we've done".
+#
+# The second one is the reason this is not optional.
+#
+# WHY DAILY, AND NOT ON EVERY PUBLISH
+#
+# Netlify's free plan meters builds and suspends the site for the rest of the
+# calendar month if the allowance runs out — an unacceptable failure for a
+# public-facing org site. A webhook firing on every publish would spend the
+# allowance on an afternoon of edits. Decision 005.
+#
+# BUILDS THIS COSTS: about 30 a month, one per day.
+# On top of merges to main and one preview per pull request. During active
+# development that is roughly 45-50 builds a month; once the site settles it
+# is about 32. At a minute or two each, comfortably inside the free plan's
+# monthly build minutes — but check Netlify → Billing → Usage rather than
+# trusting this comment, and remember this account also hosts other projects.
+#
+# URGENT CHANGES
+#
+# A cancellation should not wait until tomorrow morning. Either run this
+# workflow by hand — Actions tab → Rebuild the website → Run workflow — or
+# trigger a deploy in Netlify → Deploys → Trigger deploy.
+#
+# ⚠️ GITHUB DISABLES SCHEDULED WORKFLOWS IN QUIET REPOSITORIES
+#
+# After 60 days with no commits, GitHub switches scheduled workflows off and
+# emails the repository admins. This repository will go quiet — that is the
+# whole point of building it this way — so expect that email eventually and do
+# not ignore it. Re-enabling is one button in the Actions tab. If it becomes a
+# recurring nuisance, the alternative is a Netlify scheduled function, which
+# has no inactivity rule but adds a moving part to a site that currently has
+# none.
+
+name: Rebuild the website
+
+on:
+  schedule:
+    # 14:00 UTC — 6am Pacific in winter, 7am in summer. GitHub cron does not
+    # observe daylight saving, and an hour either way does not matter here.
+    # The point is that the site is current before anyone looks at it.
+    - cron: '0 14 * * *'
+
+  # Adds a "Run workflow" button in the Actions tab, for when something needs
+  # to go out now.
+  workflow_dispatch:
+
+# Nothing here reads or writes the repository.
+permissions: {}
+
+jobs:
+  trigger-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ask Netlify to rebuild
+        env:
+          # A Netlify build hook URL. Anyone holding it can spend the month's
+          # build allowance, so it is a repository secret and must never be
+          # committed. Settings → Secrets and variables → Actions.
+          HOOK: ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "NETLIFY_BUILD_HOOK_URL is not set."
+            echo "Add it under Settings → Secrets and variables → Actions."
+            echo "See docs/runbook.md."
+            exit 1
+          fi
+
+          # --fail turns an HTTP error into a non-zero exit, so a broken or
+          # revoked hook shows up as a red run rather than a silent success
+          # that quietly stops rebuilding the site.
+          curl --fail --silent --show-error --max-time 30 \
+            -X POST -d '{}' "$HOOK"
+
+          echo "Build requested. Watch it in Netlify → Deploys."

@@ -35,14 +35,51 @@ Publish makes your change live **in Sanity**. It does not put it on the website.
 The website is rebuilt from Sanity's content, and it only shows what was there at the
 moment of the last build. So there are two steps, and only the first is yours.
 
-> ⚠️ **There is currently no automatic trigger.** Nothing rebuilds the site when you
-> publish. Until the build hook is set up (decision 005 — batched to at most one build a
-> day), a change in the Studio reaches the website only when someone pushes code or
-> triggers a deploy by hand in Netlify. **This needs finishing before the board is asked
-> to rely on the site.**
+**The site rebuilds once a day, at about 6am Pacific.** So something published on
+Tuesday afternoon appears on the website on Wednesday morning. That delay is
+deliberate — Netlify's free plan limits how many builds we get in a month, and building
+on every single publish would spend a month's allowance in one busy afternoon and take
+the site offline (decision 005).
 
-To trigger a build by hand in the meantime: Netlify → the site → **Deploys** →
-**Trigger deploy** → **Deploy site**.
+The daily rebuild also does something less obvious but more important: it is what moves
+an event from *What's on* to *What we've done* once its date passes. Nothing else does
+that.
+
+**If something needs to go out now** — a cancellation, most likely — either:
+
+- Netlify → the site → **Deploys** → **Trigger deploy** → **Deploy site**, or
+- GitHub → **Actions** → **Rebuild the website** → **Run workflow**.
+
+Either takes a couple of minutes.
+
+> ⚠️ **Setup still needed.** The daily rebuild runs from
+> `.github/workflows/daily-build.yml` and needs a Netlify build hook URL stored as a
+> GitHub secret called `NETLIFY_BUILD_HOOK_URL`. Until that exists, the scheduled run
+> fails every morning and nothing rebuilds on its own. See "Setting up the daily
+> rebuild" below.
+
+## Setting up the daily rebuild
+
+One-off, and needs doing before editors are asked to rely on the site.
+
+1. **Netlify** → the site → **Site configuration** → **Build & deploy** → **Build
+   hooks** → **Add build hook**. Name it `Daily rebuild`, branch `main`. Save, then
+   copy the URL it gives you.
+2. **GitHub** → the repository → **Settings** → **Secrets and variables** → **Actions**
+   → **New repository secret**. Name it exactly `NETLIFY_BUILD_HOOK_URL`, paste the URL
+   as the value, and save.
+3. Test it: **Actions** → **Rebuild the website** → **Run workflow**. A green tick, and
+   a new deploy appearing in Netlify, means it works.
+
+**That URL is a credential.** Anyone who has it can trigger builds and exhaust the
+month's allowance. It goes in the GitHub secret and the password vault, and nowhere
+else — never in the repository, never in an email.
+
+> ⚠️ **GitHub turns off scheduled workflows in quiet repositories.** After 60 days with
+> no commits, the daily rebuild stops and GitHub emails the repository admins. This
+> repository *will* go quiet — that is rather the point of building it this way — so
+> expect that email one day and do not ignore it. Re-enabling is one button in the
+> Actions tab.
 
 ## How to tell it worked
 
