@@ -1,0 +1,650 @@
+<!--
+  PHOTOGRAPHS REMOVED.
+
+  This is a photo-free copy of a mock-up, kept in the repository as the design
+  record. Every <img> keeps its alt text and its place in the layout; only the
+  image data is replaced with a grey placeholder.
+
+  The originals, with the real photographs, are not in git. They live in
+  docs/mockups/ on John's machine and in FotVG's Google Drive. See decision 017
+  in docs/decisions.md for why.
+
+  Generated from the original by scratchpad/strip-photos.mjs.
+-->
+<title>FotVG landing page — Mock-up 1: The Programme</title>
+
+<style>
+  :root {
+    --ground:      #ffffff;
+    --ground-2:    #f1f5f1;
+    --ink:         #16221b;
+    --ink-2:       #4a5a50;
+    --rule:        #cbd6cd;
+    --rule-soft:   #e3e9e3;
+    --accent:      #24603f;
+    --accent-soft: #e6efe9;
+    --flag:        #9c4515;
+    --flag-soft:   #f8ece4;
+
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+
+    --measure: 46rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:      #0f1411;
+      --ground-2:    #171f1a;
+      --ink:         #e9efea;
+      --ink-2:       #a4b3a9;
+      --rule:        #2e3c34;
+      --rule-soft:   #212c26;
+      --accent:      #7cc79a;
+      --accent-soft: #1a2b21;
+      --flag:        #e79a63;
+      --flag-soft:   #2b201a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #0f1411;
+    --ground-2:    #171f1a;
+    --ink:         #e9efea;
+    --ink-2:       #a4b3a9;
+    --rule:        #2e3c34;
+    --rule-soft:   #212c26;
+    --accent:      #7cc79a;
+    --accent-soft: #1a2b21;
+    --flag:        #e79a63;
+    --flag-soft:   #2b201a;
+  }
+  :root[data-theme="light"] {
+    --ground:      #ffffff;
+    --ground-2:    #f1f5f1;
+    --ink:         #16221b;
+    --ink-2:       #4a5a50;
+    --rule:        #cbd6cd;
+    --rule-soft:   #e3e9e3;
+    --accent:      #24603f;
+    --accent-soft: #e6efe9;
+    --flag:        #9c4515;
+    --flag-soft:   #f8ece4;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .skip {
+    position: absolute; left: -9999px;
+    background: var(--ink); color: var(--ground);
+    padding: .75rem 1rem; z-index: 10; border-radius: 0 0 4px 0;
+  }
+  .skip:focus { left: 0; top: 0; }
+
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--flag); outline-offset: 3px; }
+
+  .wrap {
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  /* ---------- mock-up banner ---------- */
+  .mockbar {
+    background: var(--flag-soft);
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .04em;
+  }
+  .mockbar p { padding: .6rem 0; }
+  .mockbar strong { color: var(--flag); }
+
+  /* ---------- masthead ---------- */
+  .masthead { border-bottom: 2px solid var(--ink); }
+  .masthead .wrap {
+    display: flex; flex-wrap: wrap; gap: 1rem 2rem;
+    align-items: baseline; justify-content: space-between;
+    padding-block: 1.5rem 1.1rem;
+  }
+  .wordmark { text-decoration: none; display: block; }
+  .wordmark .line-1 {
+    display: block;
+    font-size: .8rem; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .wordmark .line-2 {
+    display: block;
+    font-size: clamp(1.55rem, 5vw, 2.1rem);
+    font-weight: 700; letter-spacing: -.02em; line-height: 1.05;
+  }
+
+  nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+  nav a {
+    display: inline-block; padding: .5rem 0;
+    min-height: 44px; line-height: 30px;
+    font-weight: 600; font-size: .95rem;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover { border-bottom-color: var(--accent); }
+  nav a.give { color: var(--accent); }
+
+  /* ---------- sections ---------- */
+  main > section { padding-block: 3rem; border-bottom: 1px solid var(--rule-soft); }
+  main > section:last-of-type { border-bottom: 0; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: .9rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 3rem);
+    line-height: 1.08; letter-spacing: -.03em; font-weight: 700;
+    text-wrap: balance;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-size: clamp(1.35rem, 4vw, 1.7rem);
+    letter-spacing: -.02em; font-weight: 700; line-height: 1.15;
+    text-wrap: balance;
+  }
+  h3 { font-size: 1.1rem; font-weight: 700; line-height: 1.25; }
+
+  .lede { font-size: 1.15rem; color: var(--ink-2); max-width: 34rem; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- intro ---------- */
+  .intro { background: var(--ground-2); }
+  .intro .wrap { padding-block: 2.5rem 2.75rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    min-height: 48px; padding: .7rem 1.4rem;
+    font-weight: 700; font-size: 1rem; text-decoration: none;
+    border-radius: 2px; border: 2px solid var(--accent);
+  }
+  .btn-solid { background: var(--accent); color: var(--ground); }
+  .btn-solid:hover { background: var(--ink); border-color: var(--ink); }
+  .btn-line { color: var(--accent); }
+  .btn-line:hover { background: var(--accent-soft); }
+  .btn .ext { font-size: .8em; }
+
+  /* ---------- the timetable ---------- */
+  .timetable { list-style: none; }
+  .timetable > li { border-top: 1px solid var(--rule); }
+  .timetable > li:last-child { border-bottom: 1px solid var(--rule); }
+
+  .row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0 1.5rem;
+    padding-block: 1.4rem;
+    text-decoration: none;
+  }
+  a.row:hover .row-title { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  .when {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: .95rem; line-height: 1.35;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .when .day { display: block; font-size: 1.6rem; letter-spacing: -.04em; }
+  .when .mon { display: block; text-transform: uppercase; letter-spacing: .1em; font-size: .72rem; color: var(--ink-2); }
+  .when .time { display: block; margin-top: .35rem; font-size: .78rem; color: var(--ink-2); font-weight: 400; }
+
+  .row-title { display: block; font-size: 1.2rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .row-meta {
+    font-size: .85rem; color: var(--ink-2); margin-top: .3rem;
+    display: flex; flex-wrap: wrap; gap: .35rem .75rem; align-items: center;
+  }
+  .prog {
+    font-family: var(--mono);
+    font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--accent-soft); color: var(--accent);
+    padding: .2rem .45rem; border-radius: 2px; font-weight: 600;
+  }
+  .row-desc { display: block; font-size: .98rem; color: var(--ink-2); margin-top: .5rem; max-width: 32rem; }
+
+  .next-flag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .66rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--flag); background: var(--flag-soft);
+    padding: .2rem .45rem; border-radius: 2px; font-weight: 700;
+    margin-bottom: .4rem;
+  }
+
+  .after-list { margin-top: 1.5rem; }
+  .more { margin-top: 1.5rem; font-weight: 700; }
+  .more a { color: var(--accent); text-underline-offset: 4px; }
+
+  /* ---------- recaps ---------- */
+  .recaps { display: grid; gap: 2.5rem; margin-top: 1.75rem; }
+  .recap { display: grid; gap: 1rem; }
+  @media (min-width: 40rem) {
+    .recap { grid-template-columns: 13rem 1fr; gap: 1.5rem; align-items: start; }
+  }
+  .recap h3 a { color: inherit; text-decoration: none; }
+  .recap h3 a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .recap-date {
+    font-family: var(--mono); font-size: .78rem; letter-spacing: .06em;
+    color: var(--ink-2); text-transform: uppercase; margin-bottom: .35rem;
+  }
+  .recap p { font-size: .98rem; color: var(--ink-2); margin-top: .5rem; }
+
+  .ph {
+    background:
+      repeating-linear-gradient(-45deg, var(--rule-soft) 0 8px, transparent 8px 16px),
+      var(--ground-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    display: grid; place-content: center; text-align: center;
+    padding: 1rem;
+    aspect-ratio: 4 / 3;
+  }
+  .ph span {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .06em;
+    color: var(--ink-2); max-width: 16rem;
+  }
+  .ph-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .75rem; }
+  .ph-row .ph { aspect-ratio: 1; }
+
+  .shot {
+    display: block; width: 100%; height: auto;
+    aspect-ratio: 4 / 3; object-fit: cover;
+    border: 1px solid var(--rule); border-radius: 2px;
+    background: var(--ground-2);
+  }
+  .ph-row .shot { aspect-ratio: 1; }
+  .credit {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .04em;
+    color: var(--ink-2); margin-top: .45rem;
+  }
+
+  /* ---------- what we do ---------- */
+  .doing { background: var(--ground-2); }
+  .plainlist { list-style: none; margin-top: 1.5rem; display: grid; gap: 1.1rem; }
+  .plainlist li { border-left: 3px solid var(--accent); padding-left: 1rem; }
+  .plainlist strong { display: block; font-size: 1.02rem; }
+  .plainlist span { font-size: .95rem; color: var(--ink-2); }
+
+  /* ---------- give ---------- */
+  .give-block { display: grid; gap: 2rem; }
+  @media (min-width: 44rem) { .give-block { grid-template-columns: 1fr 1fr; } }
+  .give-block p { color: var(--ink-2); margin-top: .6rem; font-size: 1rem; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 2px solid var(--ink); background: var(--ground); }
+  footer .wrap { padding-block: 2.5rem 3rem; display: grid; gap: 1.5rem; }
+  .disambig {
+    font-size: .92rem; color: var(--ink-2);
+    border-left: 3px solid var(--rule); padding-left: 1rem; max-width: 34rem;
+  }
+  .foot-meta { font-size: .88rem; color: var(--ink-2); display: grid; gap: .3rem; }
+  .tk { font-family: var(--mono); font-size: .85em; color: var(--flag); }
+
+  /* ---------- editor notes ---------- */
+  .notes {
+    border-top: 1px dashed var(--rule);
+    background: var(--ground-2);
+    font-size: .85rem;
+  }
+  .notes .wrap { padding-block: 1.75rem 2.25rem; }
+  .notes h2 {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-2); font-weight: 600; margin-bottom: .75rem;
+  }
+  .notes ul { list-style: none; display: grid; gap: .4rem; color: var(--ink-2); }
+  .notes code {
+    font-family: var(--mono); font-size: .92em;
+    background: var(--accent-soft); color: var(--accent);
+    padding: .05rem .3rem; border-radius: 2px;
+  }
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="mockbar">
+  <div class="wrap">
+    <p><strong>Mock-up 1 of 3 — “The Programme.”</strong> For board review. Not the live site. Event details are illustrative.</p>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="#main">
+      <span class="line-1">Kingston, Washington</span>
+      <span class="line-2">Friends of the Village&nbsp;Green</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#whats-on">What’s on</a></li>
+        <li><a href="#past">What we’ve done</a></li>
+        <li><a href="#doing">What we pay for</a></li>
+        <li><a class="give" href="#give">Donate</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="intro">
+    <div class="wrap">
+      <h1>There is nearly always something on.</h1>
+      <p class="lede">
+        We’re <strong>Friends of the Village Green</strong> — neighbours who fund and run
+        programs at the Village Green Community Center in Kingston. Concerts, a garden,
+        lunches, lectures, trail work. Most of it free or low-cost, all of it open to
+        every age and ability.
+      </p>
+      <div class="actions">
+        <a class="btn btn-solid" href="#whats-on">See what’s on</a>
+        <a class="btn btn-line" href="#give">Donate <span class="ext" aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="whats-on">
+    <div class="wrap">
+      <p class="eyebrow">Upcoming</p>
+      <h2>What’s on</h2>
+
+      <ul class="timetable after-list">
+        <li>
+          <a class="row" href="#">
+            <span class="when">
+              <span class="mon">Aug</span>
+              <span class="day">12</span>
+              <span class="time">Wed · 9am</span>
+            </span>
+            <span>
+              <span class="next-flag">Next up</span>
+              <span class="row-title">Work party in the Village Green Woods</span>
+              <span class="row-meta">
+                <span class="prog">Village Green Woods</span>
+                <span>Above the upper parking lot</span>
+              </span>
+              <span class="row-desc">
+                Trail building and clearing. Wednesday mornings, most weeks. Bring gloves
+                and boots — we have the rest.
+              </span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="row" href="#">
+            <span class="when">
+              <span class="mon">Aug</span>
+              <span class="day">20</span>
+              <span class="time">Thu · noon</span>
+            </span>
+            <span>
+              <span class="row-title">Senior luncheon</span>
+              <span class="row-meta">
+                <span class="prog">Community</span>
+                <span>Village Green Community Center</span>
+              </span>
+              <span class="row-desc">
+                A hot lunch and company, once a month, with Kingston Cares. Around forty
+                people come. You don’t have to book, but it helps us cook.
+              </span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="row" href="#">
+            <span class="when">
+              <span class="mon">Sep</span>
+              <span class="day">13</span>
+              <span class="time">Sun · 2pm</span>
+            </span>
+            <span>
+              <span class="row-title">Sunday Sounds: the fall season opens</span>
+              <span class="row-meta">
+                <span class="prog">VGAP</span>
+                <span>Village Green Community Center</span>
+              </span>
+              <span class="row-desc">
+                Our afternoon concert series starts again, with the Ladies Musical Club of
+                Seattle. Seating is limited, so book early.
+              </span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="row" href="#">
+            <span class="when">
+              <span class="mon">Sep</span>
+              <span class="day">28</span>
+              <span class="time">Mon</span>
+            </span>
+            <span>
+              <span class="row-title">Discover Kingston</span>
+              <span class="row-meta">
+                <span class="prog">Out and about</span>
+                <span>Kingston</span>
+              </span>
+              <span class="row-desc">
+                We’ll have a table. Come and say hello, or ask us how to get involved.
+              </span>
+            </span>
+          </a>
+        </li>
+
+        <li>
+          <a class="row" href="#">
+            <span class="when">
+              <span class="mon">Oct</span>
+              <span class="day">06</span>
+              <span class="time">Tue</span>
+            </span>
+            <span>
+              <span class="row-title">Newcomers welcome series, session one</span>
+              <span class="row-meta">
+                <span class="prog">Community</span>
+                <span>With Kitsap Regional Library</span>
+              </span>
+              <span class="row-desc">
+                Four sessions for people who’ve recently moved to Kingston. Run with the
+                library.
+              </span>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="more"><a href="#">See all upcoming events</a></p>
+    </div>
+  </section>
+
+  <section id="past">
+    <div class="wrap">
+      <p class="eyebrow">Already happened</p>
+      <h2>What we’ve done</h2>
+      <p class="lede" style="margin-top:.75rem">
+        Every event gets written up afterwards, with photos. It’s how we show what your
+        money paid for.
+      </p>
+
+      <div class="recaps">
+
+        <article class="recap">
+          <div>
+            <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1400" height="1050"
+              alt="A dozen people dancing on the grass in front of the marimba band, most of them
+                   laughing, on a summer evening at Music at the Green.">
+          </div>
+          <div>
+            <p class="recap-date">Summer 2026</p>
+            <h3><a href="#">Music at the Green</a></h3>
+            <p>
+              Free outdoor concerts in the Kingston Village Green Park, every Wednesday
+              evening through July and August. People bring their own chairs, and a good
+              deal of food. By the second set there is usually dancing.
+            </p>
+            <div class="ph-row">
+              <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1400" height="1050"
+                alt="A six-piece band playing on the lawn in front of the VGAP banner, with the
+                     audience seated on the grass in the foreground.">
+              <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1050" height="1400"
+                alt="A full audience in camp chairs under a maple tree, watching four musicians play.">
+              <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1400" height="1235"
+                alt="Four musicians with a guitar and fiddle performing beside the Music at the Green banner.">
+            </div>
+            <p class="credit">Photos: Betsy Cooper</p>
+          </div>
+        </article>
+
+        <article class="recap">
+          <div>
+            <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1050" height="1400"
+              alt="Four cellists playing in the Summit room, with a seated audience watching and
+                   the parking lot visible through tall windows behind.">
+          </div>
+          <div>
+            <p class="recap-date">Sunday, February 22, 2026</p>
+            <h3><a href="#">Sunday Sounds: Cello Mania</a></h3>
+            <p>
+              Four cellists in the Summit room, playing folk, classical and contemporary
+              pieces to a full house. Seating is limited for these, so they are worth
+              booking early.
+            </p>
+            <p class="credit">Photo: Betsy Cooper</p>
+          </div>
+        </article>
+
+        <article class="recap">
+          <div>
+            <img class="shot" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Crect width='3' height='2' fill='%23c9cec8'/%3E%3C/svg%3E" width="1050" height="1400"
+              alt="Two visitors looking up at framed paintings hung along the Grand Hallway,
+                   with more people walking down the corridor behind them.">
+          </div>
+          <div>
+            <p class="recap-date">November 2025</p>
+            <h3><a href="#">The Grand Hallway Gallery</a></h3>
+            <p>
+              The corridor doubles as a gallery, and the work on the walls changes through
+              the year. It costs nothing to walk down it, which is rather the point.
+            </p>
+            <p class="credit">Photo: Betsy Cooper</p>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="more"><a href="#">See all past events</a></p>
+    </div>
+  </section>
+
+  <section id="doing" class="doing">
+    <div class="wrap">
+      <p class="eyebrow">Where the money goes</p>
+      <h2>What we pay for</h2>
+
+      <ul class="plainlist">
+        <li>
+          <strong>Village Green Arts Program (VGAP)</strong>
+          <span>Sunday Sounds concerts, Music at the Green through the summer, and the
+          exhibitions in the Grand Hallway Gallery.</span>
+        </li>
+        <li>
+          <strong>Greenworks</strong>
+          <span>The community garden and its rental beds, plus classes, workshops and
+          lectures. The 2026 beds sold out.</span>
+        </li>
+        <li>
+          <strong>Village Green Woods</strong>
+          <span>Three acres of woodland above the upper parking lot. Volunteers build and
+          clear trails on Wednesday mornings.</span>
+        </li>
+        <li>
+          <strong>Lunches, lectures and welcomes</strong>
+          <span>The monthly senior luncheon with Kingston Cares, the newcomers series with
+          the library, and four lectures a year.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="give">
+    <div class="wrap">
+      <div class="give-block">
+        <div>
+          <p class="eyebrow">Money</p>
+          <h2>Donate</h2>
+          <p>
+            A donation pays a musician, buys seed and tools, or covers a lunch for someone
+            who needs one. We have no paid staff and the board are all volunteers, so what
+            you give goes to the program.
+          </p>
+          <div class="actions">
+            <a class="btn btn-solid" href="#">Donate <span class="ext" aria-hidden="true">↗</span></a>
+          </div>
+          <p style="font-size:.85rem">Donations are handled by Square. <span class="tk">[TK: confirm tax-deductibility wording with the board]</span></p>
+        </div>
+        <div>
+          <p class="eyebrow">Time</p>
+          <h2>Volunteer</h2>
+          <p>
+            Wednesday mornings in the woods. An hour on the front table at Discover
+            Kingston. Setting out chairs before a concert, and stacking them after. Tell us
+            what you’d enjoy and we’ll find you something.
+          </p>
+          <div class="actions">
+            <a class="btn btn-line" href="#">Email us about volunteering</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="disambig">
+      Three organizations share the Village Green name. The
+      <strong>Metropolitan Park District</strong> owns the land and the
+      <strong>Village Green Foundation</strong> owns the building. We’re
+      <strong>Friends of the Village Green</strong> — we look after the programs and the
+      people who run them.
+    </p>
+    <div class="foot-meta">
+      <p>Friends of the Village Green · Village Green Community Center,
+        26159 Dulay Road NE, Kingston, WA</p>
+      <p><a href="#">Email us</a> · Washington nonprofit corporation, founded 2025</p>
+    </div>
+  </div>
+</footer>
+
+<aside class="notes">
+  <div class="wrap">
+    <h2>What the board would edit in Sanity</h2>
+    <ul>
+      <li>Every row under “What’s on” and every write-up under “What we’ve done” is one <code>event</code> document — the same one, before and after.</li>
+      <li>An event moves from the top list to the bottom list by itself, on its date. Nobody has to move it.</li>
+      <li>The write-up and photos are the bottom half of the event you already made. There is no second thing to remember.</li>
+      <li>“What we pay for” and the two donate blocks are a <code>page</code>, edited once or twice a year.</li>
+      <li>The program tags (VGAP, Greenworks, Village Green Woods) are a field on the event — <strong>not</strong> the navigation. Settling the pillars later changes nothing here.</li>
+    </ul>
+  </div>
+</aside>

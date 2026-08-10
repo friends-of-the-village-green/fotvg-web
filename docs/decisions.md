@@ -232,10 +232,14 @@ would stop, so do not build anything on a paid-tier feature until the plan is se
 **Revisit if:** the nonprofit application is rejected, which would make the quota ceiling
 a live design constraint rather than a footnote.
 
-## 017 — The mock-up HTML files are not committed to git *(provisional)*
+## 017 — Photo-free copies of the mock-ups are committed; the originals are not
 **Date:** 2026-08-09
-**Decision:** `docs/mockups/` is gitignored. The files stay on John's machine and in
-FotVG's Drive.
+**Decision:** The original mock-ups are gitignored and stay on John's machine and in
+FotVG's Drive. Alongside them sit `*-no-photos.html` copies — same markup, same classes,
+same alt text, with each photograph replaced by a grey SVG placeholder — and those are
+committed. 13 MB becomes 129 KB.
+**Settled by:** John confirmed on 9 August 2026 that the GitHub repository is **public**,
+which turns the concern below from a question into a straightforward no.
 **Why:** The three mock-ups are about 13 MB, almost all of it real event photographs
 embedded as base64 — Kathleen's Greenworks pictures and the batch that came via Betsy.
 Two of the project's hard rules bear on that: no photograph is published without
@@ -246,15 +250,17 @@ that fixing it is an outstanding pre-launch action. Git history is effectively p
 would be irreversible while the permission position is still unsettled.
 **Also:** it is 13 MB that Netlify would clone on every single build, for files that are
 never part of the site.
-**What we lose:** the visual record lives outside the repo. Acceptable, because the
-decisions the mock-ups produced are written up as prose in this file (010, 011, 012, 014),
-and prose is what a future maintainer actually needs.
-**Provisional — decide properly when two things are known:**
-1. Is the GitHub repo public or private?
-2. Is the photo attribution and children's sign-off settled (decision 013)?
-If the answer to both is favorable, committing them is fine. A better option either way
-is a photo-stripped copy: the mock-up CSS and markup with the images swapped for the
-`.ph` placeholder blocks the stylesheet already defines. That preserves everything we
-actually refer back to and weighs a few kilobytes.
-**Revisit:** at the next session, once John has checked repo visibility.
+**What we lose:** nothing that matters. Every `<img>` keeps its tag, classes and alt
+text, so the stripped files render with the same grid, the same aspect ratios and the
+same source order. They are still usable for porting a section into real code, which is
+the only thing anyone will open them for. The photographs themselves were never the part
+we needed to consult.
+**Also worth having removed:** 13 MB that Netlify would otherwise clone on every build,
+for files that are never part of the site.
+**How they were made:** every `"data:image/…"` attribute value swapped for an inline grey
+SVG, with the generator refusing to write a file if any non-SVG image data survived. The
+banner comment at the top of each file records where the originals live.
+**Revisit if:** the attribution and children's sign-off in decision 013 are ever fully
+settled *and* someone actually needs the photographs in git — which is unlikely, since by
+then the pictures will be in Sanity where they belong.
 
