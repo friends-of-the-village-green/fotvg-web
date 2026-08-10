@@ -76,3 +76,25 @@ const srcset = widths.map((w) => `${build(w)} ${w}w`).join(', ')
     fetchpriority={loading === 'eager' ? 'high' : undefined}
   />
 )}
+
+<style>
+  /**
+   * This component owns its own layout, and it has to.
+   *
+   * Astro scopes styles to the component that declares them, so a class passed
+   * in from a parent — `<SanityImage class="hero-image" />` — produces a rule
+   * the parent can write but that never matches this <img>. Relying on the
+   * parent for `width: 100%; height: auto` is therefore a bug waiting to be
+   * rediscovered, and was: the first program page shipped with photographs
+   * squeezed at narrow widths.
+   *
+   * To decorate one of these from a parent — a border, a background — style the
+   * wrapping element instead, or reach in with :global(). See the .hero-figure
+   * rule in src/pages/programs/[slug].astro.
+   */
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

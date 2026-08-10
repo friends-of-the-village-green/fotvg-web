@@ -127,6 +127,15 @@ img,
 picture,
 svg { display: block; max-width: 100%; }
 
+/* `height: auto` is not decoration — it is load-bearing.
+   Every image on this site carries width and height attributes so the browser
+   can reserve space and the page does not jump as photographs load. Without
+   this rule those attributes also *fix* the rendered height, so a 1200x800
+   photograph stays 800px tall while its container narrows, and the picture is
+   squeezed. Together, the attributes plus this rule give both: no layout shift
+   and correct proportions at every width. */
+img { height: auto; }
+
 input,
 button,
 textarea,
