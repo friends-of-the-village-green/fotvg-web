@@ -34,7 +34,21 @@ export async function getSiteSettings() {
     donateUrl: settings.donateUrl || fallback.donateUrl,
     socialLinks: settings.socialLinks || [],
     heroImage: settings.heroImage || null,
-    shareImage: settings.shareImage || null,
+
+    /**
+     * Falls back to the hero photograph.
+     *
+     * The order that matters is: a page's own picture, then an explicitly
+     * chosen sharing image, then the hero. The hero is already a landscape
+     * photograph the board picked deliberately, so it makes a far better link
+     * preview than nothing at all — and "nothing at all" is what the home page
+     * was serving, on a site whose traffic mostly arrives from Facebook and
+     * Nextdoor.
+     *
+     * Setting a separate sharing image still wins, for when the hero crops
+     * badly to a wide letterbox.
+     */
+    shareImage: settings.shareImage || settings.heroImage || null,
     founded: fallback.founded,
   }
 }
