@@ -1,0 +1,137 @@
+---
+/**
+ * The board.
+ *
+ * A grant reviewer checking who runs this organization looks for exactly this
+ * page, which is why it is called what it is called rather than something
+ * warmer.
+ *
+ * Built to look right with almost nothing filled in. Today there are six
+ * people, one biography and no photographs at all, and it has to read as a
+ * deliberate list rather than a page waiting for content. So: no empty photo
+ * frames, no placeholder silhouettes, and the layout does not depend on
+ * everyone having the same fields. As bios and photographs arrive it fills out
+ * without anything needing to change.
+ *
+ * Only people who have agreed to appear belong here — docs/organization.md.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SanityImage from '../components/SanityImage.astro'
+import {client} from '../lib/sanity.js'
+import {boardQuery} from '../lib/queries.js'
+
+const board = await client.fetch(boardQuery)
+---
+
+<BaseLayout
+  title="The board"
+  description="The volunteers who run Friends of the Village Green, a small all-volunteer nonprofit in Kingston, Washington."
+>
+  <section class="intro">
+    <div class="wrap prose">
+      <p class="eyebrow">Who we are</p>
+      <h1>The board</h1>
+      <p class="lede">
+        Friends of the Village Green is entirely run by volunteers. Nobody here
+        draws a salary, and there is no office and no paid staff — everyone
+        below does this in the time they have.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      {board.length > 0 ? (
+        <ul class="board" role="list">
+          {board.map((person) => (
+            <li class="person">
+              {person.photo?.asset && (
+                <div class="portrait">
+                  <SanityImage
+                    image={person.photo}
+                    width={400}
+                    aspect={1}
+                    sizes="(min-width: 52rem) 20vw, 40vw"
+                  />
+                </div>
+              )}
+
+              <h2>{person.name}</h2>
+              {person.role && <p class="role">{person.role}</p>}
+              {person.bio && <p class="bio">{person.bio}</p>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="empty">The board list is being put together.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    padding-block: var(--space-section) var(--space-l);
+  }
+
+  .lede {
+    margin-top: var(--space-m);
+    color: var(--color-text-muted);
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  }
+
+  .board {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  @media (min-width: 40rem) {
+    .board { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 60rem) {
+    .board { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* The rule above each name is what makes a list of bare names read as a
+     designed page rather than an unfinished one. It carries the layout while
+     the photographs are missing, and still works once they arrive. */
+  .person {
+    border-top: 2px solid var(--color-accent);
+    padding-top: var(--space-m);
+  }
+
+  .portrait {
+    margin-bottom: var(--space-m);
+    max-width: 12rem;
+  }
+
+  .portrait :global(img) {
+    border: 1px solid var(--color-rule);
+    background: var(--color-bg-alt);
+  }
+
+  .person h2 {
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  .role {
+    margin-top: var(--space-2xs);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .bio {
+    margin-top: var(--space-s);
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+  }
+</style>

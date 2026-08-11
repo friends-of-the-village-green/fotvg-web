@@ -99,3 +99,24 @@ export async function getStandingPages() {
 
   return (await pagesPromise) || []
 }
+
+/**
+ * Everything the footer links to: the standing pages an editor has written,
+ * plus the board page, which is a real route rather than a `page` document and
+ * so has to be added by hand.
+ *
+ * The board page appears only once there is somebody on it. A "The board" link
+ * leading to an empty page is worse than no link, particularly for the grant
+ * reviewer who is the reason that page exists.
+ */
+export async function getFooterLinks() {
+  if (!sectionsPromise) sectionsPromise = client.fetch(homeSectionsQuery)
+
+  const [pages, sections] = await Promise.all([getStandingPages(), sectionsPromise])
+
+  const links = pages.map((page) => ({title: page.title, href: `/${page.slug}`}))
+
+  if (sections?.hasPeople) links.push({title: 'The board', href: '/board'})
+
+  return links
+}

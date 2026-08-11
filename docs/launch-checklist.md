@@ -52,6 +52,8 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       search results; leaving it would keep the real site out too.
 - [ ] Trigger a build after both of the above — neither takes effect until then.
 - [ ] The old GoDaddy site retired only *after* the new one is confirmed serving.
+- [ ] **The editors' guide in Drive updated.** "Putting things on the FotVG website"
+      names `fotvg-webtest.netlify.app` as the site address, which will be wrong.
 
 ## Checks worth doing once
 

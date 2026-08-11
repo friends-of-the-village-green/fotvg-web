@@ -22,7 +22,7 @@ export async function getStaticPaths() {
 
   /* Guard the collision the comment above warns about, rather than trusting
      nobody will ever do it. */
-  const reserved = new Set(['events', 'programs'])
+  const reserved = new Set(['events', 'programs', 'board'])
 
   return slugs
     .filter((slug) => !reserved.has(slug))

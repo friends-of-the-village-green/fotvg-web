@@ -131,7 +131,8 @@ export const homeSectionsQuery = `{
     && coalesce(endDate, startDate) < now() && defined(recap)]) > 0,
   "hasUpcoming": count(*[_type == "event" && defined(slug.current)
     && coalesce(endDate, startDate) >= now()]) > 0,
-  "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0
+  "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0,
+  "hasPeople": count(*[_type == "person"]) > 0
 }`
 
 /* ------------------------------------------------------------- news, pages */
