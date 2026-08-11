@@ -549,7 +549,7 @@ Hand these to Claude Code roughly in order, one branch and PR each:
 6. Standing pages — About, What We Do, Get Involved, Donate, Contact
 7. Contact form with Netlify Forms, honeypot, spam filtering
 8. 404 page, `robots.txt`, sitemap, favicons
-9. Pagefind search — last, once there's content to index
+9. ~~Pagefind search~~ — dropped, see decision 020
 
 Run the `accessibility` checklist before merging each one.
 

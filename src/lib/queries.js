@@ -22,6 +22,7 @@ export const siteSettingsQuery = `
   *[_type == "siteSettings"][0]{
     organizationName, tagline, contactEmail, postalAddress, donateUrl,
     socialLinks[]{platform, url},
+    "heroImage": heroImage${IMAGE},
     "shareImage": shareImage${IMAGE}
   }
 `
@@ -152,6 +153,13 @@ export const pageBySlugQuery = `
 
 export const allPageSlugsQuery = `
   *[_type == "page" && defined(slug.current)].slug.current
+`
+
+/** Titles and slugs only, for the footer links. */
+export const standingPagesQuery = `
+  *[_type == "page" && defined(slug.current)] | order(title asc){
+    title, "slug": slug.current
+  }
 `
 
 /* ------------------------------------------------------------------ people */

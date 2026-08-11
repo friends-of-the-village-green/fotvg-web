@@ -37,6 +37,7 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
 <BaseLayout
   title={event.title}
   description={event.seoDescription || event.summary}
+  shareImage={event.image}
 >
   <article>
     <section class="intro">

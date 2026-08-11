@@ -6,7 +6,11 @@
  * quietly. It does not anymore — Betsy asked for it to be louder, so it is now
  * a card in the page flow (see Disambiguation.astro and decision 010).
  */
+import {getStandingPages} from '../lib/content.js'
+
 const {site} = Astro.props
+
+const pages = await getStandingPages()
 
 const socialLabels = {
   facebook: 'Facebook',
@@ -17,6 +21,16 @@ const socialLabels = {
 
 <footer class="site-footer">
   <div class="wrap">
+    {pages.length > 0 && (
+      <nav class="page-links" aria-label="More pages">
+        <ul role="list">
+          {pages.map((page) => (
+            <li><a href={`/${page.slug}`}>{page.title}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
     <p class="address">{site.address}</p>
 
     <p class="meta">
@@ -46,6 +60,24 @@ const socialLabels = {
     border-top: 1px solid var(--color-rule);
     color: var(--color-text-muted);
     font-size: 0.88rem;
+  }
+
+  .page-links ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-l);
+    margin-bottom: var(--space-l);
+    padding-bottom: var(--space-m);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .page-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--color-text);
+    text-underline-offset: 3px;
   }
 
   .address {

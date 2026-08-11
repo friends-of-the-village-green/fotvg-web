@@ -149,7 +149,7 @@ Ask before adding one. When you do add one, note in `docs/decisions.md` what it 
 and what would replace it if it were abandoned.
 
 Reasonable to add: `@sanity/client`, `@sanity/image-url`, `astro-portabletext`,
-`@astrojs/sitemap`, `pagefind`.
+`@astrojs/sitemap`.
 
 Not reasonable without discussion: any UI framework, any CSS framework, any state
 manager, any animation library, anything with more than a handful of transitive deps.
