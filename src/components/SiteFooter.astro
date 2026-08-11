@@ -6,11 +6,11 @@
  * quietly. It does not anymore — Betsy asked for it to be louder, so it is now
  * a card in the page flow (see Disambiguation.astro and decision 010).
  */
-import {getStandingPages} from '../lib/content.js'
+import {getFooterLinks} from '../lib/content.js'
 
 const {site} = Astro.props
 
-const pages = await getStandingPages()
+const pages = await getFooterLinks()
 
 const socialLabels = {
   facebook: 'Facebook',
@@ -25,7 +25,7 @@ const socialLabels = {
       <nav class="page-links" aria-label="More pages">
         <ul role="list">
           {pages.map((page) => (
-            <li><a href={`/${page.slug}`}>{page.title}</a></li>
+            <li><a href={page.href}>{page.title}</a></li>
           ))}
         </ul>
       </nav>
