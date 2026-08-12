@@ -350,3 +350,43 @@ The first thing a visitor or a grant reviewer sees is worth a deliberate choice.
 alternative, and the runbook can carry a reminder.
 **Fallback:** with no photograph set, the hero falls back to the plain green panel from
 mock-up 2. Tidy, and much less inviting — which is the correct incentive.
+
+## 023 — The home page wording is editable, and falls back to the code
+**Date:** 2026-08-11
+**Decision:** The hero's small line, headline and introduction move to Site settings as
+`heroEyebrow`, `heroHeading` and `heroLede`. Every one of them falls back to the copy in
+`src/pages/index.astro` when empty.
+**Why:** John's call. The board owns this wording — it is the sentence that says what
+FotVG is — and needing a developer to change a headline is the wrong dependency for an
+organization with one technical volunteer. The photograph was already theirs to choose
+(decision 022); the words sitting on top of it were not.
+**Why the fallback, rather than requiring the fields:** `initialValue` only fires when a
+document is created, and `siteSettings` already exists — so a required field would have
+shipped as a validation error on an empty box, with the live home page headline gone.
+Falling back to code also means clearing a field to start again cannot blank the page.
+**Why `heroLede` is not `blockContent`:** it allows paragraphs and bold, nothing else. A
+heading, a bulleted list or a link in a hero paragraph would all render, and all three
+would look broken. The hero's styling only knows how to render bold.
+**Where the default copy lives:** the template, not `site.js` and not the schema. It has
+to agree with a design that wraps the headline at about sixteen characters and colors
+the bold — that agreement is only checkable in the file holding the CSS.
+**Consequence:** `npx sanity deploy` is needed before editors can see the new tab. This
+is the change that gets forgotten — see `docs/runbook.md`.
+
+## 024 — The footer is two labeled columns
+**Date:** 2026-08-11
+**Decision:** The footer's links move out of a full-width strip and into a column headed
+"More about us", beside a "Find us" column carrying the address, email and social links.
+Both sit under the 2px brass rule the rest of the site uses above a heading. The
+corporate status line moves below a hairline of its own.
+**Why:** the strip was built for four standing pages and is currently holding one. No
+`page` documents have been written yet, so "The board" — the one footer link added by
+hand rather than coming from an editor's page — was rendering alone above a divider and
+reading as something left behind rather than something placed. John raised it.
+**Why a rule and an eyebrow rather than just tidier spacing:** the brass rule above a
+label is the site's signature device; it carries "What we support" on the home page and
+every name on the board page. Repeating it in the footer makes the footer the last two
+items in that sequence. One link under a heading reads as deliberate in a way one link
+in a strip does not.
+**It also scales the right way:** as About, Contact and Get Involved get written they
+stack in the same column, and nothing needs revisiting.

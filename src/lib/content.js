@@ -36,6 +36,22 @@ export async function getSiteSettings() {
     heroImage: settings.heroImage || null,
 
     /**
+     * The words across the top of the home page.
+     *
+     * Null rather than a default when a field is empty, because the fallback
+     * copy lives in the home page template alongside the design it was written
+     * for — not here, and not in site.js, which is for values the whole site
+     * reads. An empty rich-text field comes back as an empty array, so check
+     * the length rather than truthiness or the template gets a live-looking
+     * value with nothing in it.
+     */
+    home: {
+      eyebrow: settings.heroEyebrow || null,
+      heading: settings.heroHeading || null,
+      lede: settings.heroLede?.length ? settings.heroLede : null,
+    },
+
+    /**
      * Falls back to the hero photograph.
      *
      * The order that matters is: a page's own picture, then an explicitly

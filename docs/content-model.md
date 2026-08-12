@@ -3,8 +3,25 @@
 The Sanity schema, in plain language. Keep this in sync with `studio/schemaTypes/`.
 
 ## siteSettings (singleton)
-Organization name, contact email, donate URL, social links, default share image.
-There is only ever one of these.
+There is only ever one of these. Three tabs in the Studio, because it holds two
+unrelated kinds of thing:
+
+- **Home page** — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImage`. The words and
+  the photograph across the top of the home page. Opens first: it is what an editor
+  comes to this document to change.
+- **Organization and contact** — organization name, tagline, public email, postal
+  address, donate URL, social links.
+- **Sharing** — the default link-preview image.
+
+`heroLede` is Portable Text, but **not** `blockContent` — it allows normal paragraphs
+and bold, and nothing else. Headings, lists and links all belong somewhere on this site;
+none of them belong in a hero paragraph, and a control an editor can reach is one that
+eventually gets used. Two paragraphs is the most the design holds, which the schema
+warns about rather than enforces.
+
+Every home page field falls back to the copy in `src/pages/index.astro` when it is
+empty, so clearing one restores the original wording rather than blanking the page.
+Recorded as decision 023.
 
 ## page
 Standing pages that change rarely: About, What We Do, Get Involved, Contact.

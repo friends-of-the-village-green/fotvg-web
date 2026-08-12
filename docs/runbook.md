@@ -28,6 +28,31 @@ Filling in "How it went" is what moves the event from *What's on* to *What we've
 
 _(To be written: screenshots.)_
 
+## Changing the wording on the home page
+
+The headline across the top of the home page, the small line above it, and the
+paragraph underneath are all editable. So is the photograph behind them.
+
+1. Go to https://fotvg.sanity.studio and sign in.
+2. **Site settings**, at the bottom of the left sidebar, under the divider.
+3. It opens on the **Home page** tab. Four fields:
+   - **Small line above the headline** — the brass capitals at the very top.
+   - **Headline** — the large heading. It is set very large; about sixteen characters
+     fit on a line before it wraps.
+   - **Introduction** — the paragraph. **Bold** is the only formatting, and it is worth
+     using on the two things a skimming reader should catch: that we are Friends of the
+     Village Green, and that we are all-volunteer.
+   - **Home page photograph** — see "Adding a photo" below for the permission rules.
+4. **Publish**, bottom right. It appears on the website at the next daily rebuild.
+
+**Leaving a field empty puts the original wording back.** That is deliberate — the home
+page can never end up with a blank headline because someone cleared a box to start again
+and got distracted. If you want a field genuinely gone rather than reset, that is a code
+change; ask.
+
+The rest of the site's wording — the section headings, "What we've done", the Donate and
+Volunteer text — is in the code, not the Studio. Ask for those to be changed.
+
 ## What the Publish button actually does
 
 Publish makes your change live **in Sanity**. It does not put it on the website.
