@@ -4,7 +4,11 @@
 
    The visual language here comes from mock-up 2, "The Evidence", which the
    board chose on 9 August 2026 (docs/decisions.md, decision 010): a deep
-   forest-green band, serif headlines, brass accents, generous type.
+   forest-green band, brass accents, generous type.
+
+   Mock-up 2 had serif headlines. It no longer does — the board switched the
+   display face to the "Friendly" option on 12 August 2026, decision 026.
+   Everything else about mock-up 2 stands.
 
    The token names differ from the mock-up's. The mock-up used a print
    metaphor — --ink, --ground, --band. Readable if you know it, opaque if you
@@ -59,11 +63,21 @@
 
   /* --- Type ----------------------------------------------------------- */
   /* System fonts only. No webfont, no Google Fonts request — a third-party
-     connection and a render blocker for very little gain. Constantia is the
-     Windows serif; the rest of the stack covers everyone else. */
+     connection and a render blocker for very little gain.
+
+     The display face is the board's "Friendly" pick from the August 2026
+     comparison page (decision 026): warm, open letterforms, approachable
+     without being jokey. Trebuchet MS covers Windows and most Macs, Lucida
+     Grande is the older Mac fallback, Tahoma the last resort before the
+     generic sans.
+
+     Note for anyone editing weights: every face in this stack ships only 400
+     and 700 — there is no 600. Asking for 600 gets you 700, so the headings
+     below say 700 outright rather than pretending to a weight that does not
+     exist. */
   --font-body:    system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: Constantia, "Iowan Old Style", "Hoefler Text", Georgia,
-                  "Times New Roman", serif;
+  --font-display: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode",
+                  Tahoma, sans-serif;
   --font-mono:    ui-monospace, Consolas, "SF Mono", monospace;
 
   /* --- Space ----------------------------------------------------------- */
@@ -172,17 +186,24 @@ a:hover { text-decoration-thickness: 2px; }
   outline-offset: 3px;
 }
 
+/* The tracking is looser than the serif it replaced (-0.015em against
+   -0.02em). A serif's own shapes hold a tight line together; Trebuchet's open
+   letterforms are what makes it read as friendly, and tightening them takes
+   that back out. -0.015em is the value from the comparison page the board
+   chose from. */
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
-h1 { font-size: clamp(2.4rem, 8vw, 4.6rem); line-height: 1.03; letter-spacing: -0.025em; }
+/* h1 alone keeps a little extra tightening: it renders up to 4.6rem, and
+   tracking that reads as open at 1.75rem reads as gappy at that size. */
+h1 { font-size: clamp(2.4rem, 8vw, 4.6rem); line-height: 1.03; letter-spacing: -0.02em; }
 h2 { font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.08; }
-h3 { font-size: clamp(1.4rem, 3.5vw, 1.75rem); line-height: 1.15; letter-spacing: -0.015em; }
+h3 { font-size: clamp(1.4rem, 3.5vw, 1.75rem); line-height: 1.15; }
 
 /* ==========================================================================
    Layout helpers
