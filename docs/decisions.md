@@ -390,3 +390,42 @@ items in that sequence. One link under a heading reads as deliberate in a way on
 in a strip does not.
 **It also scales the right way:** as About, Contact and Get Involved get written they
 stack in the same column, and nothing needs revisiting.
+
+## 025 — The remaining Dependabot alerts are Sanity's CLI, and we wait for Sanity
+**Date:** 2026-08-12
+**Decision:** Two of the thirteen open alerts are fixed by lockfile updates. The other
+eleven are left open deliberately. No `overrides` block, and no `npm audit fix --force`.
+**What was fixed:** `js-yaml` 4.3.0 → 4.3.1 in both trees — in the site via Astro, in the
+Studio via ESLint. Both are within the existing semver ranges, so `package.json` is
+untouched in both trees and the change is entirely in the lockfiles.
+**What is left, and why it is acceptable:** the other eleven alerts are four packages —
+`js-yaml` 3.13.1, `undici` 7.28.0, `uuid` 10.0.0, `smol-toml` 1.5.2 — and every one of
+them is nested under `@sanity/cli`. That is the command-line tool that runs `sanity
+build` and `sanity deploy` on a maintainer's own laptop. It is not the Studio that
+editors open in a browser, and it is not on the website.
+
+Two checks establish that rather than assuming it:
+
+- **The website ships no JavaScript at all.** Eleven built pages, zero `.js` files, not
+  one `<script>` tag. Nothing in the site's dependency tree can be reached by a visitor,
+  so every alert there is build-time only by construction.
+- **The deployed Studio bundle does not contain any of them.** Grepping the 530K build
+  output for `js-yaml`, `undici`, `smol-toml`, `@vercel/frameworks` and
+  `module-federation` returns nothing. The vulnerable code never leaves the laptop.
+
+**Why not `--force`:** it resolves these by installing **sanity 5.14.1** — a major
+*downgrade* from 6.9.2, which would break the Studio that two editors are now using
+daily. Not a close call.
+**Why not `overrides`:** forcing patched versions into a vendor's CLI subtree would put
+four entries in `studio/package.json` that a future volunteer has to understand, could
+break `sanity deploy` in ways `sanity build` would not catch, and would go stale and
+start pinning *old* versions once Sanity ships its own fix. That is a poor trade against
+code with no untrusted input path — the CLI talks to Sanity's own API. These clear when
+Sanity updates `@sanity/cli`, and `npm audit` will pick that up on its own.
+**Also bumped:** `sanity` and `@sanity/vision` 6.9.1 → 6.9.2, within the existing `^6.9.1`
+range. This fixed **zero** alerts and earns no security credit. It is here because local
+and runtime versions had drifted, which made `sanity deploy` stop and ask on every run.
+That prompt is now gone.
+**Revisit if:** any alert appears against a package the site actually builds with, or
+against something in the Studio's browser bundle. The two checks above are the test —
+re-run them rather than trusting this entry.
