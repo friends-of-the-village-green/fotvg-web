@@ -63,6 +63,13 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 - [ ] Every page at 200% browser zoom, and at 400%. No horizontal scrolling.
 - [ ] Share a link to an event on Facebook and check the preview card looks right.
 - [ ] The favicon, seen by the board at actual size in a browser tab (decision 021).
+- [ ] **Favicon redrawn in the new display face.** `public/favicon.svg` still sets the
+      abbreviation in Georgia, from when the site was serif — the board changed the
+      display face to Trebuchet on 12 August 2026 (decision 026), so the tab icon and
+      the site now disagree. Needs the SVG changed *and* `favicon.ico` and
+      `apple-touch-icon.png` regenerated from it, which needs a tool this machine does
+      not have — no ImageMagick, Inkscape or rsvg-convert. Changing only the SVG makes
+      it worse, not better.
 
 ## Handover
 

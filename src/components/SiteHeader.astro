@@ -56,9 +56,11 @@ const {site, nav = []} = Astro.props
     line-height: 1.05;
   }
 
+  /* 700, not 600: the display stack has no 600 weight, so 600 was already
+     rendering as bold — see the type block in global.css. */
   .wordmark b {
     display: block;
-    font-weight: 600;
+    font-weight: 700;
     font-size: clamp(1.4rem, 4.5vw, 1.75rem);
     letter-spacing: -0.01em;
   }

@@ -71,11 +71,13 @@ const time = formatTime(event.startDate)
     font-variant-numeric: tabular-nums;
   }
 
+  /* 700, not 600: the display stack has no 600 weight, so 600 was already
+     rendering as bold — see the type block in global.css. */
   .event-title {
     display: block;
     font-family: var(--font-display);
     font-size: 1.3rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.2;
   }

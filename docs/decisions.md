@@ -429,3 +429,42 @@ That prompt is now gone.
 **Revisit if:** any alert appears against a package the site actually builds with, or
 against something in the Studio's browser bundle. The two checks above are the test —
 re-run them rather than trusting this entry.
+
+## 026 — The display face is "Friendly", not the serif
+**Date:** 2026-08-12
+**Decision:** Headings move from the Constantia serif stack to `"Trebuchet MS",
+"Lucida Grande", "Lucida Sans Unicode", Tahoma, sans-serif`. Body text is unchanged.
+**Why:** the board's choice from the four-way comparison page built on 10 August, where
+each option was shown as a full working page rather than a specimen. "Friendly" was
+described there as warm and slightly informal, with open letterforms — approachable
+without being jokey, and the closest of the four to how the group actually sounds in
+writing. That last part is the reason it won.
+**Supersedes:** the "serif headlines" half of decision 010. Everything else about
+mock-up 2 — the forest-green band, the brass, the photo bands, the write-ups-first
+ordering — stands untouched.
+**Still no webfont.** Every face in the new stack is already on the machine, so this
+remains a zero-request change. Trebuchet MS covers Windows and most Macs, Lucida Grande
+is the older Mac fallback, Tahoma the last resort. Verified rendering as Trebuchet
+rather than silently falling back.
+**Two adjustments that came with it, neither cosmetic whim:**
+- **Weight 600 → 700.** Every face in this stack ships only 400 and 700. Asking for 600
+  was already getting 700; the CSS now says what it means, in `global.css` and in the
+  two components that set the display face themselves.
+- **Tracking loosened, -0.02em → -0.015em.** A serif's own shapes hold a tight line
+  together. Trebuchet's open letterforms are precisely what makes it read as friendly,
+  and tightening them takes that back out. -0.015em is the comparison page's value. `h1`
+  keeps a little extra tightening at -0.02em because it renders up to 4.6rem, where
+  tracking that looks open at 1.75rem looks gappy.
+**Two consequences worth knowing:**
+- **The favicon now disagrees with the site.** Decision 021 set the tab icon in "the
+  site's serif", and `public/favicon.svg` hardcodes Georgia. It was left alone rather
+  than half-changed: `favicon.ico` and `apple-touch-icon.png` are generated from that
+  SVG, and this machine has no ImageMagick, Inkscape or rsvg-convert to regenerate them.
+  Changing the SVG alone would produce exactly the disagreement decision 021 warns
+  about. On the launch checklist.
+- **The disambiguation card is quieter.** Its paragraph is set in the display face,
+  which against a serif read as a pull-quote. Sans against sans is a subtler contrast —
+  still visible (different face, 16.3px against the body's 18px), and the card's
+  prominence was always carried by its brass left border and tinted panel rather than
+  the typeface. Worth a look on the deploy preview; Betsy asked for that card to be
+  loud, and she is the one to judge whether it still is.
