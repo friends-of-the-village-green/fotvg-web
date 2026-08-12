@@ -19,6 +19,7 @@ import EventRow from '../components/EventRow.astro'
 import GiveBand from '../components/GiveBand.astro'
 import NextEventStrip from '../components/NextEventStrip.astro'
 import RecapBand from '../components/RecapBand.astro'
+import RichText from '../components/RichText.astro'
 import SanityImage from '../components/SanityImage.astro'
 import {client} from '../lib/sanity.js'
 import {getSiteSettings} from '../lib/content.js'
@@ -40,6 +41,21 @@ const [programs, nextEvent, recaps, upcoming] = await Promise.all([
 
 /* Six rows is enough for a home page. The full list lives at /events. */
 const upcomingShown = upcoming.slice(0, 6)
+
+/**
+ * Hero wording, from Site settings in the Studio (decision 023).
+ *
+ * The fallbacks below are the copy the board approved in August 2026, and they
+ * live here rather than in the schema for two reasons. `initialValue` only
+ * fires when a document is created, and this one already exists — so it would
+ * never appear. And this is the file where the wording has to agree with the
+ * design: the headline wraps at about sixteen characters, and the bold in the
+ * introduction is doing a job (CLAUDE.md — say all-volunteer plainly).
+ *
+ * Clear a field in the Studio and the wording here comes back. That is the
+ * intended behavior: the home page is never headless.
+ */
+const hero = site.home
 ---
 
 <BaseLayout
@@ -71,17 +87,27 @@ const upcomingShown = upcoming.slice(0, 6)
     )}
 
     <div class="wrap">
-      <p class="hero-label">Village Green Community Center · Kingston</p>
-
-      <h1>What we help make happen.</h1>
-
-      <p class="hero-lede">
-        <b>Friends of the Village Green</b> is an <b>all-volunteer</b> group. We
-        support some of what goes on at the Village Green Community Center — the
-        arts program, the Greenworks community garden, and community projects
-        like the Secret Garden Tour. We don't run or fund everything that
-        happens here, and we hope to support more as Kingston grows.
+      <p class="hero-label">
+        {hero.eyebrow || 'Village Green Community Center · Kingston'}
       </p>
+
+      <h1>{hero.heading || 'What we help make happen.'}</h1>
+
+      {/* Wrapped, for the same reason the photograph above is: scoped styles
+          here cannot reach markup that RichText renders. The wrapper is ours. */}
+      <div class="hero-lede">
+        {hero.lede ? (
+          <RichText value={hero.lede} />
+        ) : (
+          <p>
+            <b>Friends of the Village Green</b> is an <b>all-volunteer</b> group. We
+            support some of what goes on at the Village Green Community Center — the
+            arts program, the Greenworks community garden, and community projects
+            like the Secret Garden Tour. We don't run or fund everything that
+            happens here, and we hope to support more as Kingston grows.
+          </p>
+        )}
+      </div>
     </div>
   </section>
 
@@ -226,7 +252,28 @@ const upcomingShown = upcoming.slice(0, 6)
     color: var(--color-band-text-muted);
   }
 
-  .hero-lede b {
+  /* The paragraph inside is either the fallback written above or Portable Text
+     from the Studio. RichText caps prose at --width-prose and puts a margin on
+     every paragraph, both of which are wrong in a hero — so they are overridden
+     here.
+
+     The `.hero` prefix is not decoration. Astro compiles `.hero-lede :global(p)`
+     to the same specificity as RichText's own `.rich-text :global(p)`, and which
+     one wins would then come down to the order the two components' styles happen
+     to be bundled in. The extra class settles it. */
+  .hero .hero-lede :global(p) {
+    max-width: none;
+    margin-top: var(--space-s);
+  }
+
+  .hero .hero-lede :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  /* `b` is the fallback's markup; `strong` is what the Studio's Bold button
+     produces. Both get the same treatment. */
+  .hero-lede :global(b),
+  .hero-lede :global(strong) {
     color: var(--color-band-text);
     font-weight: 600;
   }

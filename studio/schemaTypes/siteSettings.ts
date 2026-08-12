@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import {defineArrayMember, defineField, defineType} from 'sanity'
 
 /**
  * Site-wide settings. There is only ever one of these.
@@ -12,11 +12,87 @@ export const siteSettings = defineType({
   title: 'Site settings',
   type: 'document',
 
+  /**
+   * Three tabs, because this document now holds two unrelated kinds of thing:
+   * the words across the top of the home page, and the organization's own
+   * details. "Home page" opens first — it is the one an editor comes here to
+   * change, and the reason it is in the Studio at all.
+   */
+  groups: [
+    {name: 'home', title: 'Home page', default: true},
+    {name: 'org', title: 'Organization and contact'},
+    {name: 'sharing', title: 'Sharing'},
+  ],
+
   fields: [
+    /* ---------------------------------------------------------- home page */
+
+    defineField({
+      name: 'heroEyebrow',
+      title: 'Small line above the headline',
+      type: 'string',
+      group: 'home',
+      description:
+        'The short line in brass capitals at the very top. Leave it empty and ' +
+        'the line disappears entirely, which is tidy. Keep it under about 45 ' +
+        'characters — it is set in wide capitals and wraps awkwardly.',
+      placeholder: 'Village Green Community Center · Kingston',
+      validation: (Rule) => Rule.max(60),
+    }),
+
+    defineField({
+      name: 'heroHeading',
+      title: 'Headline',
+      type: 'string',
+      group: 'home',
+      description:
+        'The large heading on the home page, and the first thing most visitors ' +
+        'read. Short is better — it is set very large, and the design allows ' +
+        'about sixteen characters per line before it wraps.',
+      placeholder: 'What we help make happen.',
+      validation: (Rule) => Rule.max(80),
+    }),
+
+    defineField({
+      name: 'heroLede',
+      title: 'Introduction',
+      type: 'array',
+      group: 'home',
+      description:
+        'The paragraph under the headline. Use bold sparingly, for the two ' +
+        'things worth catching a skimming eye — that we are Friends of the ' +
+        'Village Green, and that we are all-volunteer. One paragraph reads ' +
+        'best; two is the most the design holds.',
+
+      /**
+       * Deliberately not `blockContent`. Headings, lists and links all belong
+       * somewhere on this site, but none of them belong in a hero paragraph —
+       * and a control an editor can reach is a control that eventually gets
+       * used. Bold is the only thing the hero's styling knows how to render.
+       */
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [{title: 'Normal', value: 'normal'}],
+          lists: [],
+          marks: {
+            decorators: [{title: 'Bold', value: 'strong'}],
+            annotations: [],
+          },
+        }),
+      ],
+
+      validation: (Rule) =>
+        Rule.max(2).warning('Longer than two paragraphs will crowd the photograph.'),
+    }),
+
+    /* ------------------------------------------------------- organization */
+
     defineField({
       name: 'organizationName',
       title: 'Organization name',
       type: 'string',
+      group: 'org',
       description: 'In full. Shown in the header and in link previews.',
       initialValue: 'Friends of the Village Green',
       validation: (Rule) => Rule.required(),
@@ -26,6 +102,7 @@ export const siteSettings = defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
+      group: 'org',
       description: 'The short line under the name in the header. Keep it under about 40 characters.',
       initialValue: 'Kingston, Washington',
       validation: (Rule) => Rule.max(60),
@@ -35,6 +112,7 @@ export const siteSettings = defineType({
       name: 'contactEmail',
       title: 'Public email address',
       type: 'string',
+      group: 'org',
       description:
         'The address anyone can write to. A shared or role address, never a ' +
         'board member\'s personal one — board members change and personal ' +
@@ -46,6 +124,7 @@ export const siteSettings = defineType({
       name: 'postalAddress',
       title: 'Postal address',
       type: 'text',
+      group: 'org',
       rows: 2,
       description:
         'The Village Green Community Center. Never a board member\'s home ' +
@@ -58,6 +137,7 @@ export const siteSettings = defineType({
       name: 'donateUrl',
       title: 'Donate link',
       type: 'url',
+      group: 'org',
       description:
         'The Square donation page. Donations are handled entirely by Square — ' +
         'no card details ever touch this website. Leave this empty and the ' +
@@ -70,6 +150,7 @@ export const siteSettings = defineType({
       name: 'socialLinks',
       title: 'Social media',
       type: 'array',
+      group: 'org',
       of: [
         {
           type: 'object',
@@ -103,6 +184,7 @@ export const siteSettings = defineType({
       name: 'heroImage',
       title: 'Home page photograph',
       type: 'figure',
+      group: 'home',
       description:
         'The large photograph across the top of the home page. Chosen by hand ' +
         'rather than picked automatically from the newest event, so the board ' +
@@ -116,6 +198,7 @@ export const siteSettings = defineType({
       name: 'shareImage',
       title: 'Default sharing image',
       type: 'figure',
+      group: 'sharing',
       description:
         'Shown when a link to this site is posted on Facebook or Nextdoor and ' +
         'the page has no picture of its own. Event and program pages use their ' +

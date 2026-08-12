@@ -22,6 +22,7 @@ export const siteSettingsQuery = `
   *[_type == "siteSettings"][0]{
     organizationName, tagline, contactEmail, postalAddress, donateUrl,
     socialLinks[]{platform, url},
+    heroEyebrow, heroHeading, heroLede,
     "heroImage": heroImage${IMAGE},
     "shareImage": shareImage${IMAGE}
   }

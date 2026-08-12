@@ -1,10 +1,16 @@
 ---
 /**
- * Site footer: contact details and corporate status.
+ * Site footer: where else to go, how to reach us, and corporate status.
  *
  * The "three organizations share the name" explanation used to live down here,
  * quietly. It does not anymore — Betsy asked for it to be louder, so it is now
  * a card in the page flow (see Disambiguation.astro and decision 010).
+ *
+ * Two labeled columns rather than a strip of loose links, and each one sits
+ * under the brass rule the rest of the site uses above a heading. That is what
+ * makes a footer holding a single link — which is what this one holds today,
+ * because no standing pages have been written yet — read as designed rather
+ * than as an offcut. See decision 024.
  */
 import {getFooterLinks} from '../lib/content.js'
 
@@ -21,36 +27,46 @@ const socialLabels = {
 
 <footer class="site-footer">
   <div class="wrap">
-    {pages.length > 0 && (
-      <nav class="page-links" aria-label="More pages">
-        <ul role="list">
-          {pages.map((page) => (
-            <li><a href={page.href}>{page.title}</a></li>
-          ))}
-        </ul>
-      </nav>
-    )}
+    <div class="cols">
+      {pages.length > 0 && (
+        <nav class="col" aria-labelledby="footer-more">
+          <h2 class="eyebrow" id="footer-more">More about us</h2>
 
-    <p class="address">{site.address}</p>
+          <ul class="links" role="list">
+            {pages.map((page) => (
+              <li><a href={page.href}>{page.title}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
 
-    <p class="meta">
-      {site.email
-        ? <a href={`mailto:${site.email}`}>Email us</a>
-        : <span class="tk">[TK: public email address]</span>
-      }
-      <span aria-hidden="true"> · </span>
+      <div class="col">
+        <h2 class="eyebrow">Find us</h2>
+
+        <p class="address">{site.address}</p>
+
+        <p class="contact">
+          {site.email
+            ? <a href={`mailto:${site.email}`}>Email us</a>
+            : <span class="tk">[TK: public email address]</span>
+          }
+        </p>
+
+        {site.socialLinks.length > 0 && (
+          <ul class="social" role="list">
+            {site.socialLinks.map((link) => (
+              <li>
+                <a href={link.url}>{socialLabels[link.platform] || link.platform}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+
+    <p class="legal">
       Washington nonprofit corporation, founded {site.founded}
     </p>
-
-    {site.socialLinks.length > 0 && (
-      <ul class="social" role="list">
-        {site.socialLinks.map((link) => (
-          <li>
-            <a href={link.url}>{socialLabels[link.platform] || link.platform}</a>
-          </li>
-        ))}
-      </ul>
-    )}
   </div>
 </footer>
 
@@ -62,16 +78,39 @@ const socialLabels = {
     font-size: 0.88rem;
   }
 
-  .page-links ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-l);
-    margin-bottom: var(--space-l);
-    padding-bottom: var(--space-m);
-    border-bottom: 1px solid var(--color-rule);
+  .cols {
+    display: grid;
+    gap: var(--space-l) var(--space-xl);
   }
 
-  .page-links a {
+  /* Two columns from the width at which the board grid also goes two-up, so
+     the footer changes shape at the same place as the page above it. */
+  @media (min-width: 40rem) {
+    .cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* The brass rule above a heading is the site's signature — it carries "What
+     we support" on the home page and every name on the board page. Repeating
+     it here is the whole point: the footer becomes the last two items in that
+     sequence rather than a separate thing bolted underneath. */
+  .col {
+    border-top: 2px solid var(--color-accent);
+    padding-top: var(--space-m);
+  }
+
+  .col .eyebrow {
+    margin-bottom: var(--space-s);
+  }
+
+  .links li + li {
+    margin-top: var(--space-2xs);
+  }
+
+  .links a {
+    /* 44px minimum tap target, WCAG 2.5.8 — and the stacked layout gives them
+       room to be that tall without two links crowding one thumb. */
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -84,24 +123,37 @@ const socialLabels = {
     color: var(--color-text);
   }
 
-  .meta {
-    margin-top: var(--space-2xs);
+  .contact {
+    margin-top: var(--space-xs);
+  }
+
+  .contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    text-underline-offset: 3px;
   }
 
   .social {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-m);
-    margin-top: var(--space-m);
   }
 
   .social a {
-    /* 44px tap target, and enough space between them that a thumb does not
-       hit the wrong one. */
     display: inline-flex;
     align-items: center;
     min-height: 44px;
     font-weight: 600;
     text-underline-offset: 3px;
+  }
+
+  /* Below a hairline, away from the links — it is a legal statement, not
+     navigation, and the separation says so without needing smaller type. */
+  .legal {
+    margin-top: var(--space-l);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--color-rule);
   }
 </style>
