@@ -8,11 +8,22 @@
  *
  * No card details ever touch this site; Square handles the whole transaction
  * (decision 007).
+ *
+ * Both halves of the copy are editable in the Studio (decision 027). The
+ * fallbacks below are the board-approved wording, and an empty field puts them
+ * back — the band is never headless. What is *not* editable is the Donate
+ * button, the Square link and the tax note: a button and a statement of
+ * corporate status are not marketing copy, and neither should be a typo away
+ * from breaking.
  */
+import RichText from './RichText.astro'
+
 const {site} = Astro.props
 
 const hasDonate = Boolean(site.donateUrl)
 const hasEmail = Boolean(site.email)
+
+const give = site.give ?? {}
 
 /**
  * While the Square link is still being chased, the Donate half renders with a
@@ -37,13 +48,22 @@ const showDonatePlaceholder = !hasDonate
         {(hasDonate || showDonatePlaceholder) && (
           <div>
             <p class="eyebrow">Money</p>
-            <h2>Donate</h2>
-            <p>
-              A donation pays a musician, buys seed and timber for a garden bed,
-              or helps put on the rummage sale. We are an all-volunteer
-              organization — no paid staff, no office, no one drawing a salary —
-              so what you give goes to the program.
-            </p>
+            <h2>{give.donateHeading || 'Donate'}</h2>
+
+            {/* Wrapped: scoped styles here cannot reach markup that RichText
+                renders. The wrapper is ours. */}
+            <div class="give-text">
+              {give.donateText ? (
+                <RichText value={give.donateText} />
+              ) : (
+                <p>
+                  A donation pays a musician, buys seed and timber for a garden bed,
+                  or helps put on the rummage sale. We are an all-volunteer
+                  organization — no paid staff, no office, no one drawing a salary —
+                  so what you give goes to the program.
+                </p>
+              )}
+            </div>
 
             {hasDonate ? (
               <a class="button" href={site.donateUrl}>
@@ -57,12 +77,16 @@ const showDonatePlaceholder = !hasDonate
               </p>
             )}
 
+            {/* Deliberately not editable in the Studio. This is a statement of
+                corporate status, not copy — FotVG's 501(c)(3) determination was
+                received in 2025 (docs/organization.md). The EIN stays off the
+                site; it is listed there as not for publication. */}
             <p class="fine">
-              Donations are handled by Square.
+              Donations are handled by Square. Friends of the Village Green is a
+              501(c)(3) nonprofit, so your donation is tax-deductible.
               {showDonatePlaceholder && (
                 <span class="tk">[TK: Square donation URL — button is not live]</span>
               )}
-              <span class="tk">[TK: confirm tax-deductibility wording with the board]</span>
             </p>
           </div>
         )}
@@ -70,13 +94,20 @@ const showDonatePlaceholder = !hasDonate
         {hasEmail && (
           <div>
             <p class="eyebrow">Time</p>
-            <h2>Volunteer</h2>
-            <p>
-              Wednesday mornings in the garden. An hour on the front table at
-              Discover Kingston. Sorting donations for the rummage sale. Setting
-              out chairs before a concert, and stacking them after. Tell us what
-              you'd enjoy and we'll find you something.
-            </p>
+            <h2>{give.volunteerHeading || 'Volunteer'}</h2>
+
+            <div class="give-text">
+              {give.volunteerText ? (
+                <RichText value={give.volunteerText} />
+              ) : (
+                <p>
+                  Wednesday mornings in the garden. An hour on the front table at
+                  Discover Kingston. Sorting donations for the rummage sale. Setting
+                  out chairs before a concert, and stacking them after. Tell us what
+                  you'd enjoy and we'll find you something.
+                </p>
+              )}
+            </div>
             <a class="button button--ghost" href={`mailto:${site.email}?subject=Volunteering`}>
               Email us about volunteering
             </a>
@@ -108,6 +139,25 @@ const showDonatePlaceholder = !hasDonate
   p {
     margin-top: 0.9rem;
     color: var(--color-text-muted);
+  }
+
+  /* The paragraph is either the fallback written above or Portable Text from
+     the Studio. RichText caps prose at --width-prose and puts a margin on every
+     paragraph; inside a two-column band the column is already the measure.
+
+     The `.give-grid` prefix is not decoration. Astro compiles the shorter
+     selector to the same specificity as RichText's own `.rich-text :global(p)`,
+     and which one wins would come down to the order the two components' styles
+     happen to be bundled in. The extra class settles it. */
+  .give-grid .give-text :global(p) {
+    margin-top: 0.9rem;
+    max-width: none;
+    color: var(--color-text-muted);
+  }
+
+  .give-grid .give-text :global(strong) {
+    color: var(--color-band-text);
+    font-weight: 700;
   }
 
   .fine {

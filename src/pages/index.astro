@@ -173,6 +173,26 @@ const hero = site.home
               <p>{program.summary}</p>
             </li>
           ))}
+
+          {/* The closing card, from mock-up 2. It sits in the same grid as the
+              program areas but is deliberately NOT one of them: no slug, no
+              page, no link, and nothing an event can be attributed to. It says
+              the list is expected to grow — see decision 027. */}
+          <li class="supported-item supported-more">
+            <h3>{hero.supportMoreHeading || 'And, we hope, more'}</h3>
+
+            <div class="support-more-text">
+              {hero.supportMoreText ? (
+                <RichText value={hero.supportMoreText} />
+              ) : (
+                <p>
+                  We want to facilitate and support more activities and more
+                  community engagement, to meet the needs of a changing and
+                  growing Kingston.
+                </p>
+              )}
+            </div>
+          </li>
         </ul>
       </div>
     </section>
@@ -182,7 +202,7 @@ const hero = site.home
 
   <section class="disambiguation-section">
     <div class="wrap">
-      <Disambiguation />
+      <Disambiguation site={site} />
     </div>
   </section>
 </BaseLayout>
@@ -346,6 +366,16 @@ const hero = site.home
     margin-top: var(--space-xs);
     color: var(--color-text-muted);
     font-size: 0.98rem;
+  }
+
+  /* Same treatment for the closing card, whose paragraph may come from
+     RichText. The `.supported` prefix outruns RichText's own `p` rule, which
+     would otherwise tie on specificity and be settled by bundle order. */
+  .supported .support-more-text :global(p) {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+    max-width: none;
   }
 
   /* ---------- disambiguation ---------- */

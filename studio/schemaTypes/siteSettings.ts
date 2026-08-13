@@ -1,4 +1,4 @@
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {defineField, defineType} from 'sanity'
 
 /**
  * Site-wide settings. There is only ever one of these.
@@ -13,29 +13,54 @@ export const siteSettings = defineType({
   type: 'document',
 
   /**
-   * Three tabs, because this document now holds two unrelated kinds of thing:
-   * the words across the top of the home page, and the organization's own
-   * details. "Home page" opens first — it is the one an editor comes here to
-   * change, and the reason it is in the Studio at all.
+   * Four tabs. "Home page" and "Donate and volunteer" are the words on the home
+   * page, in the order they appear on it; the other two are the organization's
+   * own details and its link previews. Home page opens first — it is what an
+   * editor comes here to change, and the reason any of this is in the Studio.
    */
   groups: [
     {name: 'home', title: 'Home page', default: true},
+    {name: 'give', title: 'Donate and volunteer'},
     {name: 'org', title: 'Organization and contact'},
     {name: 'sharing', title: 'Sharing'},
   ],
 
+  /**
+   * The Home page tab holds three separate blocks of the page, so they are
+   * boxed rather than run together as eight loose fields. The top of the page
+   * is open because it is edited most often; the other two are collapsed,
+   * because they are close to settled.
+   */
+  fieldsets: [
+    {
+      name: 'hero',
+      title: 'The top of the page',
+      options: {collapsible: true, collapsed: false},
+    },
+    {
+      name: 'supportMore',
+      title: 'What we support — the closing note',
+      options: {collapsible: true, collapsed: true},
+    },
+    {
+      name: 'notice',
+      title: 'Three organizations share the name',
+      options: {collapsible: true, collapsed: true},
+    },
+  ],
+
   fields: [
-    /* ---------------------------------------------------------- home page */
+    /* -------------------------------------------- home page — top of page */
 
     defineField({
       name: 'heroEyebrow',
       title: 'Small line above the headline',
       type: 'string',
       group: 'home',
+      fieldset: 'hero',
       description:
-        'The short line in brass capitals at the very top. Leave it empty and ' +
-        'the line disappears entirely, which is tidy. Keep it under about 45 ' +
-        'characters — it is set in wide capitals and wraps awkwardly.',
+        'The short line in brass capitals at the very top. Keep it under about ' +
+        '45 characters — it is set in wide capitals and wraps awkwardly.',
       placeholder: 'Village Green Community Center · Kingston',
       validation: (Rule) => Rule.max(60),
     }),
@@ -45,6 +70,7 @@ export const siteSettings = defineType({
       title: 'Headline',
       type: 'string',
       group: 'home',
+      fieldset: 'hero',
       description:
         'The large heading on the home page, and the first thing most visitors ' +
         'read. Short is better — it is set very large, and the design allows ' +
@@ -56,37 +82,147 @@ export const siteSettings = defineType({
     defineField({
       name: 'heroLede',
       title: 'Introduction',
-      type: 'array',
+      type: 'simpleText',
       group: 'home',
+      fieldset: 'hero',
       description:
         'The paragraph under the headline. Use bold sparingly, for the two ' +
         'things worth catching a skimming eye — that we are Friends of the ' +
         'Village Green, and that we are all-volunteer. One paragraph reads ' +
         'best; two is the most the design holds.',
-
-      /**
-       * Deliberately not `blockContent`. Headings, lists and links all belong
-       * somewhere on this site, but none of them belong in a hero paragraph —
-       * and a control an editor can reach is a control that eventually gets
-       * used. Bold is the only thing the hero's styling knows how to render.
-       */
-      of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [{title: 'Normal', value: 'normal'}],
-          lists: [],
-          marks: {
-            decorators: [{title: 'Bold', value: 'strong'}],
-            annotations: [],
-          },
-        }),
-      ],
-
       validation: (Rule) =>
         Rule.max(2).warning('Longer than two paragraphs will crowd the photograph.'),
     }),
 
-    /* ------------------------------------------------------- organization */
+    defineField({
+      name: 'heroImage',
+      title: 'Home page photograph',
+      type: 'figure',
+      group: 'home',
+      fieldset: 'hero',
+      description:
+        'The large photograph across the top of the home page. Chosen by hand ' +
+        'rather than picked automatically from the newest event, so the board ' +
+        'controls the first thing a visitor sees. Landscape, and the wider the ' +
+        'better — it is cropped to a broad band on a big screen. Leave it empty ' +
+        'and the header falls back to a plain green panel, which is tidy but ' +
+        'much less inviting.',
+    }),
+
+    /* ----------------------------------- home page — what we support note */
+
+    defineField({
+      name: 'supportMoreHeading',
+      title: 'Heading',
+      type: 'string',
+      group: 'home',
+      fieldset: 'supportMore',
+      description:
+        'The last card under "What we support", after the program areas. It is ' +
+        'the one card that is not a program — it says the list is expected to ' +
+        'grow. It has no page of its own and never links anywhere.',
+      placeholder: 'And, we hope, more',
+      validation: (Rule) => Rule.max(60),
+    }),
+
+    defineField({
+      name: 'supportMoreText',
+      title: 'Text',
+      type: 'simpleText',
+      group: 'home',
+      fieldset: 'supportMore',
+      description:
+        'A sentence or two. Keep it about the length of a program summary so ' +
+        'the card sits level with the ones beside it.',
+      validation: (Rule) => Rule.max(1).warning('One paragraph keeps the cards even.'),
+    }),
+
+    /* ------------------------------------ home page — three organizations */
+
+    defineField({
+      name: 'disambiguationHeading',
+      title: 'Heading',
+      type: 'string',
+      group: 'home',
+      fieldset: 'notice',
+      description:
+        'The bordered card near the bottom of the home page. Betsy asked for ' +
+        'this to be prominent rather than quiet footer text.',
+      placeholder: 'Three organizations share the Village Green name',
+      validation: (Rule) => Rule.max(90),
+    }),
+
+    defineField({
+      name: 'disambiguationText',
+      title: 'Text',
+      type: 'simpleText',
+      group: 'home',
+      fieldset: 'notice',
+      description:
+        'Read before editing. Who owns the land, who owns the building and who ' +
+        'supports the programs are three different organizations, and the ' +
+        'difference is legally and politically real: the Metropolitan Park ' +
+        'District owns the land, the Village Green Foundation owns the ' +
+        'building, and FotVG supports some of the programs and the people who ' +
+        'run them. Rewording this is the easiest way to say something untrue ' +
+        'about another organization. Keep bold on the three names, as it is now.',
+      validation: (Rule) =>
+        Rule.max(2).warning('Two paragraphs is the most the card holds.'),
+    }),
+
+    /* ------------------------------------------------ donate and volunteer */
+
+    defineField({
+      name: 'donateHeading',
+      title: 'Donate — heading',
+      type: 'string',
+      group: 'give',
+      description: 'The heading on the money half of the green band.',
+      placeholder: 'Donate',
+      validation: (Rule) => Rule.max(40),
+    }),
+
+    defineField({
+      name: 'donateText',
+      title: 'Donate — text',
+      type: 'simpleText',
+      group: 'give',
+      description:
+        'Why a donation matters, in concrete terms. The version on the site ' +
+        'names what the money actually buys — a musician, seed and timber, the ' +
+        'rummage sale — which reads far better than a general appeal. The ' +
+        'Donate button, the Square link and the tax note under it are not part ' +
+        'of this field and cannot be broken by editing it.',
+      validation: (Rule) =>
+        Rule.max(2).warning('Two paragraphs is the most the band holds.'),
+    }),
+
+    defineField({
+      name: 'volunteerHeading',
+      title: 'Volunteer — heading',
+      type: 'string',
+      group: 'give',
+      description: 'The heading on the time half of the green band.',
+      placeholder: 'Volunteer',
+      validation: (Rule) => Rule.max(40),
+    }),
+
+    defineField({
+      name: 'volunteerText',
+      title: 'Volunteer — text',
+      type: 'simpleText',
+      group: 'give',
+      description:
+        'What volunteering actually looks like. Specific jobs beat a general ' +
+        'appeal — someone can picture setting out chairs before a concert in a ' +
+        'way they cannot picture "helping out". Never write "join FotVG": the ' +
+        'bylaws state the corporation has no members, so the invitation is to ' +
+        'volunteer, donate or come along.',
+      validation: (Rule) =>
+        Rule.max(2).warning('Two paragraphs is the most the band holds.'),
+    }),
+
+    /* -------------------------------------------------------- organization */
 
     defineField({
       name: 'organizationName',
@@ -180,19 +316,7 @@ export const siteSettings = defineType({
       ],
     }),
 
-    defineField({
-      name: 'heroImage',
-      title: 'Home page photograph',
-      type: 'figure',
-      group: 'home',
-      description:
-        'The large photograph across the top of the home page. Chosen by hand ' +
-        'rather than picked automatically from the newest event, so the board ' +
-        'controls the first thing a visitor sees. Landscape, and the wider the ' +
-        'better — it is cropped to a broad band on a big screen. Leave it empty ' +
-        'and the header falls back to a plain green panel, which is tidy but ' +
-        'much less inviting.',
-    }),
+    /* ------------------------------------------------------------- sharing */
 
     defineField({
       name: 'shareImage',

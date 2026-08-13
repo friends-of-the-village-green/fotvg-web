@@ -468,3 +468,41 @@ rather than silently falling back.
   prominence was always carried by its brass left border and tinted panel rather than
   the typeface. Worth a look on the deploy preview; Betsy asked for that card to be
   loud, and she is the one to judge whether it still is.
+
+## 027 — The home page copy blocks are editable, and "more" is not a program
+**Date:** 2026-08-12
+**Decision:** The Donate text, the Volunteer text, the three-organizations notice and
+the closing "And, we hope, more" card all move to Site settings. All four follow the
+pattern set by decision 023 — an empty field restores the copy held in the template, so
+the page is never headless. A new `simpleText` type carries all of them.
+**Why:** Betsy and Kathleen asked for it after living with the site for a few days. The
+board owns the words; needing a developer to adjust a sentence is the wrong dependency
+for an organization with one technical volunteer.
+**Why a shared `simpleText` type:** this is the fifth field of exactly this shape, and
+five copies of the same inline definition is four too many. It allows paragraphs and
+bold and nothing else — not `blockContent`, which stays the right type for the long-form
+body of an event, program or page. The restriction is the point: these blocks sit inside
+a fixed design rather than flowing down a page, and every control `blockContent` offers
+would break one. A heading inside the green band competes with the band's own heading, a
+list blows out the two-column grid, a link sits next to a button that is already the
+call to action.
+**What was deliberately left in code, and why it is not an oversight:**
+- **The Donate button and the Square link.** A button is not copy.
+- **The tax note.** It is a statement of corporate status, not marketing — see below.
+- **The "Money" and "Time" eyebrows.** Two one-word design labels.
+**The tax-deductibility TK is closed.** The fine print now reads "Donations are handled
+by Square. Friends of the Village Green is a 501(c)(3) nonprofit, so your donation is
+tax-deductible." The determination was received in 2025 (`docs/organization.md`), and
+John confirmed with the board on 12 August. The EIN stays off the site — that same file
+lists it as not for publication. This is the last of the three TK markers; the built
+output now contains none.
+**"And, we hope, more" is not a program, and must never become one.** It was a fourth
+card in mock-up 2, sitting in the same grid as the three program areas but saying the
+list is expected to grow. Creating it as a `program` document would have given it a
+slug, a page of its own at `/programs/...` with no mission or body behind it, and a
+place in the reference picker where an editor could attribute a real event to it — a
+grant reviewer clicking through to an aspiration is the opposite of the evidence that
+page exists to provide. It is a field on Site settings and renders as a card with no
+link. `docs/organization.md` still says three programs, and that remains true.
+**Consequence:** `npx sanity deploy` is needed before editors see the new tab, the new
+boxes, or any of this. It is the step that gets forgotten — see `docs/runbook.md`.

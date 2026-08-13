@@ -3,25 +3,49 @@
 The Sanity schema, in plain language. Keep this in sync with `studio/schemaTypes/`.
 
 ## siteSettings (singleton)
-There is only ever one of these. Three tabs in the Studio, because it holds two
-unrelated kinds of thing:
+There is only ever one of these. Four tabs in the Studio — the first two are the words
+on the home page, in the order they appear on it; the other two are the organization's
+own details.
 
-- **Home page** — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImage`. The words and
-  the photograph across the top of the home page. Opens first: it is what an editor
-  comes to this document to change.
+- **Home page**, in three collapsible boxes:
+  - *The top of the page* — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImage`
+  - *What we support — the closing note* — `supportMoreHeading`, `supportMoreText`
+  - *Three organizations share the name* — `disambiguationHeading`, `disambiguationText`
+- **Donate and volunteer** — `donateHeading`, `donateText`, `volunteerHeading`,
+  `volunteerText`. The green band. The Donate button, the Square link and the tax note
+  are **not** here: a button and a statement of corporate status are not copy.
 - **Organization and contact** — organization name, tagline, public email, postal
   address, donate URL, social links.
 - **Sharing** — the default link-preview image.
 
-`heroLede` is Portable Text, but **not** `blockContent` — it allows normal paragraphs
-and bold, and nothing else. Headings, lists and links all belong somewhere on this site;
-none of them belong in a hero paragraph, and a control an editor can reach is one that
-eventually gets used. Two paragraphs is the most the design holds, which the schema
-warns about rather than enforces.
+**Every one of those text fields falls back to the copy in the template when it is
+empty**, so clearing one restores the original wording rather than blanking the page.
+Decisions 023 and 027.
 
-Every home page field falls back to the copy in `src/pages/index.astro` when it is
-empty, so clearing one restores the original wording rather than blanking the page.
-Recorded as decision 023.
+### simpleText
+The shared type behind every one of those prose fields: Portable Text allowing normal
+paragraphs and **bold**, and nothing else. Not `blockContent`, which is still right for
+the long-form body of an event, program or page.
+
+The restriction is the point. These blocks sit inside a fixed design rather than flowing
+down a page, and every control `blockContent` offers would break one: a heading inside
+the green band competes with the band's own heading, a bulleted list blows out the
+two-column grid, a link sits next to a button that is already the call to action. Bold
+survives because it earns its place — it is what lets an editor put weight on
+"all-volunteer" without asking a developer.
+
+### The one field to be careful with
+`disambiguationText` is the only field on this site where an edit can say something
+untrue about **another organization**. The Metropolitan Park District owns the land, the
+Village Green Foundation owns the building, and FotVG supports some of the programs and
+the people who run them. See `docs/organization.md`; the Studio field carries the
+warning too.
+
+### What is deliberately *not* a program
+`supportMoreHeading` / `supportMoreText` render the closing card under "What we support"
+— "And, we hope, more". It sits in the same grid as the program areas but is not one:
+no slug, no page, no link, and nothing an event can be attributed to. It must not be
+created as a `program` document. See decision 027.
 
 ## page
 Standing pages that change rarely: About, What We Do, Get Involved, Contact.
