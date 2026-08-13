@@ -23,6 +23,9 @@ export const siteSettingsQuery = `
     organizationName, tagline, contactEmail, postalAddress, donateUrl,
     socialLinks[]{platform, url},
     heroEyebrow, heroHeading, heroLede,
+    supportMoreHeading, supportMoreText,
+    disambiguationHeading, disambiguationText,
+    donateHeading, donateText, volunteerHeading, volunteerText,
     "heroImage": heroImage${IMAGE},
     "shareImage": shareImage${IMAGE}
   }

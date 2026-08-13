@@ -8,25 +8,45 @@
  * bordered card, with a heading, in the flow of the page. That is decision 010,
  * and it is the one element carried across from a retired mock-up.
  *
- * The wording is checked against docs/organization.md. Do not paraphrase it
- * without reading that file — the distinction between owning the land, owning
- * the building, and supporting the programs is legally and politically real.
+ * The wording is editable in the Studio as of decision 027, at the board's
+ * request. That is the one field on this site where an edit can say something
+ * untrue about *another* organization: who owns the land, who owns the building
+ * and who supports the programs are three different bodies, and the distinction
+ * is legally and politically real. The Studio field carries that warning, and
+ * `docs/organization.md` is the source of truth.
+ *
+ * The fallback below is the checked wording, so clearing the field restores it
+ * rather than emptying the card.
  */
+import RichText from './RichText.astro'
+
+const {site} = Astro.props
+
+const heading =
+  site?.home?.disambiguationHeading || 'Three organizations share the Village Green name'
+const body = site?.home?.disambiguationText || null
 ---
 
 <aside class="disambiguation" aria-labelledby="disambiguation-heading">
-  <h2 id="disambiguation-heading">Three organizations share the Village Green name</h2>
+  <h2 id="disambiguation-heading">{heading}</h2>
 
-  {/* Keep each <b> on the same line as the word before it. A line break
-      directly before a tag is collapsed away, which silently glues the words
-      together — "The<b>Village Green Foundation</b>". */}
-  <p>
-    The <b>Metropolitan Park District</b> owns the land.
-    The <b>Village Green Foundation</b> owns the building.
-    We are <b>Friends of the Village Green</b>, an all-volunteer group that
-    supports some of the programs and the people who run them. We do not run
-    the Community Center.
-  </p>
+  {/* Wrapped: scoped styles here cannot reach markup that RichText renders. */}
+  <div class="disambiguation-text">
+    {body ? (
+      <RichText value={body} />
+    ) : (
+      /* Keep each <b> on the same line as the word before it. A line break
+         directly before a tag is collapsed away, which silently glues the words
+         together — "The<b>Village Green Foundation</b>". */
+      <p>
+        The <b>Metropolitan Park District</b> owns the land.
+        The <b>Village Green Foundation</b> owns the building.
+        We are <b>Friends of the Village Green</b>, an all-volunteer group that
+        supports some of the programs and the people who run them. We do not run
+        the Community Center.
+      </p>
+    )}
+  </div>
 </aside>
 
 <style>
@@ -46,16 +66,23 @@
     letter-spacing: 0;
   }
 
-  .disambiguation p {
+  /* Covers the fallback paragraph above and Portable Text from the Studio
+     alike. The `.disambiguation` prefix outruns RichText's own `p` rule, which
+     would otherwise tie on specificity and be settled by bundle order. */
+  .disambiguation .disambiguation-text :global(p) {
     font-family: var(--font-display);
     font-size: 1.02rem;
     line-height: 1.55;
     color: var(--color-text-muted);
     margin-top: var(--space-s);
+    max-width: none;
   }
 
-  .disambiguation b {
+  /* `b` is the fallback's markup, `strong` is what the Studio's Bold button
+     produces. 700 because the display stack has no 600 — see global.css. */
+  .disambiguation .disambiguation-text :global(b),
+  .disambiguation .disambiguation-text :global(strong) {
     color: var(--color-text);
-    font-weight: 600;
+    font-weight: 700;
   }
 </style>

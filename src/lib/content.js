@@ -16,6 +16,14 @@ let sectionsPromise
 let pagesPromise
 
 /**
+ * An empty rich-text field comes back from Sanity as an empty array, and an
+ * empty array is truthy — so `value || fallback` would hand the template a
+ * live-looking value with nothing in it, and the fallback copy would never
+ * appear. Normalize both empty cases to null so `||` behaves.
+ */
+const text = (value) => (Array.isArray(value) && value.length ? value : null)
+
+/**
  * Site settings from Sanity, with the hardcoded values in site.js as a
  * fallback. The fallback matters for exactly one situation — the settings
  * document has not been created yet — and it means the header and footer
@@ -36,19 +44,31 @@ export async function getSiteSettings() {
     heroImage: settings.heroImage || null,
 
     /**
-     * The words across the top of the home page.
+     * The blocks of copy on the home page.
      *
      * Null rather than a default when a field is empty, because the fallback
-     * copy lives in the home page template alongside the design it was written
-     * for — not here, and not in site.js, which is for values the whole site
-     * reads. An empty rich-text field comes back as an empty array, so check
-     * the length rather than truthiness or the template gets a live-looking
-     * value with nothing in it.
+     * copy lives in the templates alongside the design it was written for —
+     * not here, and not in site.js, which is for values the whole site reads.
      */
     home: {
       eyebrow: settings.heroEyebrow || null,
       heading: settings.heroHeading || null,
-      lede: settings.heroLede?.length ? settings.heroLede : null,
+      lede: text(settings.heroLede),
+
+      supportMoreHeading: settings.supportMoreHeading || null,
+      supportMoreText: text(settings.supportMoreText),
+
+      disambiguationHeading: settings.disambiguationHeading || null,
+      disambiguationText: text(settings.disambiguationText),
+    },
+
+    /* The green band. Separate from `home` only because it is its own tab in
+       the Studio and its own component here; it is the same home page. */
+    give: {
+      donateHeading: settings.donateHeading || null,
+      donateText: text(settings.donateText),
+      volunteerHeading: settings.volunteerHeading || null,
+      volunteerText: text(settings.volunteerText),
     },
 
     /**

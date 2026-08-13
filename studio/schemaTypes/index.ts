@@ -5,12 +5,13 @@ import {newsPost} from './newsPost'
 import {page} from './page'
 import {person} from './person'
 import {program} from './program'
+import {simpleText} from './simpleText'
 import {siteSettings} from './siteSettings'
 
 /**
  * Schema v1.
  *
- * Six document types and two shared objects. Documented in plain language in
+ * Six document types and three shared objects. Documented in plain language in
  * docs/content-model.md — keep the two in step.
  *
  * Adding a document type is a decision, not a detail: record it in
@@ -28,5 +29,6 @@ export const schemaTypes = [
 
   // Shared objects
   blockContent,
+  simpleText,
   figure,
 ]

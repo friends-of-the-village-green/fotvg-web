@@ -35,7 +35,9 @@ paragraph underneath are all editable. So is the photograph behind them.
 
 1. Go to https://fotvg.sanity.studio and sign in.
 2. **Site settings**, at the bottom of the left sidebar, under the divider.
-3. It opens on the **Home page** tab. Four fields:
+3. It opens on the **Home page** tab, in three boxes you can open and close:
+
+   **The top of the page**
    - **Small line above the headline** — the brass capitals at the very top.
    - **Headline** — the large heading. It is set very large; about sixteen characters
      fit on a line before it wraps.
@@ -43,15 +45,31 @@ paragraph underneath are all editable. So is the photograph behind them.
      using on the two things a skimming reader should catch: that we are Friends of the
      Village Green, and that we are all-volunteer.
    - **Home page photograph** — see "Adding a photo" below for the permission rules.
-4. **Publish**, bottom right. It appears on the website at the next daily rebuild.
+
+   **What we support — the closing note**
+   - The last card under "What we support", after the program areas — "And, we hope,
+     more". It is the one card there that is not a program: it has no page of its own
+     and never links anywhere. Keep it about as long as a program summary so the card
+     sits level with the ones beside it.
+
+   **Three organizations share the name**
+   - The bordered card near the bottom. ⚠️ **Read the field's own note before changing
+     the text.** Who owns the land, who owns the building and who supports the programs
+     are three different organizations, and getting it wrong says something untrue about
+     somebody else. Keep the bold on the three names.
+
+4. The **Donate and volunteer** tab holds the words on the green band — a heading and a
+   paragraph for each half. The Donate button itself, the Square link and the line about
+   tax are not editable and cannot be broken from here.
+5. **Publish**, bottom right. It appears on the website at the next daily rebuild.
 
 **Leaving a field empty puts the original wording back.** That is deliberate — the home
 page can never end up with a blank headline because someone cleared a box to start again
-and got distracted. If you want a field genuinely gone rather than reset, that is a code
-change; ask.
+and got distracted. If you want something genuinely gone rather than reset, that is a
+code change; ask.
 
-The rest of the site's wording — the section headings, "What we've done", the Donate and
-Volunteer text — is in the code, not the Studio. Ask for those to be changed.
+Still in the code rather than the Studio: the section headings themselves ("What we've
+done", "What's on", "What we support"), the button labels, and the footer. Ask for those.
 
 ## What the Publish button actually does
 
