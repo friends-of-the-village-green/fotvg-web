@@ -506,3 +506,52 @@ page exists to provide. It is a field on Site settings and renders as a card wit
 link. `docs/organization.md` still says three programs, and that remains true.
 **Consequence:** `npx sanity deploy` is needed before editors see the new tab, the new
 boxes, or any of this. It is the step that gets forgotten — see `docs/runbook.md`.
+
+## 028 — One Square link per fund, not a "which program?" box
+**Date:** 2026-08-18
+**Decision:** The Donate section gains three things: a sentence inviting the donor to
+cover Square's processing fee, a sentence offering the alternative of a check, and — for
+anyone who wants their gift to go to one program — a small set of links to *separate
+Square donation links*, one per program. All three are Site settings fields, so the
+board owns the words and the links without a developer.
+**Who decided:** Betsy Cooper, Catherine Farrell and Karmenn Hanson met on 18 August
+2026 and agreed it, after the research John circulated on 14 August. Betsy's summary
+email is the record.
+**Why not Square's own custom field:** a Square donation link can carry up to two custom
+fields, and they were the obvious way to ask "which program?". Two things rule them out.
+They are free text — the API's `CustomField` object has one property, `title`, with no
+type and no list of options, so there is no dropdown and no way to stop a donor writing
+"the garden one" or leaving it blank. And the answer reaches FotVG only by logging into
+Square and opening the individual payment: it appears on the donor's receipt but *not*
+on the notification email the organization receives. That is a manual step every time,
+forever, done by whoever is treasurer that year.
+**Why separate links work better:** a payment link's title arrives as the order source on
+the transaction, so it is in the Dashboard listing and in the CSV export without anyone
+typing or transcribing anything. Square's own support staff give the same answer when
+asked for a program dropdown. The cost is three links to keep alive in Square instead of
+one, and three sets of words on the site instead of one — both visible, neither silent.
+**Why not a donation platform with a real "cover the fee" checkbox:** Givebutter,
+Donorbox, Zeffy and Classy all have one. Adopting any of them means replacing Square,
+which is already FotVG's card processor, and handing a second service to the one
+technical volunteer. Against decision 007 that is a bad trade for a checkbox.
+**Why not an email to `info@fotvg.org` announcing the designation:** Betsy's own
+suggestion, and the right instinct, but the mechanics do not hold. The donation happens
+on Square's page; once the donor leaves this site it never learns whether the payment
+completed or for how much. The email would say someone *intended* to give to Greenworks,
+and the treasurer would still have to match it against Square by hand — two records
+instead of one. The separate links attach the answer to the payment itself.
+**Why "about 4%":** Square takes 3.3% + 30¢ on the free plan (decision 007 notes the
+plan). That is 4.5% of a $25 gift and 3.6% of $100, so "about 4%" is honest across the
+range people actually give. The copy carries two worked examples deliberately: "add a
+few dollars", the wording first proposed, is twelve percent of a $25 gift and almost
+nothing on $500.
+**Why the fee and check sentences are their own fields** rather than extra paragraphs of
+the Donate text: they say different things, and an editor rewriting the appeal should
+not be able to delete the fee ask by accident.
+**Still open, and both belong to the board:** whether mail addressed to the Community
+Center reliably reaches the treasurer, and whether the bank will accept a check made out
+to "FotVG" rather than the full name. The site says the full name until someone says
+otherwise.
+**Consequence:** `npx sanity deploy` before editors see the new fields, and the three
+Square links have to exist before the program links are filled in — see
+`docs/runbook.md`.

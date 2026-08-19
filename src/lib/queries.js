@@ -21,11 +21,13 @@ const IMAGE = `{
 export const siteSettingsQuery = `
   *[_type == "siteSettings"][0]{
     organizationName, tagline, contactEmail, postalAddress, donateUrl,
+    programDonateLinks[]{program, url},
     socialLinks[]{platform, url},
     heroEyebrow, heroHeading, heroLede,
     supportMoreHeading, supportMoreText,
     disambiguationHeading, disambiguationText,
-    donateHeading, donateText, volunteerHeading, volunteerText,
+    donateHeading, donateText, donateFeeText, donateByCheck,
+    volunteerHeading, volunteerText,
     "heroImage": heroImage${IMAGE},
     "shareImage": shareImage${IMAGE}
   }

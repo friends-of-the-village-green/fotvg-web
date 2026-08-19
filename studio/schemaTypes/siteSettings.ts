@@ -197,6 +197,45 @@ export const siteSettings = defineType({
         Rule.max(2).warning('Two paragraphs is the most the band holds.'),
     }),
 
+    /**
+     * Its own field rather than a third paragraph of the text above.
+     *
+     * Two reasons. It is a different thing — the text above says why to give,
+     * this asks for a specific amount on top — and separating them means the
+     * fee sentence cannot be lost by an editor rewriting the appeal around it.
+     */
+    defineField({
+      name: 'donateFeeText',
+      title: 'Donate — covering the card fee',
+      type: 'simpleText',
+      group: 'give',
+      description:
+        'The invitation to cover Square\'s processing fee, agreed by the board ' +
+        'on 18 August 2026. Square keeps 3.3% plus 30 cents of each card ' +
+        'donation, which works out between about 3.6% and 4.5% on the amounts ' +
+        'people usually give — so "about 4%" is honest, and worth saying rather ' +
+        'than rounding up. Give a worked example or two: "add a few dollars" is ' +
+        'twelve percent of a $25 gift and almost nothing on $500. Clear the ' +
+        'field to drop the ask entirely.',
+      validation: (Rule) =>
+        Rule.max(1).warning('One paragraph. Longer and it competes with the appeal above it.'),
+    }),
+
+    defineField({
+      name: 'donateByCheck',
+      title: 'Donate — other ways to give',
+      type: 'simpleText',
+      group: 'give',
+      description:
+        'The small print under the Donate button, for anyone who would rather ' +
+        'not use a card. A check costs FotVG nothing at all, which is the ' +
+        'reason to mention it, so say that before giving the address. Check ' +
+        'with the treasurer before changing the name checks should be made out ' +
+        'to — a bank can refuse a check written to an abbreviation.',
+      validation: (Rule) =>
+        Rule.max(1).warning('One paragraph. This sits in the small print, not the body.'),
+    }),
+
     defineField({
       name: 'volunteerHeading',
       title: 'Volunteer — heading',
@@ -275,11 +314,64 @@ export const siteSettings = defineType({
       type: 'url',
       group: 'org',
       description:
-        'The Square donation page. Donations are handled entirely by Square — ' +
-        'no card details ever touch this website. Leave this empty and the ' +
-        'Donate buttons do not appear at all, which is better than a button ' +
-        'that goes nowhere.',
+        'The Square donation page for a gift to wherever it is needed most. ' +
+        'This is the one the Donate button goes to. Donations are handled ' +
+        'entirely by Square — no card details ever touch this website. Leave ' +
+        'this empty and the Donate buttons do not appear at all, which is ' +
+        'better than a button that goes nowhere.',
       validation: (Rule) => Rule.uri({scheme: ['https']}),
+    }),
+
+    /**
+     * One Square link per program, rather than a "which program?" box on the
+     * Square page.
+     *
+     * Square's custom fields are free text, and the answer reaches the
+     * treasurer only by logging in and opening the payment — it is not in the
+     * notification email. A payment link's title, by contrast, arrives as the
+     * order source on the transaction and in the CSV export, so a separate
+     * link per program sorts the money out with no typing and nothing to
+     * reconcile by hand. Board decision, 18 August 2026.
+     */
+    defineField({
+      name: 'programDonateLinks',
+      title: 'Donate links for a particular program',
+      type: 'array',
+      group: 'org',
+      description:
+        'Optional. A separate Square donation link for each program someone ' +
+        'might want to give to directly, shown as small links under the Donate ' +
+        'button. Because each Square link carries its own name, the treasurer ' +
+        'can tell the funds apart in Square without anyone sorting them by ' +
+        'hand — so add one here only when a matching link exists in Square. ' +
+        'Two or three is plenty; more turns a simple ask into a decision.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'program',
+              title: 'Program',
+              type: 'string',
+              description:
+                'As a donor would recognize it, and the same words as the ' +
+                'program page — "Village Green Arts Program", not "VGAP". ' +
+                'This is the link text, so it has to make sense read on its own.',
+              validation: (Rule) => Rule.required().max(50),
+            },
+            {
+              name: 'url',
+              title: 'Square link',
+              type: 'url',
+              description: 'The Square donation link for this program alone.',
+              validation: (Rule) => Rule.required().uri({scheme: ['https']}),
+            },
+          ],
+          preview: {select: {title: 'program', subtitle: 'url'}},
+        },
+      ],
+      validation: (Rule) =>
+        Rule.max(4).warning('More than four is a menu, and the band has room for a line.'),
     }),
 
     defineField({

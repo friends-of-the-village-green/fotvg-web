@@ -11,11 +11,23 @@ own details.
   - *The top of the page* — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImage`
   - *What we support — the closing note* — `supportMoreHeading`, `supportMoreText`
   - *Three organizations share the name* — `disambiguationHeading`, `disambiguationText`
-- **Donate and volunteer** — `donateHeading`, `donateText`, `volunteerHeading`,
-  `volunteerText`. The green band. The Donate button, the Square link and the tax note
-  are **not** here: a button and a statement of corporate status are not copy.
+- **Donate and volunteer** — `donateHeading`, `donateText`, `donateFeeText`,
+  `donateByCheck`, `volunteerHeading`, `volunteerText`. The green band. The Donate
+  button, the Square link and the tax note are **not** here: a button and a statement of
+  corporate status are not copy.
+
+  `donateFeeText` is the invitation to cover the card fee and `donateByCheck` is the
+  alternative for anyone who would rather not use a card — each its own field rather
+  than another paragraph of `donateText`, so that rewriting the appeal cannot quietly
+  delete either. Decision 028.
 - **Organization and contact** — organization name, tagline, public email, postal
-  address, donate URL, social links.
+  address, donate URL, `programDonateLinks`, social links.
+
+  `programDonateLinks` is a list of {program, Square link} pairs, shown as small links
+  under the Donate button. Each entry needs its **own** donation link in Square — that
+  is the whole point, because a link's title is what tells the treasurer which fund a
+  payment belongs to. Adding an entry that points at the general link would silently
+  merge the funds. Decision 028, and the procedure is in `docs/runbook.md`.
 - **Sharing** — the default link-preview image.
 
 **Every one of those text fields falls back to the copy in the template when it is
