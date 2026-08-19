@@ -105,14 +105,14 @@ export async function getSiteSettings() {
 /**
  * The main navigation.
  *
- * Built from what actually exists, so there is never a link to an empty
- * section or a Donate button with nowhere to go.
+ * The home page sections are built from what actually exists, so there is never
+ * a link to an empty one. Donate is the exception and is always present: it
+ * points at a section of this site that always renders.
  */
 export async function getNav() {
   if (!sectionsPromise) sectionsPromise = client.fetch(homeSectionsQuery)
 
   const sections = (await sectionsPromise) || {}
-  const settings = await getSiteSettings()
 
   const items = []
 
@@ -123,9 +123,16 @@ export async function getNav() {
   if (sections.hasUpcoming) items.push({label: "What's on", href: '/#upcoming'})
   if (sections.hasPrograms) items.push({label: 'What we support', href: '/#support'})
 
-  if (settings.donateUrl) {
-    items.push({label: 'Donate', href: settings.donateUrl, isDonate: true})
-  }
+  /* The Donate link goes to the section further down this page, not straight
+     out to Square. The band now carries things a donor needs before paying:
+     the invitation to cover the card fee, the per-program links, and the check
+     address for anyone who would rather not use a card (board, 18 August 2026).
+     Jumping to Square skips all of it.
+
+     Unconditional, unlike the sections above it. GiveBand always renders — with
+     the real button, or with the placeholder standing in for it — so the #give
+     target always exists, whether or not the Square link has been filled in. */
+  items.push({label: 'Donate', href: '/#give', isDonate: true})
 
   return items
 }
