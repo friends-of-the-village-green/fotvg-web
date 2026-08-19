@@ -39,6 +39,16 @@ export const site = {
    */
   donateUrl: null,
 
+  /**
+   * Square links for a gift directed at one program — [{program, url}].
+   *
+   * Empty is the normal state and renders nothing. It is not a TK: the general
+   * Donate link is the one the site needs, and these are an addition the board
+   * asked for on 18 August 2026, to be filled in once the three matching links
+   * exist in Square.
+   */
+  programDonateLinks: [],
+
   founded: 2025,
 }
 

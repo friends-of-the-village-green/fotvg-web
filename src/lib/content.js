@@ -40,6 +40,17 @@ export async function getSiteSettings() {
     email: settings.contactEmail || fallback.email,
     address: settings.postalAddress || fallback.address,
     donateUrl: settings.donateUrl || fallback.donateUrl,
+
+    /**
+     * Both halves of a program link have to be there for it to be worth
+     * rendering: a program name with no link is a dead end, and a link with no
+     * name is one a screen reader announces as nothing at all. The Studio
+     * requires both, but a half-finished draft can still reach a build.
+     */
+    programDonateLinks: (
+      settings.programDonateLinks || fallback.programDonateLinks
+    ).filter((link) => link?.program && link?.url),
+
     socialLinks: settings.socialLinks || [],
     heroImage: settings.heroImage || null,
 
@@ -67,6 +78,8 @@ export async function getSiteSettings() {
     give: {
       donateHeading: settings.donateHeading || null,
       donateText: text(settings.donateText),
+      donateFeeText: text(settings.donateFeeText),
+      donateByCheck: text(settings.donateByCheck),
       volunteerHeading: settings.volunteerHeading || null,
       volunteerText: text(settings.volunteerText),
     },

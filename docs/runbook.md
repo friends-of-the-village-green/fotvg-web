@@ -59,8 +59,17 @@ paragraph underneath are all editable. So is the photograph behind them.
      somebody else. Keep the bold on the three names.
 
 4. The **Donate and volunteer** tab holds the words on the green band — a heading and a
-   paragraph for each half. The Donate button itself, the Square link and the line about
-   tax are not editable and cannot be broken from here.
+   paragraph for each half, plus two short blocks on the money side:
+   - **Covering the card fee** — the sentence asking the donor to add the processing fee
+     to their gift. Square keeps 3.3% plus 30 cents of each card donation, so give a
+     worked example rather than saying "a few dollars": a few dollars is twelve percent
+     of a $25 gift and almost nothing on $500. Clear the field to drop the ask.
+   - **Other ways to give** — the check address, under the Donate button. Check with the
+     treasurer before changing the name checks are made out to; a bank can refuse a
+     check written to an abbreviation.
+
+   The Donate button itself, the Square link and the line about tax are not editable and
+   cannot be broken from here.
 5. **Publish**, bottom right. It appears on the website at the next daily rebuild.
 
 **Leaving a field empty puts the original wording back.** That is deliberate — the home
@@ -70,6 +79,64 @@ code change; ask.
 
 Still in the code rather than the Studio: the section headings themselves ("What we've
 done", "What's on", "What we support"), the button labels, and the footer. Ask for those.
+
+## Letting donors give to one program
+
+A donor who wants their gift to go to the Village Green Arts Program rather than to
+general funds picks it **before** leaving this site, by clicking one of the small links
+under the Donate button. Each of those links is a **separate donation link in Square**.
+
+That is the whole mechanism, and the reason for it: Square records the link's title on
+the payment, so the funds arrive already sorted in Square's own reports. There is
+nothing to type, nothing to transcribe, and nothing for the treasurer to match up by
+hand afterwards. Decision 028 explains why the alternatives were rejected.
+
+⚠️ **Two links pointing at the same Square page would silently merge the two funds.**
+Create the Square link first. Only add it to the website once it exists.
+
+### Creating a donation link in Square — treasurer
+
+Square moves its menus around, so the labels may sit slightly differently from these.
+The shape of it does not change.
+
+1. Sign in at https://squareup.com/dashboard.
+2. In the left sidebar, **Payments & orders**, then **Payment links**.
+3. **Create link**, then choose **Accept a donation**.
+4. **Title** — this is the important field. It is what the donor sees *and* what
+   identifies the fund in every report afterwards, so make it unmistakable:
+   - `FotVG — Village Green Arts Program`
+   - `FotVG — Greenworks`
+   - `FotVG — where it's needed most`  (the general one, for the main Donate button)
+5. **Description** — optional, one line about what the money does.
+6. Leave **custom fields** off. They are free text, and the answers do not reach the
+   notification email — that is exactly what these separate links replace.
+7. Save, then **copy the link**. It looks like `https://square.link/u/XXXXXXXX`.
+8. Send all three links to whoever maintains the website.
+
+**Optional:** each link can carry its own donation goal, which shows the donor a
+"raised so far" figure. Set it per link, not once for everything, or the three funds
+share one thermometer.
+
+### Putting them on the website
+
+1. https://fotvg.sanity.studio → **Site settings** → **Organization and contact** tab.
+2. **Donate link** — the general one. This is where the big Donate button goes.
+3. **Donate links for a particular program** — **Add item** once per program:
+   - **Program** — as a donor would recognize it, and the same words as the program
+     page: "Village Green Arts Program", not "VGAP". It is the link text, so it has to
+     make sense read on its own.
+   - **Square link** — the link for that program alone.
+4. **Publish**. It appears at the next daily rebuild.
+
+Leaving the list empty is fine and normal — the extra links simply do not appear, and
+the Donate button carries on by itself.
+
+### Checking it worked
+
+Give $1 to one of the program links yourself, then look at **Payments & orders →
+Transactions** in Square. The payment should be labeled with that link's title. If it
+is labeled with the general link's title instead, the website is pointing at the wrong
+URL. Refund the dollar to yourself afterwards.
 
 ## What the Publish button actually does
 
