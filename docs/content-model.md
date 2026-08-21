@@ -12,22 +12,22 @@ own details.
   - *What we support — the closing note* — `supportMoreHeading`, `supportMoreText`
   - *Three organizations share the name* — `disambiguationHeading`, `disambiguationText`
 - **Donate and volunteer** — `donateHeading`, `donateText`, `donateFeeText`,
-  `donateByCheck`, `volunteerHeading`, `volunteerText`. The green band. The Donate
-  button, the Square link and the tax note are **not** here: a button and a statement of
-  corporate status are not copy.
+  `donateUrl`, `programDonateLinks`, `donateByCheck`, `volunteerHeading`,
+  `volunteerText`. The green band, and the fields are in the order they appear in it.
+  The tax note is **not** here: a statement of corporate status is not copy.
 
   `donateFeeText` is the invitation to cover the card fee and `donateByCheck` is the
   alternative for anyone who would rather not use a card — each its own field rather
   than another paragraph of `donateText`, so that rewriting the appeal cannot quietly
   delete either. Decision 028.
-- **Organization and contact** — organization name, tagline, public email, postal
-  address, donate URL, `programDonateLinks`, social links.
 
   `programDonateLinks` is a list of {program, Square link} pairs, shown as small links
   under the Donate button. Each entry needs its **own** donation link in Square — that
   is the whole point, because a link's title is what tells the treasurer which fund a
   payment belongs to. Adding an entry that points at the general link would silently
   merge the funds. Decision 028, and the procedure is in `docs/runbook.md`.
+- **Organization and contact** — organization name, tagline, public email, postal
+  address, social links.
 - **Sharing** — the default link-preview image.
 
 **Every one of those text fields falls back to the copy in the template when it is
@@ -74,14 +74,33 @@ Saturday's concert opens the event they already created and fills in the bottom 
 they do not have to remember to create a second thing and link it up.
 
 Fields — *before*: title, slug, startDate, endDate, location, summary, body,
-image + alt, signup URL (optional), canceled flag.
+image + alt, signup URL (optional), `cancelled`, `archived`.
 
 Fields — *after*: recap (rich text), gallery (array of images, each with alt text,
-optional caption, and photographer credit).
+optional caption, and photographer credit), `featuredOnHome`.
 
 The presence of recap content is what marks an event as written up. Past events with a
 recap are the site's evidence of delivery — the board uses them in grant applications,
 so they get a durable URL and stay published indefinitely.
+
+### The three checkboxes, and what each one does
+- **`cancelled`** — the event keeps its page and its row, and both say plainly that it
+  is cancelled. For someone holding a flyer, that is the single most useful thing the
+  site can tell them.
+- **`archived`** — the event vanishes from the site entirely, its own page included, and
+  stays in the Studio to be copied from. This is the alternative to deleting, which
+  cannot be undone. Untick it and everything returns at the same URL. Decision 030.
+- **`featuredOnHome`** — puts a write-up on the home page under "What we've done". With
+  none ticked the home page falls back to the three most recent write-ups, so the
+  section can never render empty. Decision 029.
+
+`archived` sits on the *before* tab next to `cancelled` rather than with the write-up,
+even though archiving happens years later: they are the same kind of switch, and that is
+the tab that opens by default.
+
+Every event query in `src/lib/queries.js` is built on a shared `LIVE_EVENT` filter that
+excludes archived events. Write `archived != true`, never `!archived` — see the comment
+on that constant, and decision 030.
 
 Dates are stored as datetime and always displayed in America/Los_Angeles.
 
