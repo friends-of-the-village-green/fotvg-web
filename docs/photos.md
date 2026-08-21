@@ -15,7 +15,7 @@ content. It still has to stay maintainable by one person.
 2. **No photo containing identifiable children goes on the site without explicit written
    confirmation from the board.** Not a verbal nod, not an assumption because it was
    taken at a public event. Written.
-3. **If in doubt about a recognisable adult, leave it out.** There are always other
+3. **If in doubt about a recognizable adult, leave it out.** There are always other
    photos.
 4. **A mediocre photo is worse than no photo.** Six good pictures beat forty average
    ones, and forty average ones cost forty times the effort to caption.

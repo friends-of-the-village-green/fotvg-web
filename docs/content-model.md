@@ -38,7 +38,7 @@ Saturday's concert opens the event they already created and fills in the bottom 
 they do not have to remember to create a second thing and link it up.
 
 Fields — *before*: title, slug, startDate, endDate, location, summary, body,
-image + alt, signup URL (optional), cancelled flag.
+image + alt, signup URL (optional), canceled flag.
 
 Fields — *after*: recap (rich text), gallery (array of images, each with alt text,
 optional caption, and photographer credit).
@@ -84,7 +84,7 @@ Only include people who have agreed to appear.
 Not document types — building blocks the types above reuse.
 
 **`blockContent`** is the rich text field. Deliberately small: paragraphs, two heading
-levels, bulleted and numbered lists, bold, italic, link. No colour, no font size, no
+levels, bulleted and numbered lists, bold, italic, link. No color, no font size, no
 alignment, no h1. Those controls let an editor produce a page the design cannot render
 or that fails a contrast check, and neither failure is visible to the person who caused
 it.

@@ -236,7 +236,7 @@ a live design constraint rather than a footnote.
 **Date:** 2026-08-09
 **Decision:** The original mock-ups are gitignored and stay on John's machine and in
 FotVG's Drive. Alongside them sit `*-no-photos.html` copies — same markup, same classes,
-same alt text, with each photograph replaced by a grey SVG placeholder — and those are
+same alt text, with each photograph replaced by a gray SVG placeholder — and those are
 committed. 13 MB becomes 129 KB.
 **Settled by:** John confirmed on 9 August 2026 that the GitHub repository is **public**,
 which turns the concern below from a question into a straightforward no.
@@ -257,7 +257,7 @@ the only thing anyone will open them for. The photographs themselves were never 
 we needed to consult.
 **Also worth having removed:** 13 MB that Netlify would otherwise clone on every build,
 for files that are never part of the site.
-**How they were made:** every `"data:image/…"` attribute value swapped for an inline grey
+**How they were made:** every `"data:image/…"` attribute value swapped for an inline gray
 SVG, with the generator refusing to write a file if any non-SVG image data survived. The
 banner comment at the top of each file records where the originals live.
 **Revisit if:** the attribution and children's sign-off in decision 013 are ever fully

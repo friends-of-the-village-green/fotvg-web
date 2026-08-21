@@ -1,6 +1,6 @@
 ---
 name: accessibility
-description: WCAG 2.2 AA review checklist and remediation patterns for the FotVG site. Use this skill before finishing any change that touches markup, styling, forms, images, navigation, or interactive behaviour — and whenever the user mentions accessibility, screen readers, contrast, keyboard navigation, or ADA compliance. Run the checklist as a final pass on any PR that changes what a visitor sees. If you have written HTML or CSS in this session, use this skill before declaring the work done.
+description: WCAG 2.2 AA review checklist and remediation patterns for the FotVG site. Use this skill before finishing any change that touches markup, styling, forms, images, navigation, or interactive behavior — and whenever the user mentions accessibility, screen readers, contrast, keyboard navigation, or ADA compliance. Run the checklist as a final pass on any PR that changes what a visitor sees. If you have written HTML or CSS in this session, use this skill before declaring the work done.
 ---
 
 # Accessibility Review — FotVG
@@ -31,11 +31,11 @@ WCAG 2.2 AA is the standard. Treat it as the floor.
 - [ ] No text baked into images (event flyers must also exist as real text on the page)
 - [ ] Any embedded video has captions
 
-### Colour and contrast
+### Color and contrast
 - [ ] Body text against its background is at least 4.5:1
 - [ ] Large text (18.66px bold or 24px+) is at least 3:1
-- [ ] UI components and focus indicators are at least 3:1 against adjacent colours
-- [ ] No information conveyed by colour alone — a green "confirmed" dot needs a label
+- [ ] UI components and focus indicators are at least 3:1 against adjacent colors
+- [ ] No information conveyed by color alone — a green "confirmed" dot needs a label
 - [ ] The design still works at 200% browser zoom without horizontal scrolling
 
 ### Keyboard
@@ -57,7 +57,7 @@ WCAG 2.2 AA is the standard. Treat it as the floor.
 
 ### Links and targets
 - [ ] Link text makes sense out of context — no bare "click here" or "read more"
-- [ ] Links are distinguishable from body text by more than colour alone
+- [ ] Links are distinguishable from body text by more than color alone
 - [ ] Links that open a new tab say so
 - [ ] Tap targets are at least 24×24 CSS pixels, ideally 44×44
 - [ ] Adjacent tap targets have spacing between them
