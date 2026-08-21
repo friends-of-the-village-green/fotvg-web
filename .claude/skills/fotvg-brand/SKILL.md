@@ -14,7 +14,7 @@ Not FOTVG. Not FoTVG. Not Fotvg. Not "the Friends."
 
 ## Who is speaking
 
-Friends of the Village Green are neighbours in Kingston, Washington who **fund and run
+Friends of the Village Green are neighbors in Kingston, Washington who **fund and run
 the programs** at the Village Green Community Center — concerts and exhibitions, a
 community garden, monthly lunches, lectures, a newcomers series, and trail work in the
 woods above the upper parking lot.
@@ -36,7 +36,7 @@ They are a volunteer board, not a staffed nonprofit. FotVG employs nobody. Where
 `CLAUDE.md` and the mission statement say FotVG "staffs" programs, it means **finding
 the people to run them** — not employing them.
 
-The site should sound like one of them talking to a neighbour — informed, friendly,
+The site should sound like one of them talking to a neighbor — informed, friendly,
 practical, not selling anything.
 
 ## The test
@@ -171,7 +171,7 @@ Never ship a bare `<title>Friends of the Village Green</title>`.
 illustration."* A rope-motif draft was rejected in February 2026. Set the name in type.
 Do not generate, commission, or improvise a pictorial mark.
 
-**Green is the unifying colour**, discussed by the board though never formally adopted
+**Green is the unifying color**, discussed by the board though never formally adopted
 as a specific value. An "open door" motif was floated and not adopted — don't reach for
 it.
 

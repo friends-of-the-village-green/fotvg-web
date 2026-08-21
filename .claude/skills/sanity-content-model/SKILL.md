@@ -136,7 +136,7 @@ it otherwise, and the accessibility debt compounds silently.
 
 Restrict the block content type to what the design actually supports: normal, h2, h3,
 bullet list, numbered list, bold, italic, link. Do not enable h1 (the page supplies
-that), and do not enable colour, font, or alignment controls — they let editors produce
+that), and do not enable color, font, or alignment controls — they let editors produce
 pages the design cannot render and that fail contrast checks.
 
 Render with `astro-portabletext` or a small custom serializer. Handle the case where the
