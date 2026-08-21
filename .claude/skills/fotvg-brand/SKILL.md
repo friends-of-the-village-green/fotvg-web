@@ -91,6 +91,71 @@ FotVG's — that is the one piece of organizational language that is accurate he
 throughout FotVG's own writing. Use them where they describe something real, not as
 decoration.
 
+## Writing for Kathleen
+
+Kathleen Bullivant is the Greenworks coordinator and one of two people who write pages
+for this site. She has a settled style and she cares about it. When drafting a page she
+will edit, **draft in her voice rather than the neutral house voice and let her tune it**
+— a draft that already sounds like her needs a light edit, not a rewrite.
+
+Read the published About us page before drafting anything she will touch. What follows is
+drawn from comparing the copy she was handed in August 2026 against what she actually
+published, which is the best available record of her preferences.
+
+**What she reliably keeps.** Short declarative openers survived her edit untouched — "We
+are new. FotVG was founded in 2025…" — as did the colon construction and the hard date in
+"The Community Center itself is older: it marked its tenth year in May 2026." Board-adopted
+text (the mission, the vision, the values list) she leaves verbatim, correctly. Lead-ins
+that set up a list survive: "Three areas today, and we expect that list to grow:".
+
+**What she changes, and how.**
+
+- **She addresses the reader and she means it.** "You are." became "You are!" — the one
+  exclamation mark on the page, used for genuine welcome. Do not flatten this back out.
+- **She opens sections with questions.** "Who is a friend?", "Ideas?" Use them as headings
+  rather than declarative labels where the section is an invitation.
+- **She prefers inclusive generality to specific vignettes.** A drafted line listing
+  concrete ways a reader might already be a friend — a concert on the lawn, a Greenworks
+  class, bringing grandchildren on a Saturday — she replaced with "Being a part of the
+  Village Green community makes you a friend to many." This runs against the "be concrete"
+  rule elsewhere in this skill. On her pages, her preference wins; keep the specifics for
+  event write-ups and recaps, which are a different job.
+- **She asks for input explicitly**, and gives it its own section rather than a closing
+  line. Leave her a place to do that.
+- **She softens closing headings.** "One thing worth clearing up" became "One last thing".
+- **She is warmer in the invitations and more formal in the descriptions.** "To help support
+  and enhance programming and activities" is her register for the institutional sentences;
+  the conversational register is reserved for talking to the reader.
+- **She underplays fundraising.** A drafted goal about raising money through donations and
+  sponsorship did not survive. Money belongs on the Donate band and the Get involved page,
+  not woven through About us.
+
+**Her vocabulary and mechanics.**
+
+| She writes | Not |
+|---|---|
+| Support Ally (her term for a volunteer on a project) | helper, participant |
+| non-profit | nonprofit |
+| Subheading (h3) for section headings | Heading (h2) |
+
+She describes the organization with the GoDaddy-era tagline — *supports programs to enrich
+and inspire people of all ages and abilities* — and used it as the About us summary. That
+tagline is still marked TK in `docs/organization.md` as never formally adopted. Her usage
+is evidence the board is comfortable with it, not a substitute for adopting it.
+
+**Where her copy still has to be checked.** Voice is hers; facts are not. Two things need
+watching on anything she writes, because both are documented board positions she has
+crossed before:
+
+- **Village Green Woods is not FotVG.** Betsy was explicit on 8 August 2026. It appeared in
+  the early mock-ups by mistake and should not reappear under Greenworks.
+- **The three-organization split.** The Metropolitan Park District owns the land, the
+  Village Green Foundation owns the building. Any rewording that blurs which body owns
+  what needs board confirmation before it ships — `CLAUDE.md` and `docs/organization.md`
+  both call this the easiest and most damaging mistake on the project.
+
+Raise these as questions for Betsy or the board, never as corrections to Kathleen.
+
 ## Terminology
 
 Use these consistently:
