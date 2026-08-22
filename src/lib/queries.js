@@ -203,11 +203,13 @@ export const allEventSlugsQuery = `
  */
 export const homeSectionsQuery = `{
   "hasRecaps": count(*[${LIVE_EVENT} && ${WRITTEN_UP}]) > 0,
-  "hasUpcoming": count(*[${LIVE_EVENT}
-    && coalesce(endDate, startDate) >= now()]) > 0,
   "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0,
   "hasPeople": count(*[_type == "person"]) > 0
 }`
+
+/* `hasUpcoming` used to be here and was dropped in decision 032: the What's on
+   section now renders whether or not anything is on, so nothing needed to ask.
+   A field nobody reads is a field the next person has to work out. */
 
 /* ------------------------------------------------------------- news, pages */
 
