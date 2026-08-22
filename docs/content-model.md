@@ -144,6 +144,14 @@ alignment, no h1. Those controls let an editor produce a page the design cannot 
 or that fails a contrast check, and neither failure is visible to the person who caused
 it.
 
+The two heading styles are labeled **Heading 2** (`h2`) and **Heading 3** (`h3`) — the
+numbers, not "Heading" and "Subheading", because the page's own title is Heading 1 and
+the old names gave no clue which of the two outranked the other. The Studio previews h2
+far larger than the 32px the site renders it at, so an editor sizing by eye reaches for
+the wrong one; a number survives a misleading preview. Every field using `blockContent`
+repeats the same sentence about it, from the exported `HEADING_GUIDANCE` constant.
+Decision 034.
+
 **`figure`** is a photograph: the image, plus **alt text (required)**, an optional
 caption, and the photographer's name. Alt text is required everywhere with no exception —
 when it is optional, editors skip it and the accessibility debt builds silently.

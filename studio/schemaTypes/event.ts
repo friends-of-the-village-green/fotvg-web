@@ -1,5 +1,7 @@
 import {defineField, defineType} from 'sanity'
 
+import {HEADING_GUIDANCE} from './blockContent'
+
 /**
  * Shared settings for every date field on this site.
  *
@@ -140,7 +142,9 @@ export const event = defineType({
       title: 'Full description',
       type: 'blockContent',
       group: 'before',
-      description: 'Everything a person needs in order to decide to come, and to turn up.',
+      description:
+        'Everything a person needs in order to decide to come, and to turn up. ' +
+        HEADING_GUIDANCE,
     }),
 
     defineField({

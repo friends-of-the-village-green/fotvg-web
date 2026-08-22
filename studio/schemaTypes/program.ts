@@ -1,5 +1,7 @@
 import {defineField, defineType} from 'sanity'
 
+import {HEADING_GUIDANCE} from './blockContent'
+
 /**
  * A program area.
  *
@@ -73,7 +75,8 @@ export const program = defineType({
       type: 'blockContent',
       description:
         'The main text of the program page. What it does, who runs it, how ' +
-        'someone gets involved.',
+        'someone gets involved. ' +
+        HEADING_GUIDANCE,
     }),
 
     defineField({

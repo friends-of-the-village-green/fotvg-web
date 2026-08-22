@@ -1,5 +1,7 @@
 import {defineField, defineType} from 'sanity'
 
+import {HEADING_GUIDANCE} from './blockContent'
+
 /**
  * A standing page: About, Get Involved, Contact, What we're dreaming about.
  *
@@ -47,6 +49,7 @@ export const page = defineType({
       name: 'body',
       title: 'Page text',
       type: 'blockContent',
+      description: `The main text of the page. ${HEADING_GUIDANCE}`,
       validation: (Rule) => Rule.required(),
     }),
 
