@@ -70,7 +70,8 @@ const showFilter = programs.length > 1
 
 <BaseLayout title={title} description={description}>
   <section class="intro">
-    <div class="wrap prose">
+    <div class="wrap">
+     <div class="prose">
       <h1 class="page-title">What we've done</h1>
 
       <p class="lede">
@@ -83,6 +84,7 @@ const showFilter = programs.length > 1
           </>
         )}
       </p>
+     </div>
     </div>
   </section>
 
@@ -106,7 +108,13 @@ const showFilter = programs.length > 1
         </p>
       )}
 
-      <p class="more"><a href="/events">See what's coming up</a></p>
+      {/* A button, matching the home page and the event pages. */}
+      <p class="more">
+        <a class="button" href="/events">
+          See what's coming up
+          <span aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   </section>
 </BaseLayout>
@@ -140,8 +148,4 @@ const showFilter = programs.length > 1
     font-weight: 700;
   }
 
-  .more a {
-    color: var(--color-accent);
-    text-underline-offset: 4px;
-  }
 </style>

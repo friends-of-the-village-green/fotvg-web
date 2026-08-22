@@ -694,3 +694,64 @@ sections, not a second heading.
 **Revisit if:** the board misses the extra line as a place to say something the heading
 cannot — in which case it comes back as a real sentence under the heading, like the one
 What we support already has, not as a paraphrase above it.
+
+## 033 — `.prose` goes inside `.wrap`, never on it
+**Date:** 2026-08-21
+**Decision:** `class="wrap prose"` is wrong and is replaced everywhere by a `.prose`
+element nested inside the `.wrap`. The links at the bottom of the events pages, the past
+events pages and each event page become buttons, matching the home page.
+**Why the nesting:** `.prose` is declared after `.wrap` in `global.css`, so on a combined
+element its 38rem `max-width` wins — and `.wrap`'s `margin-inline: auto` then centers that
+narrow box in the middle of the page. About us, Privacy, The board, `/events` and
+`/past-events` all had it, so their titles sat centered while every event and program page
+sat left. John spotted it on About us against an event page. Nesting keeps both behaviors:
+the wrap centers the page container, the prose caps the measure, and the text starts at
+the gutter like everything else. Every page title on the site now begins at the same
+left edge.
+**Why the buttons:** the home page's "See everything we've done" became a button in
+decision 032 and was immediately more visible, but the same link at the foot of every
+event page was still a line of bold text. One link, two treatments, on the same site.
+A page that ends in a line of bold text ends in nothing.
+**What stays a text link:** "See all upcoming events" on the home page. It is a
+see-more-of-this-list link directly under a short list, not the one thing to do at the
+end of a page, and two buttons on the home page would make neither of them mean anything.
+It only renders when there are more than six upcoming events, so it is rare in any case.
+**Guard:** the `.prose` rule in `global.css` now carries a comment saying not to put it on
+a `.wrap`. It looks like it should work, which is why five pages did it.
+**Found while checking, not fixed here:** the About us page body uses the h3 style (then
+labeled "Subheading", renamed in decision 034)
+for all five of its section headings, so the page runs h1 → h3 and skips a level. That is
+content rather than code — the fix is to change them to "Heading" in the Studio. Demoting
+or promoting heading levels in the template would fight the editor's choice everywhere
+else.
+
+## 034 — The rich-text headings are numbered, not named
+**Date:** 2026-08-21
+**Decision:** The two heading styles in `blockContent` are labeled **Heading 2** and
+**Heading 3** rather than "Heading" and "Subheading". Every field using `blockContent`
+carries the same sentence explaining that the page title is Heading 1 — one exported
+`HEADING_GUIDANCE` constant, so the four descriptions cannot drift.
+**Why:** the old names were ambiguous in two ways at once. The page already has a title
+above the field, so "Heading" reads as though it might be that one; and nothing in either
+name says which of the two outranks the other.
+**What actually caused the mistake, though, was the preview.** The Studio renders h2 in
+its style dropdown at Sanity's own default, which is far larger than the 32px this site
+renders body headings at — `RichText.astro` scopes them down independently of the page
+heading scale. An editor sizing by eye sees "Heading" looking enormous and picks
+"Subheading", which is what happened on About us: all five section headings went in as
+h3, so the page ran h1 → h3 and skipped a level. The editor's judgment was right about
+the *rendered* size and wrong about the level, because the Studio showed them the wrong
+size.
+**Why numbers fix it:** 2 comes before 3 whatever the preview looks like, and it is the
+convention from Word and Google Docs, which this board already knows. The stored values
+are unchanged — `h2` and `h3` — so nothing already written moves and no migration is
+needed. It does need a Studio deploy, like any schema change.
+**Considered and not done: styling the Studio's editor to match the site.** Sanity allows
+a `component` per block style, which would make the preview honest and remove the cause
+rather than working around it. It means a React component in the Studio, a `.tsx` file
+where there is currently none, and cosmetic Studio code for the one volunteer to maintain
+— against the constraint in CLAUDE.md. Worth revisiting if editors keep picking the wrong
+level despite the numbers, which would mean the visual is still beating the label.
+**Not a decision, but the standing lesson:** the guidance sentence says why skipping a
+level matters, in one clause, because an editor who knows the reason gets it right in
+fields nobody has written guidance for.

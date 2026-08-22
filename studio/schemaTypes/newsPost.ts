@@ -1,5 +1,7 @@
 import {defineField, defineType} from 'sanity'
 
+import {HEADING_GUIDANCE} from './blockContent'
+
 /**
  * A short update that is not tied to an event.
  *
@@ -59,6 +61,7 @@ export const newsPost = defineType({
       name: 'body',
       title: 'The update',
       type: 'blockContent',
+      description: `The update itself. ${HEADING_GUIDANCE}`,
       validation: (Rule) => Rule.required(),
     }),
 

@@ -24,12 +24,14 @@ const upcoming = await client.fetch(upcomingEventsQuery)
   description="Concerts, work parties, classes, tours and sales coming up at the Village Green in Kingston, Washington."
 >
   <section class="intro">
-    <div class="wrap prose">
+    <div class="wrap">
+     <div class="prose">
       <h1 class="page-title">What's on</h1>
       <p class="lede">
         Concerts, work parties, classes, tours and sales. Everything here is at
         the Village Green, and everyone is welcome.
       </p>
+     </div>
     </div>
   </section>
 
@@ -46,7 +48,14 @@ const upcoming = await client.fetch(upcomingEventsQuery)
         </p>
       )}
 
-      <p class="more"><a href="/past-events">See everything we've done</a></p>
+      {/* A button, matching the home page and the event pages. It is the one
+          thing to do at the bottom of this page. */}
+      <p class="more">
+        <a class="button" href="/past-events">
+          See everything we've done
+          <span aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   </section>
 </BaseLayout>
@@ -81,8 +90,4 @@ const upcoming = await client.fetch(upcomingEventsQuery)
     font-weight: 700;
   }
 
-  .more a {
-    color: var(--color-accent);
-    text-underline-offset: 4px;
-  }
 </style>
