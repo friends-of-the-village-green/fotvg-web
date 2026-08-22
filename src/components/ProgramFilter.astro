@@ -20,7 +20,14 @@ const {programs, current = null} = Astro.props
 ---
 
 <nav class="filter" aria-label="Filter by program area">
-  <ul role="list">
+  {/* The class is not decoration. global.css strips list markers and padding
+      with `ul[class]` — a styled list is expected to carry one — so a classed
+      list is the only kind that loses its bullets. Without it this rendered
+      with markers and a 40px indent.
+
+      `role="list"` stays alongside it: once list-style is none, Safari drops
+      list semantics for VoiceOver, and the role puts them back. */}
+  <ul class="filter-list" role="list">
     {/* aria-current tells a screen reader which one is showing. The fill does
         the same job visually; neither is doing it alone. */}
     <li>
@@ -43,7 +50,7 @@ const {programs, current = null} = Astro.props
 </nav>
 
 <style>
-  .filter ul {
+  .filter-list {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
