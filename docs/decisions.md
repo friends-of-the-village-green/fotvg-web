@@ -652,3 +652,45 @@ and does not replace it.
 programs that is nothing; at fifteen it would be worth reconsidering.
 **Revisit if:** the archive grows past roughly fifty write-ups even within a single
 program, at which point the filtered pages want paging or dates as well.
+
+## 032 — One heading per section, and a brass rule where the second one was
+**Date:** 2026-08-21
+**Decision:** The three home page sections lose their small-capitals line — WHAT WE HAVE
+BEEN DOING over "What we've done", COMING UP over "What's on", WHERE THE MONEY GOES over
+"What we support". A short brass rule goes above each heading instead. "See everything
+we've done" becomes a button. The What's on section renders even when nothing is on.
+**Why:** the small line was a paraphrase of the heading directly under it, so a reader
+got the same thing twice and neither line earned its space. The board asked for it to go.
+**Why a rule rather than nothing:** the small line was doing two jobs and only one of
+them was words. It also put a hit of brass at the top of each section, which is what
+separates one section from the next on a very long scroll. Dropping the words and keeping
+the mark loses the repetition and keeps the rhythm. It is the same brass rule already
+used on the program cards and the write-up cards, so it is the page's existing language
+rather than a new device.
+**What keeps its small line, and why:** "Money" over Donate and "Time" over Volunteer, on
+the green band. Those are not paraphrases — they name the two things you can give, which
+the headings do not say. The footer's "More about us" and "Find us" are column labels
+with no heading under them at all. The test is whether the small line says something the
+big one does not.
+**The button.** "See everything we've done" was a line of bold text at the bottom of a
+section about 2,500 pixels tall. It was competing with nothing and still being missed.
+Making it a button meant fixing `.button`, which was hard-coded to the band's brass —
+1.8:1 on the page background, which is why the event page had quietly grown its own copy
+of the rule to undo it. It now reads `var(--color-accent)`, which `.band` already remaps,
+plus a new `--color-on-accent` for the text that has to flip with it. One declaration,
+legible in both places, and one duplicated override deleted. 8.3:1 on the band, 6.0:1 on
+the page.
+**Why What's on now renders empty.** The rule elsewhere on this page is that an empty
+section does not render, because a heading with nothing under it reads as broken. An
+empty *state* is a different thing. A home page that silently drops What's on between
+seasons tells a first-time visitor nothing, and what it implies — a dormant organization
+— is worse than the truth, which is that the concerts are seasonal. It uses the same
+sentence as `/events`. `hasUpcoming` in `homeSectionsQuery` and the condition in
+`getNav()` both went with it: the section always exists now, so nothing needed to ask,
+and a field nobody reads is a field the next person has to work out.
+**Tradeoff:** the sections are less distinct from each other than two lines of type made
+them. If the board finds the page harder to scan, the answer is more space between
+sections, not a second heading.
+**Revisit if:** the board misses the extra line as a place to say something the heading
+cannot — in which case it comes back as a real sentence under the heading, like the one
+What we support already has, not as a paraphrase above it.

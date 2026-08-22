@@ -145,7 +145,6 @@ const hero = site.home
     <section id="done">
       <div class="wrap">
         <div class="sec-head prose">
-          <p class="eyebrow">What we have been doing</p>
           <h2>What we've done</h2>
         </div>
 
@@ -153,35 +152,59 @@ const hero = site.home
           <RecapBand event={event} flip={i % 2 === 1} />
         ))}
 
-        <p class="more"><a href="/past-events">See everything we've done</a></p>
+        {/* A button, not the line of bold text this used to be. It sits at the
+            bottom of a section two and a half thousand pixels tall, and it was
+            competing with nothing and still being missed. */}
+        <p class="more">
+          <a class="button" href="/past-events">
+            See everything we've done
+            <span aria-hidden="true">→</span>
+          </a>
+        </p>
       </div>
     </section>
   )}
 
-  {upcomingShown.length > 0 && (
-    <section id="upcoming" class="upcoming">
-      <div class="wrap">
-        <div class="sec-head prose">
-          <p class="eyebrow">Coming up</p>
-          <h2>What's on</h2>
-        </div>
+  {/**
+   * Unlike the sections around it, this one renders even with nothing in it.
+   *
+   * The rule elsewhere on this page is that an empty section does not render,
+   * because a heading with nothing under it reads as a broken site. An empty
+   * *state* is a different thing: a home page that simply drops "What's on"
+   * between events tells a first-time visitor nothing, and what it implies —
+   * a dormant organization — is worse than the truth, which is that the
+   * concerts are seasonal. One sentence fixes that. Decision 032.
+   */}
+  <section id="upcoming" class="upcoming">
+    <div class="wrap">
+      <div class="sec-head prose">
+        <h2>What's on</h2>
+      </div>
 
+      {/* The empty state below is the same sentence as the one on /events.
+          Two different wordings for one situation is how a small site starts
+          to read as two sites. */}
+      {upcomingShown.length > 0 ? (
         <ul class="event-list" role="list">
           {upcomingShown.map((event) => <EventRow event={event} />)}
         </ul>
+      ) : (
+        <p class="empty">
+          Nothing on the calendar just now. We usually add the summer concerts
+          in spring and the work parties a few weeks ahead.
+        </p>
+      )}
 
-        {upcoming.length > upcomingShown.length && (
-          <p class="more"><a href="/events">See all upcoming events</a></p>
-        )}
-      </div>
-    </section>
-  )}
+      {upcoming.length > upcomingShown.length && (
+        <p class="more"><a href="/events">See all upcoming events</a></p>
+      )}
+    </div>
+  </section>
 
   {programs.length > 0 && (
     <section id="support">
       <div class="wrap">
         <div class="sec-head prose">
-          <p class="eyebrow">Where the money goes</p>
           <h2>What we support</h2>
           <p class="section-lede">
             Plenty goes on at the Village Green that we have no hand in — these
@@ -326,6 +349,33 @@ const hero = site.home
     margin-bottom: 2.5rem;
   }
 
+  /**
+   * The brass rule that replaced the small-capitals line above each heading.
+   *
+   * Every section here used to carry two headings — WHAT WE HAVE BEEN DOING
+   * over "What we've done", COMING UP over "What's on" — where the small one
+   * was a paraphrase of the large one and the reader got the same thing twice.
+   * The board asked for the repetition to go.
+   *
+   * But the small line was doing two jobs, and only one of them was words: it
+   * also put a hit of brass at the top of each section, which is what marks
+   * where one ends and the next begins on a long scroll. So the words go and
+   * the mark stays. Decision 032.
+   *
+   * Decorative, so no ARIA and no contrast requirement — the heading under it
+   * carries the meaning. It is the same brass rule already used on the program
+   * cards and the write-up cards, so this is the page's own language rather
+   * than a new device.
+   */
+  .sec-head::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 3px;
+    margin-bottom: 1.25rem;
+    background: var(--color-accent);
+  }
+
   .section-lede {
     margin-top: 0.9rem;
     color: var(--color-text-muted);
@@ -334,12 +384,20 @@ const hero = site.home
 
   .more {
     margin-top: var(--space-l);
-    font-weight: 700;
   }
 
-  .more a {
+  /* The "See all upcoming events" link is still a text link — it is one line
+     under a short list, not the end of a very long section, and two buttons on
+     one page would make neither of them mean anything. */
+  .more a:not(.button) {
     color: var(--color-accent);
+    font-weight: 700;
     text-underline-offset: 4px;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+    max-width: var(--width-prose);
   }
 
   /* ---------- what's on ---------- */

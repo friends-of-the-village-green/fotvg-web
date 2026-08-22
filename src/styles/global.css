@@ -55,6 +55,12 @@
   --color-accent:           #7a5d18;  /* 5.7:1 on bg */
   --color-accent-soft:      #f2ecdc;  /* tinted background for code, callouts */
 
+  /* Text drawn *on* the accent — a filled button, a selected filter link.
+     The accent flips between contexts, so its text color has to flip with it:
+     the page's accent is dark and wants pale text, the band's brass is pale
+     and wants dark. Both pairings are the same 5.7:1 and 8.3:1 as before. */
+  --color-on-accent:        #fcfdfb;  /* 5.7:1 on --color-accent */
+
   /* Focus ring. Deliberately NOT the brass used in the mock-up: on the light
      background that was 1.8:1, below the 3:1 that WCAG 1.4.11 requires of a
      focus indicator. This is 5.7:1. Sections on the dark band override it
@@ -246,6 +252,9 @@ section { padding-block: var(--space-section); }
   --color-text-muted: var(--color-band-text-muted);
   --color-accent: var(--color-band-accent);
   --color-focus: var(--color-band-accent);
+
+  /* The brass is the pale one here, so text on it goes dark. 8.3:1. */
+  --color-on-accent: #16241d;
 }
 
 /* Small uppercase label above a heading. */
@@ -304,16 +313,30 @@ section { padding-block: var(--space-section); }
 
   font-weight: 700;
   text-decoration: none;
-  background: var(--color-band-accent);
-  color: #16241d;                        /* 8.3:1 on the brass */
-  border: 2px solid var(--color-band-accent);
+
+  /**
+   * `--color-accent`, not `--color-band-accent`. The .band class remaps
+   * --color-accent to the brass, so this one declaration gives a legible
+   * button in both places: pale brass with dark text on the green band, dark
+   * brass with pale text on the page. Decision 032.
+   *
+   * Before this it was hard-coded to the band's brass, which is 1.8:1 on the
+   * page background — so the event page had already grown its own copy of this
+   * rule to undo it, and the home page could not have a button at all.
+   */
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: 2px solid var(--color-accent);
 }
 
 .button:hover {
   background: transparent;
-  color: var(--color-band-accent);
+  color: var(--color-accent);
 }
 
+/* Only used on the green band, where --color-band-text is the legible one.
+   On the page background this would be near-white on off-white — if a ghost
+   button is ever wanted there, it needs its own colors. */
 .button--ghost {
   background: transparent;
   color: var(--color-band-text);

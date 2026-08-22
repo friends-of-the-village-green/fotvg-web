@@ -120,7 +120,13 @@ export async function getNav() {
      mock-ups — John is checking with them whether they would rather it read
      "Upcoming", which would be a one-line change here. */
   if (sections.hasRecaps) items.push({label: "What we've done", href: '/#done'})
-  if (sections.hasUpcoming) items.push({label: "What's on", href: '/#upcoming'})
+
+  /* Unconditional, unlike the two beside it. The What's on section now renders
+     even with nothing on the calendar, because it says so in a sentence rather
+     than vanishing (decision 032) — so the #upcoming target always exists and
+     the link can never point at a section that did not render. */
+  items.push({label: "What's on", href: '/#upcoming'})
+
   if (sections.hasPrograms) items.push({label: 'What we support', href: '/#support'})
 
   /* The Donate link goes to the section further down this page, not straight
