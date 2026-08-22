@@ -1,0 +1,147 @@
+---
+/**
+ * Everything FotVG has put on, written up, newest first — and the same list
+ * narrowed to one program area (decision 031).
+ *
+ * A rest parameter, so this one file is `/past-events` *and*
+ * `/past-events/greenworks`. The alternative was an index page plus a
+ * `[program]` page that had to be kept looking identical by hand, and they
+ * would not have stayed identical.
+ *
+ * This is the page a grant reviewer is sent to. The filter exists because the
+ * summer concert series runs weekly, and a reviewer who came to see what
+ * Greenworks has done should not have to read past twelve of them —
+ * `/past-events/greenworks` is an address that can go straight in the
+ * application.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PastEventList from '../../components/PastEventList.astro'
+import ProgramFilter from '../../components/ProgramFilter.astro'
+import {client} from '../../lib/sanity.js'
+import {
+  pastEventsByProgramQuery,
+  pastEventsWithRecapQuery,
+  programRecapCountsQuery,
+} from '../../lib/queries.js'
+
+export async function getStaticPaths() {
+  const programs = await client.fetch(programRecapCountsQuery)
+
+  /* Only programs with something written up get a page. A filter link that
+     leads to an empty list is worse than not offering the filter, and the
+     first write-up for a program brings its page into being on the next build
+     with nobody doing anything. */
+  const withRecaps = programs.filter((p) => p.recapCount > 0)
+
+  return [
+    /* `undefined` is what generates /past-events itself. */
+    {params: {program: undefined}, props: {programs: withRecaps, current: null}},
+
+    ...withRecaps.map((p) => ({
+      params: {program: p.slug},
+      props: {programs: withRecaps, current: p.slug},
+    })),
+  ]
+}
+
+const {programs, current} = Astro.props
+
+const events = current
+  ? await client.fetch(pastEventsByProgramQuery, {program: current})
+  : await client.fetch(pastEventsWithRecapQuery)
+
+const program = programs.find((p) => p.slug === current)
+
+/* The heading stays the same on every one of these pages. What changes is the
+   sentence under it and the highlighted filter — which is what a reader
+   actually looks at, and it keeps a shared address like
+   /past-events/greenworks from having a heading that argues with the filter
+   sitting under it. */
+const title = program ? `${program.name} — what we've done` : "What we've done"
+
+const description = program
+  ? `Write-ups and photographs of everything Friends of the Village Green has put on for ${program.name}, in Kingston, Washington.`
+  : 'Write-ups and photographs of every event Friends of the Village Green has put on in Kingston, Washington.'
+
+/* Only worth offering the filter when there is more than one thing to filter
+   by. With a single program every link would show the same list. */
+const showFilter = programs.length > 1
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="intro">
+    <div class="wrap prose">
+      <h1 class="page-title">What we've done</h1>
+
+      <p class="lede">
+        {program ? (
+          <>Everything we have put on for {program.name}, most recent first.</>
+        ) : (
+          <>
+            Every event we have put on, most recent first. We write each one up
+            afterwards and put the photographs with it.
+          </>
+        )}
+      </p>
+    </div>
+  </section>
+
+  {showFilter && (
+    <div class="wrap filter-row">
+      <ProgramFilter programs={programs} current={current} />
+    </div>
+  )}
+
+  <section class="list">
+    <div class="wrap">
+      {events.length > 0 ? (
+        <PastEventList events={events} />
+      ) : (
+        /* getStaticPaths only builds pages that have something on them, so
+           this is for the unfiltered page before the first write-up exists —
+           a new site, or a restored-from-backup one. */
+        <p class="empty">
+          Nothing written up just yet. We add a write-up and photographs after
+          each event.
+        </p>
+      )}
+
+      <p class="more"><a href="/events">See what's coming up</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    padding-block: var(--space-section) var(--space-l);
+  }
+
+  .lede {
+    margin-top: var(--space-m);
+    color: var(--color-text-muted);
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  }
+
+  .filter-row {
+    padding-bottom: var(--space-l);
+  }
+
+  .list {
+    padding-top: 0;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+    max-width: var(--width-prose);
+  }
+
+  .more {
+    margin-top: var(--space-xl);
+    font-weight: 700;
+  }
+
+  .more a {
+    color: var(--color-accent);
+    text-underline-offset: 4px;
+  }
+</style>

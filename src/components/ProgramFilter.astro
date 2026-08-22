@@ -1,0 +1,83 @@
+---
+/**
+ * Filter the write-ups by program area.
+ *
+ * These are ordinary links to ordinary pages, not a script that hides rows
+ * (decision 031). It costs three more generated pages and buys: it works with
+ * JavaScript off and on a bad rural connection, every filter is a real address
+ * that can go in a grant application, the back button behaves, and a screen
+ * reader gets plain navigation rather than a list that silently changes under
+ * it.
+ *
+ * Only programs that have something written up appear here — the page for a
+ * program with nothing in it is never generated, so no filter can lead
+ * somewhere empty. See programRecapCountsQuery.
+ *
+ * `current` is the slug of the program being shown, or null on the unfiltered
+ * page.
+ */
+const {programs, current = null} = Astro.props
+---
+
+<nav class="filter" aria-label="Filter by program area">
+  <ul role="list">
+    {/* aria-current tells a screen reader which one is showing. The fill does
+        the same job visually; neither is doing it alone. */}
+    <li>
+      <a href="/past-events" aria-current={current === null ? 'page' : undefined}>
+        Everything
+      </a>
+    </li>
+
+    {programs.map((program) => (
+      <li>
+        <a
+          href={`/past-events/${program.slug}`}
+          aria-current={current === program.slug ? 'page' : undefined}
+        >
+          {program.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .filter ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .filter a {
+    display: flex;
+    align-items: center;
+
+    /* 44px, the WCAG 2.5.8 minimum. This audience taps with thumbs, and a long
+       program name already wraps to its own line on a phone — there is no
+       reason to make these small. */
+    min-height: 44px;
+    padding: var(--space-xs) var(--space-m);
+
+    border: 1px solid var(--color-rule);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.92rem;
+    line-height: 1.2;
+  }
+
+  .filter a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* The one that is showing. Filled rather than merely tinted, so the
+     difference between selected and not is obvious rather than a shade —
+     #7a5d18 against the page background is 5.7:1 either way round. */
+  .filter a[aria-current='page'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+    font-weight: 700;
+  }
+</style>

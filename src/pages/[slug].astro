@@ -22,7 +22,7 @@ export async function getStaticPaths() {
 
   /* Guard the collision the comment above warns about, rather than trusting
      nobody will ever do it. */
-  const reserved = new Set(['events', 'programs', 'board'])
+  const reserved = new Set(['events', 'past-events', 'programs', 'board'])
 
   return slugs
     .filter((slug) => !reserved.has(slug))
@@ -45,7 +45,7 @@ if (!page) {
   <article>
     <section class="intro">
       <div class="wrap prose">
-        <h1>{page.title}</h1>
+        <h1 class="page-title">{page.title}</h1>
         <p class="summary">{page.summary}</p>
       </div>
     </section>

@@ -205,6 +205,23 @@ h1 { font-size: clamp(2.4rem, 8vw, 4.6rem); line-height: 1.03; letter-spacing: -
 h2 { font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.08; }
 h3 { font-size: clamp(1.4rem, 3.5vw, 1.75rem); line-height: 1.15; }
 
+/* The title of an interior page — every page except the home page.
+   Decision 031.
+
+   The h1 scale above belongs to the home page, where the headline *is* the
+   content and 4.6rem is doing a job. On an interior page the title is a label
+   on something else, and at that size it was rendering "What's on, and what
+   we've done" as three lines and 227 pixels of heading before the reader
+   reached anything they came for.
+
+   Back to -0.015em, the tracking the other headings use: the extra tightening
+   on h1 was tuned for 4.6rem and reads as cramped down here. */
+.page-title {
+  font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
 /* ==========================================================================
    Layout helpers
    ========================================================================== */

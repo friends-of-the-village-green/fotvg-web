@@ -24,7 +24,9 @@ Operational procedures. Written for someone who is not the person who built this
 
 Afterwards, when the event has happened, open the same event again — do not create a
 new one — and fill in the **Afterwards** tab with the write-up and the photographs.
-Filling in "How it went" is what moves the event from *What's on* to *What we've done*.
+Filling in "How it went" is what moves the event off *What's on* (`/events`) and onto
+*What we've done* (`/past-events`), including that program's own filtered list. Until
+"How it went" has something in it, a past event appears on neither.
 
 _(To be written: screenshots.)_
 

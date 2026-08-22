@@ -1,0 +1,89 @@
+---
+/**
+ * The list of write-ups, as cards. Used by the past events page and by each of
+ * its per-program variants, which is the reason it is a component at all —
+ * before this it was markup living inside /events, and the filtered pages would
+ * have been four copies of it.
+ *
+ * Cards rather than the row treatment used for upcoming events. An upcoming
+ * event is scanned for a date; a write-up is browsed, and the summary is the
+ * part that decides whether someone opens it.
+ *
+ * The titles are h2, so this component assumes it sits directly under the page
+ * h1 with nothing in between. That is true of every page that uses it. If it
+ * ever goes inside a section with its own heading, these need to become h3 —
+ * skipping a level is what a screen reader user hears as a missing section.
+ */
+import {formatEventDate, toDateAttribute} from '../lib/dates.js'
+
+const {events} = Astro.props
+---
+
+<ul class="past-list" role="list">
+  {events.map((event) => (
+    <li>
+      <p class="past-when">
+        <time datetime={toDateAttribute(event.startDate)}>
+          {formatEventDate(event.startDate)}
+        </time>
+        {event.program && (
+          <>
+            <span aria-hidden="true"> · </span>
+            {event.program.name}
+          </>
+        )}
+      </p>
+
+      <h2><a href={`/events/${event.slug}`}>{event.title}</a></h2>
+
+      {event.summary && <p class="past-summary">{event.summary}</p>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .past-list {
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  @media (min-width: 46rem) {
+    .past-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl);
+    }
+  }
+
+  .past-list > li {
+    border-top: 2px solid var(--color-accent);
+    padding-top: var(--space-m);
+  }
+
+  .past-when {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .past-list h2 {
+    font-size: 1.3rem;
+  }
+
+  .past-list h2 a {
+    text-decoration: none;
+  }
+
+  .past-list h2 a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .past-summary {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+  }
+</style>
