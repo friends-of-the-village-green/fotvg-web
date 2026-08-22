@@ -36,19 +36,19 @@ The home page shows a few past write-ups under **What we've done**, each one a f
 across the page with its photographs. Which ones is the board's choice.
 
 1. Open the event → **Afterwards — the write-up** tab.
-2. Tick **Feature on the home page**.
+2. Check **Feature on the home page**.
 3. **Publish**. It appears at the next daily rebuild, not straight away.
 
 Three or four is what the page carries comfortably; six is the most it will show, newest
-first. There is no need to untick the old ones first — but if you tick seven, the
-*oldest* of the seven drops off the page without saying so, so untick one deliberately
+first. There is no need to uncheck the old ones first — but if you check seven, the
+*oldest* of the seven drops off the page without saying so, so uncheck one deliberately
 rather than wondering later why it never appeared.
 
-**If nothing is ticked anywhere**, the home page falls back to the three most recent
-write-ups. So the section is never empty, and "untick everything" is a safe way to go
+**If nothing is checked anywhere**, the home page falls back to the three most recent
+write-ups. So the section is never empty, and "uncheck everything" is a safe way to go
 back to how it used to behave.
 
-Only events with a write-up can be featured. Ticking the box on an event with an empty
+Only events with a write-up can be featured. Checking the box on an event with an empty
 "How it went" does nothing at all.
 
 ## Taking an old event off the website
@@ -56,11 +56,11 @@ Only events with a write-up can be featured. Ticking the box on an event with an
 Use this instead of deleting. Deleting cannot be undone; this can.
 
 1. Open the event → **Before it happens** tab (the one that opens by default).
-2. Tick **Archived — hide from the website**.
+2. Check **Archived — hide from the website**.
 3. **Publish**. It disappears at the next daily rebuild.
 
 The event stays in the Studio, so you can still open it and copy the wording for next
-year's version. Untick the box and it comes back at exactly the same web address.
+year's version. Uncheck the box and it comes back at exactly the same web address.
 
 **One thing to know before you archive something recent:** the event's own page stops
 existing, so anyone following an old Facebook post or emailed link to it gets a "page
@@ -224,7 +224,7 @@ One-off, and needs doing before editors are asked to rely on the site.
 2. **GitHub** → the repository → **Settings** → **Secrets and variables** → **Actions**
    → **New repository secret**. Name it exactly `NETLIFY_BUILD_HOOK_URL`, paste the URL
    as the value, and save.
-3. Test it: **Actions** → **Rebuild the website** → **Run workflow**. A green tick, and
+3. Test it: **Actions** → **Rebuild the website** → **Run workflow**. A green check mark, and
    a new deploy appearing in Netlify, means it works.
 
 **That URL is a credential.** Anyone who has it can trigger builds and exhaust the
@@ -233,13 +233,13 @@ else — never in the repository, never in an email.
 
 > ⚠️ **GitHub turns off scheduled workflows in quiet repositories.** After 60 days with
 > no commits, the daily rebuild stops and GitHub emails the repository admins. This
-> repository *will* go quiet — that is rather the point of building it this way — so
+> repository *will* go quiet — that is the whole point of building it this way — so
 > expect that email one day and do not ignore it. Re-enabling is one button in the
 > Actions tab.
 
 ## How to tell it worked
 
-1. Netlify → **Deploys**. The newest entry should say **Published** with a green tick.
+1. Netlify → **Deploys**. The newest entry should say **Published** with a green check mark.
    A build takes a couple of minutes.
 2. Open the page on the live site and refresh.
 3. If the deploy failed, click it and read the log. The last red line is usually the

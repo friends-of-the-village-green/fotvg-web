@@ -91,7 +91,7 @@ so they get a durable URL and stay published indefinitely.
   stays in the Studio to be copied from. This is the alternative to deleting, which
   cannot be undone. Untick it and everything returns at the same URL. Decision 030.
 - **`featuredOnHome`** — puts a write-up on the home page under "What we've done". With
-  none ticked the home page falls back to the three most recent write-ups, so the
+  none checked the home page falls back to the three most recent write-ups, so the
   section can never render empty. Decision 029.
 
 `archived` sits on the *before* tab next to `cancelled` rather than with the write-up,
