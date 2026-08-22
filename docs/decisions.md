@@ -694,3 +694,32 @@ sections, not a second heading.
 **Revisit if:** the board misses the extra line as a place to say something the heading
 cannot — in which case it comes back as a real sentence under the heading, like the one
 What we support already has, not as a paraphrase above it.
+
+## 033 — `.prose` goes inside `.wrap`, never on it
+**Date:** 2026-08-21
+**Decision:** `class="wrap prose"` is wrong and is replaced everywhere by a `.prose`
+element nested inside the `.wrap`. The links at the bottom of the events pages, the past
+events pages and each event page become buttons, matching the home page.
+**Why the nesting:** `.prose` is declared after `.wrap` in `global.css`, so on a combined
+element its 38rem `max-width` wins — and `.wrap`'s `margin-inline: auto` then centers that
+narrow box in the middle of the page. About us, Privacy, The board, `/events` and
+`/past-events` all had it, so their titles sat centered while every event and program page
+sat left. John spotted it on About us against an event page. Nesting keeps both behaviors:
+the wrap centers the page container, the prose caps the measure, and the text starts at
+the gutter like everything else. Every page title on the site now begins at the same
+left edge.
+**Why the buttons:** the home page's "See everything we've done" became a button in
+decision 032 and was immediately more visible, but the same link at the foot of every
+event page was still a line of bold text. One link, two treatments, on the same site.
+A page that ends in a line of bold text ends in nothing.
+**What stays a text link:** "See all upcoming events" on the home page. It is a
+see-more-of-this-list link directly under a short list, not the one thing to do at the
+end of a page, and two buttons on the home page would make neither of them mean anything.
+It only renders when there are more than six upcoming events, so it is rare in any case.
+**Guard:** the `.prose` rule in `global.css` now carries a comment saying not to put it on
+a `.wrap`. It looks like it should work, which is why five pages did it.
+**Found while checking, not fixed here:** the About us page body uses "Subheading" (h3)
+for all five of its section headings, so the page runs h1 → h3 and skips a level. That is
+content rather than code — the fix is to change them to "Heading" in the Studio. Demoting
+or promoting heading levels in the template would fight the editor's choice everywhere
+else.

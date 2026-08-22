@@ -239,6 +239,16 @@ h3 { font-size: clamp(1.4rem, 3.5vw, 1.75rem); line-height: 1.15; }
   padding-inline: var(--gutter);
 }
 
+/**
+ * Caps a column of text at a readable measure. Put it on an element *inside*
+ * a .wrap, never on the .wrap itself.
+ *
+ * `class="wrap prose"` looks like it should work and does the wrong thing:
+ * this rule is declared after .wrap, so its max-width wins, and .wrap's
+ * `margin-inline: auto` then centers that narrow box in the middle of the
+ * page. Five pages had it, and their titles sat centered while every event and
+ * program page sat left — which is what John spotted on About us. Decision 033.
+ */
 .prose { max-width: var(--width-prose); }
 
 section { padding-block: var(--space-section); }

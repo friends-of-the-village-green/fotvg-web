@@ -146,12 +146,21 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
     {/* Back to the list this event came from, rather than to "all events",
         which is no longer one page. Someone reading a 2024 write-up wants the
         other write-ups, not next month's concerts. */}
+    {/* Styled as a button, like the same link on the home page. It is the one
+        thing to do at the bottom of the page, and a page that ends in a line of
+        bold text ends in nothing. */}
     <div class="wrap back">
       <p>
         {past ? (
-          <a href="/past-events">See everything we've done</a>
+          <a class="button" href="/past-events">
+            See everything we've done
+            <span aria-hidden="true">→</span>
+          </a>
         ) : (
-          <a href="/events">See what else is on</a>
+          <a class="button" href="/events">
+            See what else is on
+            <span aria-hidden="true">→</span>
+          </a>
         )}
       </p>
     </div>
@@ -261,11 +270,5 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
 
   .back {
     padding-block: var(--space-xl);
-  }
-
-  .back a {
-    font-weight: 700;
-    color: var(--color-accent);
-    text-underline-offset: 4px;
   }
 </style>
