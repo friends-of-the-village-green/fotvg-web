@@ -1,42 +1,40 @@
 ---
 /**
- * All events: what is coming up, and everything written up so far.
+ * What is coming up. Only that.
  *
- * The past list is the one that does quiet work. A grant reviewer sent here
- * from an application wants to see a run of delivered events with write-ups,
- * and this is the page that shows it in one view.
+ * This page used to carry the upcoming list *and* the whole archive, which is
+ * why its heading had to be "What's on, and what we've done" — six words that
+ * took three lines to say at the home page's heading size. The archive now
+ * lives at /past-events, where it can be filtered, and this page does one job
+ * (decision 031).
+ *
+ * The URL is unchanged, so the home page's "See all upcoming events" and any
+ * link anyone has already shared still land somewhere sensible.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import EventRow from '../../components/EventRow.astro'
 import {client} from '../../lib/sanity.js'
-import {pastEventsWithRecapQuery, upcomingEventsQuery} from '../../lib/queries.js'
-import {formatEventDate, toDateAttribute} from '../../lib/dates.js'
+import {upcomingEventsQuery} from '../../lib/queries.js'
 
-const [upcoming, past] = await Promise.all([
-  client.fetch(upcomingEventsQuery),
-  client.fetch(pastEventsWithRecapQuery),
-])
+const upcoming = await client.fetch(upcomingEventsQuery)
 ---
 
 <BaseLayout
-  title="Events"
-  description="What's coming up at the Village Green, and write-ups with photographs of everything Friends of the Village Green has put on so far."
+  title="What's on"
+  description="Concerts, work parties, classes, tours and sales coming up at the Village Green in Kingston, Washington."
 >
   <section class="intro">
     <div class="wrap prose">
-      <p class="eyebrow">Events</p>
-      <h1>What's on, and what we've done</h1>
+      <h1 class="page-title">What's on</h1>
       <p class="lede">
-        Concerts, work parties, classes, tours and sales. Everything we put on
-        gets written up afterwards with photographs.
+        Concerts, work parties, classes, tours and sales. Everything here is at
+        the Village Green, and everyone is welcome.
       </p>
     </div>
   </section>
 
-  <section>
+  <section class="list">
     <div class="wrap">
-      <h2>Coming up</h2>
-
       {upcoming.length > 0 ? (
         <ul class="event-list" role="list">
           {upcoming.map((event) => <EventRow event={event} />)}
@@ -47,36 +45,10 @@ const [upcoming, past] = await Promise.all([
           in spring and the work parties a few weeks ahead.
         </p>
       )}
+
+      <p class="more"><a href="/past-events">See everything we've done</a></p>
     </div>
   </section>
-
-  {past.length > 0 && (
-    <section class="past">
-      <div class="wrap">
-        <h2>What we've done</h2>
-
-        <ul class="past-list" role="list">
-          {past.map((event) => (
-            <li>
-              <p class="past-when">
-                <time datetime={toDateAttribute(event.startDate)}>
-                  {formatEventDate(event.startDate)}
-                </time>
-                {event.program && (
-                  <>
-                    <span aria-hidden="true"> · </span>
-                    {event.program.name}
-                  </>
-                )}
-              </p>
-              <h3><a href={`/events/${event.slug}`}>{event.title}</a></h3>
-              {event.summary && <p class="past-summary">{event.summary}</p>}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )}
 </BaseLayout>
 
 <style>
@@ -90,9 +62,8 @@ const [upcoming, past] = await Promise.all([
     font-size: clamp(1.05rem, 2.5vw, 1.2rem);
   }
 
-  h2 {
-    font-size: clamp(1.5rem, 3.5vw, 2rem);
-    margin-bottom: var(--space-l);
+  .list {
+    padding-top: 0;
   }
 
   .event-list {
@@ -105,52 +76,13 @@ const [upcoming, past] = await Promise.all([
     max-width: var(--width-prose);
   }
 
-  .past {
-    background: var(--color-bg-alt);
+  .more {
+    margin-top: var(--space-xl);
+    font-weight: 700;
   }
 
-  .past-list {
-    display: grid;
-    gap: var(--space-l);
-  }
-
-  @media (min-width: 46rem) {
-    .past-list {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-xl);
-    }
-  }
-
-  .past-list > li {
-    border-top: 2px solid var(--color-accent);
-    padding-top: var(--space-m);
-  }
-
-  .past-when {
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-xs);
-  }
-
-  .past-list h3 {
-    font-size: 1.3rem;
-  }
-
-  .past-list h3 a {
-    text-decoration: none;
-  }
-
-  .past-list h3 a:hover {
+  .more a {
     color: var(--color-accent);
-    text-decoration: underline;
     text-underline-offset: 4px;
-  }
-
-  .past-summary {
-    margin-top: var(--space-xs);
-    color: var(--color-text-muted);
-    font-size: 0.98rem;
   }
 </style>

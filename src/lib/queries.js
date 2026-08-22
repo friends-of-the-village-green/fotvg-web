@@ -16,6 +16,29 @@ const IMAGE = `{
   alt, caption, credit, hotspot, crop
 }`
 
+/**
+ * The filter every event query begins with. Do not write a new event query
+ * without it.
+ *
+ * `archived != true` rather than the `!archived` that reads more naturally, and
+ * the difference is not cosmetic. Events created before the field existed have
+ * no `archived` at all, and in GROQ `!archived` on a missing field evaluates
+ * `!null` → `null`, which is not true — so that spelling would quietly drop
+ * every event on the site rather than the handful an editor has hidden.
+ * `null != true` is true, so this spelling includes them. Same trap for
+ * `cancelled` below, which is why that one is spelled the same way.
+ *
+ * Archiving takes an event off the site completely, including its own page:
+ * `allEventSlugsQuery` reads this too, so no page is generated for it at all
+ * (decision 030).
+ */
+const LIVE_EVENT = `_type == "event" && defined(slug.current) && archived != true`
+
+/* Past, and written up. The two conditions always travel together: an event
+   with no write-up is not evidence of anything, and showing an empty one on
+   the page a grant reviewer reads is worse than showing nothing. */
+const WRITTEN_UP = `coalesce(endDate, startDate) < now() && defined(recap)`
+
 /* ---------------------------------------------------------------- settings */
 
 export const siteSettingsQuery = `
@@ -42,33 +65,19 @@ export const allProgramsQuery = `
   }
 `
 
+/* `recapCount` decides whether the page offers a link to this program's own
+   archive. Zero write-ups, no link — see programRecapCountsQuery below, which
+   is the same count and the reason the filtered pages exist at all. */
 export const programBySlugQuery = `
   *[_type == "program" && slug.current == $slug][0]{
     _id, name, "slug": slug.current, summary, mission, vision, body,
     seoDescription,
-    "image": image${IMAGE}
+    "image": image${IMAGE},
+    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id])
   }
 `
 
 /* ------------------------------------------------------------------ events */
-
-/**
- * The filter every event query begins with. Do not write a new event query
- * without it.
- *
- * `archived != true` rather than the `!archived` that reads more naturally, and
- * the difference is not cosmetic. Events created before the field existed have
- * no `archived` at all, and in GROQ `!archived` on a missing field evaluates
- * `!null` → `null`, which is not true — so that spelling would quietly drop
- * every event on the site rather than the handful an editor has hidden.
- * `null != true` is true, so this spelling includes them. Same trap for
- * `cancelled` below, which is why that one is spelled the same way.
- *
- * Archiving takes an event off the site completely, including its own page:
- * `allEventSlugsQuery` reads this too, so no page is generated for it at all
- * (decision 030).
- */
-const LIVE_EVENT = `_type == "event" && defined(slug.current) && archived != true`
 
 /* Shared shape for an event in a list. */
 const EVENT_CARD = `
@@ -85,11 +94,6 @@ const EVENT_RECAP = `
   recap,
   "gallery": gallery[]${IMAGE}
 `
-
-/* Past, and written up. The two conditions always travel together: an event
-   with no write-up is not evidence of anything, and showing an empty one on
-   the page a grant reviewer reads is worse than showing nothing. */
-const WRITTEN_UP = `coalesce(endDate, startDate) < now() && defined(recap)`
 
 /**
  * Upcoming events.
@@ -117,6 +121,37 @@ export const nextEventQuery = `
 export const pastEventsWithRecapQuery = `
   *[${LIVE_EVENT} && ${WRITTEN_UP}]
   | order(startDate desc){${EVENT_RECAP}}
+`
+
+/**
+ * The same list, narrowed to one program area (decision 031).
+ *
+ * Note what this cannot reach: an event whose program is empty, which the
+ * Studio allows for anything that genuinely belongs to none. Those appear on
+ * the unfiltered page and on no filtered one, which is the right answer — the
+ * unfiltered page is the complete record.
+ */
+export const pastEventsByProgramQuery = `
+  *[${LIVE_EVENT} && ${WRITTEN_UP} && program->slug.current == $program]
+  | order(startDate desc){${EVENT_RECAP}}
+`
+
+/**
+ * Every program, with how many write-ups it has.
+ *
+ * Drives both the filter links and the pages behind them: a program with
+ * nothing written up yet gets no filter link and no page, so a filter can
+ * never lead somewhere empty, and the first write-up for a program brings its
+ * page into existence on the next build with nobody doing anything.
+ *
+ * Same principle as the navigation in content.js — build it from what exists,
+ * rather than from what ought to.
+ */
+export const programRecapCountsQuery = `
+  *[_type == "program" && defined(slug.current)] | order(name asc){
+    name, "slug": slug.current,
+    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id])
+  }
 `
 
 /**

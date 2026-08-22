@@ -52,7 +52,7 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
           )}
         </p>
 
-        <h1>{event.title}</h1>
+        <h1 class="page-title">{event.title}</h1>
 
         {event.cancelled && (
           <p class="cancelled">
@@ -143,8 +143,17 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
       </section>
     )}
 
+    {/* Back to the list this event came from, rather than to "all events",
+        which is no longer one page. Someone reading a 2024 write-up wants the
+        other write-ups, not next month's concerts. */}
     <div class="wrap back">
-      <p><a href="/events">All events</a></p>
+      <p>
+        {past ? (
+          <a href="/past-events">See everything we've done</a>
+        ) : (
+          <a href="/events">See what else is on</a>
+        )}
+      </p>
     </div>
   </article>
 </BaseLayout>

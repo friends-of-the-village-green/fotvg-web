@@ -610,3 +610,45 @@ explaining. The Studio's event list now shows ARCHIVED and CANCELLED in the subt
 an editor scanning a list can see why something is not on the site.
 **Revisit if:** editors start archiving things to tidy the Studio rather than the site,
 which would mean they want a filtered view of the event list instead.
+
+## 031 — Upcoming and past are two pages, and the past one filters by program
+**Date:** 2026-08-21
+**Decision:** `/events` lists what is coming up. `/past-events` is the archive of
+write-ups, newest first, with a filter by program area at
+`/past-events/greenworks` and one page per program. Interior pages get their own
+heading size, `.page-title`, smaller than the home page's.
+**Why two pages:** one page was doing both jobs, which is why its heading had to be
+"What's on, and what we've done" — six words that rendered as three lines and 227 pixels
+of heading before a reader reached anything. Each page now does one thing and can be
+called what it is. `/events` keeps its URL, so nothing already shared breaks.
+**Why the filter is links to real pages, not JavaScript:** it costs three generated pages
+and buys four things. It works with JavaScript off and on a bad rural connection. Every
+filter is an address that can go straight into a grant application —
+`/past-events/greenworks` is a far better thing to give a funder than "go here and click
+Greenworks". The back button behaves. And a screen reader gets ordinary navigation
+rather than a list that silently changes underneath it. A script would have been one
+page instead of four, and none of that.
+**Only programs with a write-up get a filter link or a page**, so a filter can never lead
+somewhere empty, and the first write-up for a new program brings its page into existence
+on the next build with nobody doing anything. Same principle as the navigation in
+`content.js`: build from what exists.
+**A write-up with no program area** appears on `/past-events` and on no filtered page.
+That is correct — the unfiltered page is the complete record — and it is why the filter
+links say "Everything" rather than "All programs".
+**Program pages now link to their own archive.** Until now a program page described the
+work and showed none of it, which is a strange thing to hand a grant reviewer. The
+write-ups are linked rather than repeated, so there is one list rather than two that
+drift apart.
+**Why the interior heading size is its own class** rather than a smaller `h1` everywhere:
+the home page headline genuinely wants 4.6rem — it is the content, not a label on it.
+The two cases are different and now say so.
+**Relationship to decision 020 (no search):** that decision said to revisit at roughly
+fifty write-ups, when finding "that concert two summers ago" stops being easy by eye.
+There are five today. The filter is the cheaper half of that revisit, done early because
+the weekly summer concerts are what will make the archive long, and retrofitting a filter
+into a swamped page costs more than building it into an empty one. This is not search
+and does not replace it.
+**Tradeoff:** four pages where there was one, and three more on every build. At three
+programs that is nothing; at fifteen it would be worth reconsidering.
+**Revisit if:** the archive grows past roughly fifty write-ups even within a single
+program, at which point the filtered pages want paging or dates as well.

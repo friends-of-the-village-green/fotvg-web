@@ -43,7 +43,7 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
     <section class="intro">
       <div class="wrap">
         <p class="eyebrow">What we support</p>
-        <h1>{program.name}</h1>
+        <h1 class="page-title">{program.name}</h1>
         <p class="summary">{program.summary}</p>
       </div>
     </section>
@@ -90,6 +90,22 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
               </div>
             )}
           </div>
+        )}
+
+        {/* Until now a program page described the work and showed none of it,
+            which is a strange thing to hand a grant reviewer. The write-ups
+            live on the filtered archive rather than being repeated here, so
+            there is one list to maintain rather than two that drift.
+
+            Only offered when there is something behind it — the page for a
+            program with no write-ups is not generated at all, so linking
+            unconditionally would 404. See programRecapCountsQuery. */}
+        {program.recapCount > 0 && (
+          <p class="archive-link">
+            <a href={`/past-events/${program.slug}`}>
+              See what we've done for {program.name}
+            </a>
+          </p>
         )}
       </div>
     </section>
@@ -156,5 +172,15 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
   .statement p {
     margin-top: var(--space-xs);
     color: var(--color-text-muted);
+  }
+
+  .archive-link {
+    margin-top: var(--space-xl);
+    font-weight: 700;
+  }
+
+  .archive-link a {
+    color: var(--color-accent);
+    text-underline-offset: 4px;
   }
 </style>
