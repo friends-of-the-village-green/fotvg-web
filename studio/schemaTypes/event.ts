@@ -175,9 +175,9 @@ export const event = defineType({
       group: 'before',
       initialValue: false,
       description:
-        'Tick this rather than deleting the event. The page stays up and says ' +
-        'plainly that it is cancelled, which is what someone holding a flyer ' +
-        'needs to see.',
+        'Check this box rather than deleting the event. The page stays up and ' +
+        'says plainly that it is cancelled, which is what someone holding a ' +
+        'flyer needs to see.',
     }),
 
     /**
@@ -200,7 +200,7 @@ export const event = defineType({
         'Takes the event off the website completely — the listings, the home ' +
         'page and its own page — while keeping it here in the Studio to copy ' +
         'from when you set up something similar. Use this instead of deleting, ' +
-        'which cannot be undone. Untick it and everything comes back at the ' +
+        'which cannot be undone. Uncheck it and everything comes back at the ' +
         'same web address on the next build. One thing to know: anyone ' +
         'following an old link to an archived event gets a "page not found", ' +
         'so think twice about archiving something recent that people may still ' +
@@ -247,7 +247,7 @@ export const event = defineType({
      * events were written up. The board wanted the choice to be a decision.
      *
      * The fallback in src/pages/index.astro is the important half of this. With
-     * nothing ticked — true on the day this ships, and true again the first
+     * nothing checked — true on the day this ships, and true again the first
      * time somebody tidies up — the home page returns to the three most recent,
      * so the section a grant reviewer reads can never go blank.
      */
@@ -262,10 +262,10 @@ export const event = defineType({
         'events that have a write-up above can be featured — there is nothing ' +
         'to show otherwise. Each featured event takes a full band across the ' +
         'page, so three or four is what the home page carries comfortably and ' +
-        'six is the most it will show. Tick none at all and the home page goes ' +
-        'back to showing the three most recent write-ups, so the section is ' +
-        'never empty. Changes appear on the site with the next daily build, ' +
-        'not straight away.',
+        'six is the most it will show. Leave them all unchecked and the home ' +
+        'page goes back to showing the three most recent write-ups, so the ' +
+        'section is never empty. Changes appear on the site with the next ' +
+        'daily build, not straight away.',
     }),
 
     /* ---- SEO ------------------------------------------------------------ */
