@@ -266,6 +266,29 @@ export const event = defineType({
         'page goes back to showing the three most recent write-ups, so the ' +
         'section is never empty. Changes appear on the site with the next ' +
         'daily build, not straight away.',
+
+      /**
+       * A warning rather than an error, and deliberately so.
+       *
+       * The two boxes contradict each other — archived means off the site
+       * entirely, featured means on the home page — and the site resolves it
+       * silently in archiving's favor. Silently is the problem: an editor who
+       * archives a featured event has no way to know the other box is now a
+       * lie, and the row in the events list used to repeat that lie back.
+       *
+       * An error would block publishing, which is too strong: archiving a
+       * featured event is a perfectly reasonable thing to do, and being made
+       * to uncheck a second box first is a chore, not a safeguard. A warning
+       * says what happened and lets the editor get on with it.
+       */
+      validation: (Rule) =>
+        Rule.custom((value, context) =>
+          value && context.document?.archived
+            ? 'This event is archived, so it is off the website altogether and will ' +
+              'not appear on the home page. Uncheck Archived to bring it back, or ' +
+              'uncheck this box to stop asking for it.'
+            : true,
+        ).warning(),
     }),
 
     /* ---- SEO ------------------------------------------------------------ */
@@ -327,7 +350,13 @@ export const event = defineType({
       const flags = []
       if (archived) flags.push('ARCHIVED')
       if (cancelled) flags.push('CANCELLED')
-      if (recap) flags.push(featuredOnHome ? 'on the home page' : 'written up')
+
+      /* `&& !archived` is the point. An archived event is off the site
+         entirely, home page included, so saying "on the home page" next to
+         ARCHIVED would be telling the editor something untrue about the one
+         thing this line exists to report. It happened the first day both boxes
+         were in use. */
+      if (recap) flags.push(featuredOnHome && !archived ? 'on the home page' : 'written up')
 
       const status = flags.length ? ` · ${flags.join(' · ')}` : ''
 

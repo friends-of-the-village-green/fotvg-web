@@ -51,6 +51,11 @@ back to how it used to behave.
 Only events with a write-up can be featured. Checking the box on an event with an empty
 "How it went" does nothing at all.
 
+**Archiving wins over featuring.** If an event is archived it is off the website
+altogether, home page included, whatever this box says. The Studio shows a warning on
+the document when both are checked, and the events list says ARCHIVED rather than
+claiming it is on the home page.
+
 ## Taking an old event off the website
 
 Use this instead of deleting. Deleting cannot be undone; this can.

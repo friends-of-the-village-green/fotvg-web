@@ -94,6 +94,11 @@ so they get a durable URL and stay published indefinitely.
   none checked the home page falls back to the three most recent write-ups, so the
   section can never render empty. Decision 029.
 
+`archived` beats `featuredOnHome`: every query is built on `LIVE_EVENT`, which excludes
+archived events before featuring is considered. The two can be checked at once, so the
+field carries a validation warning and the Studio list reports ARCHIVED rather than "on
+the home page" — the first pair of real edits produced exactly that combination.
+
 `archived` sits on the *before* tab next to `cancelled` rather than with the write-up,
 even though archiving happens years later: they are the same kind of switch, and that is
 the tab that opens by default.
