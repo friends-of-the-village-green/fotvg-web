@@ -176,6 +176,33 @@ export const event = defineType({
         'needs to see.',
     }),
 
+    /**
+     * Sits next to Cancelled rather than in the write-up tab, even though
+     * archiving happens years later.
+     *
+     * Two reasons. They are the same kind of switch — the two controls that
+     * change whether and how an event appears — and an editor hunting for "the
+     * checkbox that hides this" will look wherever the other checkbox is. And
+     * this tab is the one that opens by default, so archiving a 2024 event
+     * takes one click rather than a click and a tab hunt.
+     */
+    defineField({
+      name: 'archived',
+      title: 'Archived — hide from the website',
+      type: 'boolean',
+      group: 'before',
+      initialValue: false,
+      description:
+        'Takes the event off the website completely — the listings, the home ' +
+        'page and its own page — while keeping it here in the Studio to copy ' +
+        'from when you set up something similar. Use this instead of deleting, ' +
+        'which cannot be undone. Untick it and everything comes back at the ' +
+        'same web address on the next build. One thing to know: anyone ' +
+        'following an old link to an archived event gets a "page not found", ' +
+        'so think twice about archiving something recent that people may still ' +
+        'have a link to.',
+    }),
+
     /* ---- Afterwards ---------------------------------------------------- */
 
     defineField({
@@ -205,6 +232,36 @@ export const event = defineType({
         Rule.max(24).warning(
           'That is a lot of photographs. Twelve well-chosen ones do more work than forty.',
         ),
+    }),
+
+    /**
+     * Which write-ups reach the home page, chosen rather than computed.
+     *
+     * It used to be "the three most recent with a write-up", which looked
+     * deterministic and was not: it happened to give one event per program
+     * area, and would have become three concerts the moment two more music
+     * events were written up. The board wanted the choice to be a decision.
+     *
+     * The fallback in src/pages/index.astro is the important half of this. With
+     * nothing ticked — true on the day this ships, and true again the first
+     * time somebody tidies up — the home page returns to the three most recent,
+     * so the section a grant reviewer reads can never go blank.
+     */
+    defineField({
+      name: 'featuredOnHome',
+      title: 'Feature on the home page',
+      type: 'boolean',
+      group: 'after',
+      initialValue: false,
+      description:
+        'Puts this write-up on the home page under "What we\'ve done". Only ' +
+        'events that have a write-up above can be featured — there is nothing ' +
+        'to show otherwise. Each featured event takes a full band across the ' +
+        'page, so three or four is what the home page carries comfortably and ' +
+        'six is the most it will show. Tick none at all and the home page goes ' +
+        'back to showing the three most recent write-ups, so the section is ' +
+        'never empty. Changes appear on the site with the next daily build, ' +
+        'not straight away.',
     }),
 
     /* ---- SEO ------------------------------------------------------------ */
@@ -241,9 +298,11 @@ export const event = defineType({
       startDate: 'startDate',
       media: 'image',
       cancelled: 'cancelled',
+      archived: 'archived',
+      featuredOnHome: 'featuredOnHome',
       recap: 'recap',
     },
-    prepare({title, startDate, media, cancelled, recap}) {
+    prepare({title, startDate, media, cancelled, archived, featuredOnHome, recap}) {
       /* Pacific, explicitly. The Studio may be open anywhere, and an evening
          event shown a day out is exactly the confusion we are avoiding. */
       const when = startDate
@@ -253,7 +312,20 @@ export const event = defineType({
           }).format(new Date(startDate))
         : 'No date'
 
-      const status = cancelled ? ' · CANCELLED' : recap ? ' · written up' : ''
+      /* A list, not a chain of either/ors, because these combine: an archived
+         event may also be cancelled, and the editor needs to see both. The two
+         that mean "this is not on the site as you would expect" are shouted in
+         capitals; the two that are just the normal life cycle are not.
+
+         Without this, an archived event is indistinguishable in the list from a
+         live one, and the first symptom is somebody asking why the concert
+         vanished from the website. */
+      const flags = []
+      if (archived) flags.push('ARCHIVED')
+      if (cancelled) flags.push('CANCELLED')
+      if (recap) flags.push(featuredOnHome ? 'on the home page' : 'written up')
+
+      const status = flags.length ? ` · ${flags.join(' · ')}` : ''
 
       return {title, subtitle: `${when}${status}`, media}
     },

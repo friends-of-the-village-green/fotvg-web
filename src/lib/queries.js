@@ -52,6 +52,24 @@ export const programBySlugQuery = `
 
 /* ------------------------------------------------------------------ events */
 
+/**
+ * The filter every event query begins with. Do not write a new event query
+ * without it.
+ *
+ * `archived != true` rather than the `!archived` that reads more naturally, and
+ * the difference is not cosmetic. Events created before the field existed have
+ * no `archived` at all, and in GROQ `!archived` on a missing field evaluates
+ * `!null` → `null`, which is not true — so that spelling would quietly drop
+ * every event on the site rather than the handful an editor has hidden.
+ * `null != true` is true, so this spelling includes them. Same trap for
+ * `cancelled` below, which is why that one is spelled the same way.
+ *
+ * Archiving takes an event off the site completely, including its own page:
+ * `allEventSlugsQuery` reads this too, so no page is generated for it at all
+ * (decision 030).
+ */
+const LIVE_EVENT = `_type == "event" && defined(slug.current) && archived != true`
+
 /* Shared shape for an event in a list. */
 const EVENT_CARD = `
   _id, title, "slug": slug.current, startDate, endDate, location, summary,
@@ -59,6 +77,19 @@ const EVENT_CARD = `
   "program": program->{name, "slug": slug.current},
   "image": image${IMAGE}
 `
+
+/* The write-up and its photographs, for the queries that show a past event in
+   full rather than as a row. */
+const EVENT_RECAP = `
+  ${EVENT_CARD},
+  recap,
+  "gallery": gallery[]${IMAGE}
+`
+
+/* Past, and written up. The two conditions always travel together: an event
+   with no write-up is not evidence of anything, and showing an empty one on
+   the page a grant reviewer reads is worse than showing nothing. */
+const WRITTEN_UP = `coalesce(endDate, startDate) < now() && defined(recap)`
 
 /**
  * Upcoming events.
@@ -70,50 +101,53 @@ const EVENT_CARD = `
  * is a scheduled daily build (decision 005).
  */
 export const upcomingEventsQuery = `
-  *[_type == "event" && defined(slug.current)
+  *[${LIVE_EVENT}
     && coalesce(endDate, startDate) >= now()]
   | order(startDate asc){${EVENT_CARD}}
 `
 
 /** The single next event, for the strip under the hero. */
 export const nextEventQuery = `
-  *[_type == "event" && defined(slug.current) && !cancelled
+  *[${LIVE_EVENT} && cancelled != true
     && coalesce(endDate, startDate) >= now()]
   | order(startDate asc)[0]{${EVENT_CARD}}
 `
 
-/**
- * Past events that have been written up.
- *
- * `defined(recap)` is the filter that matters: an event with no write-up is
- * not evidence of anything, and showing an empty one on the page a grant
- * reviewer reads is worse than showing nothing.
- */
+/** Every past event that has been written up, newest first. */
 export const pastEventsWithRecapQuery = `
-  *[_type == "event" && defined(slug.current)
-    && coalesce(endDate, startDate) < now()
-    && defined(recap)]
-  | order(startDate desc){
-    ${EVENT_CARD},
-    recap,
-    "gallery": gallery[]${IMAGE}
-  }
+  *[${LIVE_EVENT} && ${WRITTEN_UP}]
+  | order(startDate desc){${EVENT_RECAP}}
 `
 
-/** Recent write-ups for the home page. Same as above, limited. */
+/**
+ * The write-ups the board has chosen for the home page (decision 029).
+ *
+ * `featuredOnHome == true` is deliberately the positive test, not the `!= true`
+ * used elsewhere: an event nobody has ticked should not be featured, and a
+ * missing field means exactly that.
+ *
+ * This can legitimately come back empty — nothing is ticked yet, or somebody
+ * cleared them all — which is what `recentRecapsQuery` below is for.
+ */
+export const featuredRecapsQuery = `
+  *[${LIVE_EVENT} && ${WRITTEN_UP} && featuredOnHome == true]
+  | order(startDate desc)[0...$limit]{${EVENT_RECAP}}
+`
+
+/**
+ * The fallback for the home page: the most recent write-ups, whatever they are.
+ *
+ * This was how the home page chose its three write-ups outright, until the
+ * board asked for the choice to be theirs. It stays as the safety net, so the
+ * section can never render empty (decision 029).
+ */
 export const recentRecapsQuery = `
-  *[_type == "event" && defined(slug.current)
-    && coalesce(endDate, startDate) < now()
-    && defined(recap)]
-  | order(startDate desc)[0...$limit]{
-    ${EVENT_CARD},
-    recap,
-    "gallery": gallery[]${IMAGE}
-  }
+  *[${LIVE_EVENT} && ${WRITTEN_UP}]
+  | order(startDate desc)[0...$limit]{${EVENT_RECAP}}
 `
 
 export const eventBySlugQuery = `
-  *[_type == "event" && slug.current == $slug][0]{
+  *[${LIVE_EVENT} && slug.current == $slug][0]{
     ${EVENT_CARD},
     body, recap, signupUrl, seoDescription,
     "gallery": gallery[]${IMAGE}
@@ -122,7 +156,7 @@ export const eventBySlugQuery = `
 
 /** Every event slug, for generating the static pages. */
 export const allEventSlugsQuery = `
-  *[_type == "event" && defined(slug.current)].slug.current
+  *[${LIVE_EVENT}].slug.current
 `
 
 /**
@@ -133,9 +167,8 @@ export const allEventSlugsQuery = `
  * using a screen reader than not offering the link at all.
  */
 export const homeSectionsQuery = `{
-  "hasRecaps": count(*[_type == "event" && defined(slug.current)
-    && coalesce(endDate, startDate) < now() && defined(recap)]) > 0,
-  "hasUpcoming": count(*[_type == "event" && defined(slug.current)
+  "hasRecaps": count(*[${LIVE_EVENT} && ${WRITTEN_UP}]) > 0,
+  "hasUpcoming": count(*[${LIVE_EVENT}
     && coalesce(endDate, startDate) >= now()]) > 0,
   "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0,
   "hasPeople": count(*[_type == "person"]) > 0

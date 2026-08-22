@@ -13,10 +13,16 @@ export const siteSettings = defineType({
   type: 'document',
 
   /**
-   * Four tabs. "Home page" and "Donate and volunteer" are the words on the home
-   * page, in the order they appear on it; the other two are the organization's
-   * own details and its link previews. Home page opens first — it is what an
-   * editor comes here to change, and the reason any of this is in the Studio.
+   * Four tabs. "Home page" and "Donate and volunteer" are the home page itself,
+   * field by field in the order it renders; the other two are the
+   * organization's own details and its link previews. Home page opens first —
+   * it is what an editor comes here to change, and the reason any of this is in
+   * the Studio.
+   *
+   * The Square links live on the Donate tab rather than with the contact
+   * details, which is where they started. They are part of the donation ask, an
+   * editor changing the wording of that ask is the person who needs them, and
+   * nobody looked for a payment link under "Organization and contact".
    */
   groups: [
     {name: 'home', title: 'Home page', default: true},
@@ -222,6 +228,72 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: 'donateUrl',
+      title: 'Donate — link',
+      type: 'url',
+      group: 'give',
+      description:
+        'The Square donation page for a gift to wherever it is needed most. ' +
+        'This is the one the Donate button goes to. Donations are handled ' +
+        'entirely by Square — no card details ever touch this website. Leave ' +
+        'this empty and the Donate buttons do not appear at all, which is ' +
+        'better than a button that goes nowhere.',
+      validation: (Rule) => Rule.uri({scheme: ['https']}),
+    }),
+
+    /**
+     * One Square link per program, rather than a "which program?" box on the
+     * Square page.
+     *
+     * Square's custom fields are free text, and the answer reaches the
+     * treasurer only by logging in and opening the payment — it is not in the
+     * notification email. A payment link's title, by contrast, arrives as the
+     * order source on the transaction and in the CSV export, so a separate
+     * link per program sorts the money out with no typing and nothing to
+     * reconcile by hand. Board decision, 18 August 2026.
+     */
+    defineField({
+      name: 'programDonateLinks',
+      title: 'Donate — links to a particular program',
+      type: 'array',
+      group: 'give',
+      description:
+        'Optional. A separate Square donation link for each program someone ' +
+        'might want to give to directly, shown as small links under the Donate ' +
+        'button. Because each Square link carries its own name, the treasurer ' +
+        'can tell the funds apart in Square without anyone sorting them by ' +
+        'hand — so add one here only when a matching link exists in Square. ' +
+        'Two or three is plenty; more turns a simple ask into a decision.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'program',
+              title: 'Program',
+              type: 'string',
+              description:
+                'As a donor would recognize it, and the same words as the ' +
+                'program page — "Village Green Arts Program", not "VGAP". ' +
+                'This is the link text, so it has to make sense read on its own.',
+              validation: (Rule) => Rule.required().max(50),
+            },
+            {
+              name: 'url',
+              title: 'Square link',
+              type: 'url',
+              description: 'The Square donation link for this program alone.',
+              validation: (Rule) => Rule.required().uri({scheme: ['https']}),
+            },
+          ],
+          preview: {select: {title: 'program', subtitle: 'url'}},
+        },
+      ],
+      validation: (Rule) =>
+        Rule.max(4).warning('More than four is a menu, and the band has room for a line.'),
+    }),
+
+    defineField({
       name: 'donateByCheck',
       title: 'Donate — other ways to give',
       type: 'simpleText',
@@ -306,72 +378,6 @@ export const siteSettings = defineType({
         'address, even though that is the registered agent address on the ' +
         'filings — see docs/organization.md.',
       initialValue: 'Village Green Community Center, 26159 Dulay Road NE, Kingston, WA',
-    }),
-
-    defineField({
-      name: 'donateUrl',
-      title: 'Donate link',
-      type: 'url',
-      group: 'org',
-      description:
-        'The Square donation page for a gift to wherever it is needed most. ' +
-        'This is the one the Donate button goes to. Donations are handled ' +
-        'entirely by Square — no card details ever touch this website. Leave ' +
-        'this empty and the Donate buttons do not appear at all, which is ' +
-        'better than a button that goes nowhere.',
-      validation: (Rule) => Rule.uri({scheme: ['https']}),
-    }),
-
-    /**
-     * One Square link per program, rather than a "which program?" box on the
-     * Square page.
-     *
-     * Square's custom fields are free text, and the answer reaches the
-     * treasurer only by logging in and opening the payment — it is not in the
-     * notification email. A payment link's title, by contrast, arrives as the
-     * order source on the transaction and in the CSV export, so a separate
-     * link per program sorts the money out with no typing and nothing to
-     * reconcile by hand. Board decision, 18 August 2026.
-     */
-    defineField({
-      name: 'programDonateLinks',
-      title: 'Donate links for a particular program',
-      type: 'array',
-      group: 'org',
-      description:
-        'Optional. A separate Square donation link for each program someone ' +
-        'might want to give to directly, shown as small links under the Donate ' +
-        'button. Because each Square link carries its own name, the treasurer ' +
-        'can tell the funds apart in Square without anyone sorting them by ' +
-        'hand — so add one here only when a matching link exists in Square. ' +
-        'Two or three is plenty; more turns a simple ask into a decision.',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            {
-              name: 'program',
-              title: 'Program',
-              type: 'string',
-              description:
-                'As a donor would recognize it, and the same words as the ' +
-                'program page — "Village Green Arts Program", not "VGAP". ' +
-                'This is the link text, so it has to make sense read on its own.',
-              validation: (Rule) => Rule.required().max(50),
-            },
-            {
-              name: 'url',
-              title: 'Square link',
-              type: 'url',
-              description: 'The Square donation link for this program alone.',
-              validation: (Rule) => Rule.required().uri({scheme: ['https']}),
-            },
-          ],
-          preview: {select: {title: 'program', subtitle: 'url'}},
-        },
-      ],
-      validation: (Rule) =>
-        Rule.max(4).warning('More than four is a menu, and the band has room for a line.'),
     }),
 
     defineField({

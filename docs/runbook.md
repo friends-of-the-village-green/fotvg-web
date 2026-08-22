@@ -28,6 +28,50 @@ Filling in "How it went" is what moves the event from *What's on* to *What we've
 
 _(To be written: screenshots.)_
 
+## Choosing what appears on the home page
+
+The home page shows a few past write-ups under **What we've done**, each one a full band
+across the page with its photographs. Which ones is the board's choice.
+
+1. Open the event → **Afterwards — the write-up** tab.
+2. Tick **Feature on the home page**.
+3. **Publish**. It appears at the next daily rebuild, not straight away.
+
+Three or four is what the page carries comfortably; six is the most it will show, newest
+first. There is no need to untick the old ones first — but if you tick seven, the
+*oldest* of the seven drops off the page without saying so, so untick one deliberately
+rather than wondering later why it never appeared.
+
+**If nothing is ticked anywhere**, the home page falls back to the three most recent
+write-ups. So the section is never empty, and "untick everything" is a safe way to go
+back to how it used to behave.
+
+Only events with a write-up can be featured. Ticking the box on an event with an empty
+"How it went" does nothing at all.
+
+## Taking an old event off the website
+
+Use this instead of deleting. Deleting cannot be undone; this can.
+
+1. Open the event → **Before it happens** tab (the one that opens by default).
+2. Tick **Archived — hide from the website**.
+3. **Publish**. It disappears at the next daily rebuild.
+
+The event stays in the Studio, so you can still open it and copy the wording for next
+year's version. Untick the box and it comes back at exactly the same web address.
+
+**One thing to know before you archive something recent:** the event's own page stops
+existing, so anyone following an old Facebook post or emailed link to it gets a "page
+not found". That is fine for a concert from three summers ago and less fine for one from
+last month.
+
+In the events list, an archived event shows **ARCHIVED** next to its date, so you can
+tell at a glance why it is not on the site.
+
+**Archived is not the same as canceled.** Cancel an event that is not going to happen —
+its page stays up and says so plainly, which is what someone holding a flyer needs.
+Archive one that happened fine but that you no longer want listed.
+
 ## Changing the wording on the home page
 
 The headline across the top of the home page, the small line above it, and the
@@ -119,9 +163,9 @@ share one thermometer.
 
 ### Putting them on the website
 
-1. https://fotvg.sanity.studio → **Site settings** → **Organization and contact** tab.
-2. **Donate link** — the general one. This is where the big Donate button goes.
-3. **Donate links for a particular program** — **Add item** once per program:
+1. https://fotvg.sanity.studio → **Site settings** → **Donate and volunteer** tab.
+2. **Donate — link** — the general one. This is where the big Donate button goes.
+3. **Donate — links to a particular program** — **Add item** once per program:
    - **Program** — as a donor would recognize it, and the same words as the program
      page: "Village Green Arts Program", not "VGAP". It is the link text, so it has to
      make sense read on its own.

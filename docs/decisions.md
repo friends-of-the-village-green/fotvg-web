@@ -555,3 +555,58 @@ otherwise.
 **Consequence:** `npx sanity deploy` before editors see the new fields, and the three
 Square links have to exist before the program links are filled in — see
 `docs/runbook.md`.
+
+## 029 — The home page write-ups are chosen, not computed
+**Date:** 2026-08-21
+**Decision:** A `featuredOnHome` checkbox on the event decides which write-ups appear on
+the home page under "What we've done". With none ticked, the page falls back to the
+three most recent write-ups — the behavior it had before this change.
+**Why:** It used to be "the three newest with a write-up", which looked deterministic and
+was not. It happened to produce one event per program area, which is what the board
+thought they were seeing; write up two more summer concerts and the home page would have
+become three concerts with no warning. The board wanted the choice to be a decision, and
+to be able to feature more than three when the upcoming list is thin.
+**Why the fallback is not optional:** "featured" starts as a field nobody has ticked.
+Without a fallback the most important section on the site — the one a grant reviewer is
+sent to look at — would disappear the day this shipped, and disappear again the first
+time an editor cleared the boxes. A section that is one unticked checkbox away from
+empty is a trap, not a feature.
+**Capped at six**, in `src/pages/index.astro`. Each featured write-up renders as a full
+alternating band, so ten would push the Donate section somewhere nobody scrolls. The
+field description says three or four is what the page carries comfortably.
+**Tradeoff:** the home page no longer updates itself when a write-up is added. That is
+the point, but it means a newly written-up event does not appear there until somebody
+ticks the box — and because content publishes are batched (decision 005), not until the
+next daily build either.
+**Not done:** manual ordering of the featured events. They show newest first. Ordering
+would need a number field on every event and editors keeping those numbers consistent
+across documents, which is more machinery than the board has asked for.
+**Revisit if:** the board finds themselves re-ticking boxes every month, which would mean
+"the newest three" was the right rule after all.
+
+## 030 — Events are archived, not deleted
+**Date:** 2026-08-21
+**Decision:** An `archived` checkbox on the event takes it off the site completely — the
+listings, the home page, and its own page, which stops being generated. The document
+stays in the Studio to be copied from. Every event query is built on a shared
+`LIVE_EVENT` filter that excludes archived events.
+**Why:** Deleting is currently the only way to stop showing an old event, and it is the
+one action in this Studio that cannot be undone. The board wants to retire the weekly
+summer concerts from the archive eventually without losing something they can clone for
+next year.
+**Why the page 404s** rather than staying up: "not shown on the website" should mean what
+it says, and a page reachable by URL but linked from nowhere is a page nobody maintains.
+The cost is real and worth stating — an old Facebook post pointing at an archived event
+will break. That is the argument for archiving things nobody is still linking to, and it
+is written into the field's description in the Studio.
+**Write `archived != true`, never `!archived`.** In GROQ, `!archived` on a document
+without the field evaluates `!null` → `null`, which is not true — so that spelling drops
+*every* event rather than the archived ones. Nothing on the site would have rendered.
+The same trap applies to `cancelled`, and `nextEventQuery` was quietly relying on
+`initialValue: false` having been set on every existing document; it now uses
+`cancelled != true` as well.
+**Tradeoff:** a third checkbox on the event, and three is enough that they needed
+explaining. The Studio's event list now shows ARCHIVED and CANCELLED in the subtitle, so
+an editor scanning a list can see why something is not on the site.
+**Revisit if:** editors start archiving things to tidy the Studio rather than the site,
+which would mean they want a filtered view of the event list instead.
