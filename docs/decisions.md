@@ -755,3 +755,37 @@ level despite the numbers, which would mean the visual is still beating the labe
 **Not a decision, but the standing lesson:** the guidance sentence says why skipping a
 level matters, in one clause, because an editor who knows the reason gets it right in
 fields nobody has written guidance for.
+
+## 035 — `main` is protected on GitHub, and nobody bypasses it
+**Date:** 2026-08-21
+**Decision:** A repository ruleset named `protect main` targets the default branch with
+three rules — require a pull request before merging (zero approvals), block force pushes,
+restrict deletions — enforcement active, and **no bypass actors**, so it applies to the
+repository owner too.
+**Why:** Netlify builds `main` automatically, so a direct push to `main` is an unreviewed
+production deploy. Until 21 August 2026 nothing prevented one. The workflow in `CLAUDE.md`
+— branch, PR, review the deploy preview, merge — was a convention that the tooling did
+not enforce.
+**Why zero required approvals:** FotVG has one technical volunteer, who is also the person
+opening every pull request, and GitHub does not let anyone approve their own. Requiring
+one approval would lock the only maintainer out of the repository. Zero still forces the
+pull request, which is the part that matters: it produces the deploy preview.
+**Why this rather than local permission rules alone:** Claude's local rules deny
+force-pushes, branch deletion and anything naming `main`, but they match command strings,
+and a bare `git push` while `main` is checked out names nothing. No pattern can catch it.
+The ruleset is server-side and does not care how the push was spelled.
+**`require_extra_approval_for_unattributed_changes` is set true and is inert.** GitHub's
+documentation is explicit that it has no effect when the ruleset requires zero approvals,
+and it concerns Copilot opening pull requests under its own app identity rather than
+`Co-Authored-By` trailers. Left as GitHub's default rather than turned off, but it is not
+doing anything.
+**Checked before enabling:** the daily rebuild workflow declares `permissions: {}` and only
+calls a Netlify build hook, so it does not push to the repository and is unaffected. Feature
+branches are untouched — the ruleset targets only the default branch.
+**Tradeoff, and it is real:** there is no emergency escape hatch. A one-line production fix
+at nine in the evening has to go through a pull request. That is the intended cost, and the
+faster remedy in a genuine emergency is the Netlify rollback in `docs/runbook.md`
+— Deploys, last good deploy, Publish deploy — which needs no code change at all. Adding a
+bypass actor is a two-click change to the ruleset if the board ever wants one.
+**Revisit if:** a second maintainer appears, at which point required approvals of one
+becomes possible and worth having.

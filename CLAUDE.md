@@ -122,6 +122,11 @@ Check current usage under Netlify → Billing → Usage before assuming there's 
 3. Human reviews the preview URL.
 4. Merge to `main` → production build.
 
+Step 1 is enforced, not just asked for: `main` carries a GitHub ruleset requiring a pull
+request, blocking force pushes and restricting deletions, with no bypass for anyone
+including the repository owner (decision 035). A direct push to `main` is rejected by
+GitHub. If one is refused, that is the rule working — open a branch, not a workaround.
+
 Local development: `npm run dev` for the site, `npm run studio` for the Sanity Studio.
 
 ## Content model
