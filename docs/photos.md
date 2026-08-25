@@ -106,6 +106,63 @@ Every image needs:
 
 ---
 
+## Re-using a photo, and building up a library
+
+Every photo uploaded to Sanity stays in the dataset's asset store for good, and any
+image field can pick one that is already there instead of uploading it again. So the
+library is not something to build — it already exists, and it grows every time somebody
+publishes a write-up.
+
+Two things decide whether it is usable, and one of them is step 4 above.
+
+### Search matches the filename, and nothing else
+
+The asset browser searches the name of the file. Not the alt text, not the caption, not
+the photographer. `secret-garden-tour-2026-visitors-in-the-rose-garden.jpg` can be found
+in a library of three hundred; `IMG_4471.jpg` is lost the moment it goes in.
+
+That is the real reason step 4 is in this document. Renaming is not tidiness — it is the
+difference between a library and a heap.
+
+### Alt text does not travel with the photo
+
+Picking an existing photo gives you back the picture, not its alt text, caption or
+credit. Those are stored against each *use* of a photo rather than against the file, so
+they come back empty and have to be written again.
+
+That is mostly the right behavior — the same photo of the garden wants a different
+caption in an event write-up than in a news article — but it means re-using a photo
+still costs the paperwork. The photographer credit especially: look it up in the Drive
+folder's permission note rather than trusting memory.
+
+### Loading photos in without building a page
+
+To get a batch into the library before there is anywhere to put it — straight after an
+event, while permissions are fresh — upload it to a document that is never published.
+
+1. In the Studio, create a **News post** titled `Photo library — do not publish`.
+2. Upload the batch into its **Photographs** field.
+3. Leave it as a draft. Do not press Publish.
+
+The photos are in the dataset as soon as they finish uploading, and can be picked from
+every image field on every other document. The draft cannot reach the website: the site
+reads with `perspective: 'published'` and no token, so an unpublished document is
+invisible to it (`src/lib/sanity.js`).
+
+Alt text is required on every photograph before a document can be **published**, and
+this one never is — so a batch can go in unlabeled and be described properly at the
+point somebody actually uses a picture.
+
+**Do not delete that draft to tidy up.** Deleting it would not delete the photos, but it
+would remove the one place they are listed together.
+
+> **This may be replaced.** Sanity's Media Library — a real asset library with tagging
+> and search that does not depend on filenames — is enabled for the FotVG organization
+> but has not been set up. If it gets set up, it supersedes this section. Until then,
+> the draft above is the way to do it, and it needs nothing switched on.
+
+---
+
 ## Who does the uploading
 
 **Not every board member.** One or two trained editors with Studio accounts, and
