@@ -25,7 +25,12 @@ const {site, nav = []} = Astro.props
         <ul>
           {nav.map((item) => (
             <li>
-              <a href={item.href} class:list={[item.isDonate && 'nav-donate']}>
+              {/* Donate is the site's own `.button` from global.css rather than
+                  a header-only variant. One definition of what a button looks
+                  like, in one file — and it flips correctly on the dark band
+                  and in dark mode without this component knowing anything about
+                  either. Decision 039. */}
+              <a href={item.href} class:list={[item.isDonate && 'button']}>
                 {item.label}
               </a>
             </li>
@@ -83,28 +88,88 @@ const {site, nav = []} = Astro.props
 
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-l);
+
+    /* `center`, so the taller Donate button and the text links beside it sit
+       on a shared middle rather than the button hanging below the row. */
+    align-items: center;
+
+    /* Was `var(--space-2xs) var(--space-l)`. The labels are wider in sentence
+       case and one of them is now a button, so the column gap comes in to
+       --space-m to hold the wrap point roughly where it was. The row gap goes
+       the other way: the underlines below sit 6px under the text, and at
+       --space-2xs a wrapped second row was crowding them. */
+    gap: var(--space-xs) var(--space-m);
   }
 
-  nav a {
+  /**
+   * The four section links (decision 039).
+   *
+   * `:not(.button)`, because Donate is the site's `.button` now and must keep
+   * its own treatment. This is not only about the underline: the base rule
+   * below sets `border-bottom`, and Astro's scoped selectors outrank a bare
+   * `.button` in global.css — so without the exclusion, the button would come
+   * out with three brass sides and a transparent bottom.
+   *
+   * Sentence case at 1rem, not the 0.9rem uppercase these used to be. The
+   * board said the top of the page did not stand out; the reason was never
+   * contrast, which was already 15:1. It was that capitals with 0.04em of
+   * letter spacing at 14px is the slowest setting to read at a glance, on a
+   * site whose body copy has an 18px floor precisely because this audience
+   * skews older. The labels themselves are unchanged.
+   *
+   * The rule under each is `text-decoration`, not the `border-bottom` this
+   * had: a border sits at the foot of the 44px tap target, which leaves it
+   * floating a long way below the words. And it is visible at rest rather
+   * than on hover only — a phone has no hover, and that is where most of
+   * these readers are.
+   *
+   * `--color-text-muted` for that rule, not `--color-rule`. The mock-up used
+   * the hairline, and on the page background that is 1.2:1 — visible in a
+   * design file, not visible on a phone in daylight. An affordance nobody can
+   * see is not one, and the whole reason for drawing it at rest was the phone.
+   * This is 7.1:1 and stays neutral, so it does not compete with the brass on
+   * the Donate button beside it. If the board finds four of these too heavy,
+   * dropping back to --color-rule is a one-word change.
+   */
+  nav a:not(.button) {
     /* 44px minimum tap target, WCAG 2.5.8. */
     display: inline-flex;
     align-items: center;
     min-height: 44px;
 
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+    text-decoration-color: var(--color-text-muted);
   }
 
-  nav a:hover {
-    border-bottom-color: var(--color-accent);
+  /* Hover and keyboard focus get the same acknowledgement. The focus ring in
+     global.css is what actually marks focus; this just stops a keyboard user
+     seeing less than a mouse user does. */
+  nav a:not(.button):hover,
+  nav a:not(.button):focus-visible {
+    text-decoration-color: var(--color-accent);
   }
 
-  .nav-donate {
-    color: var(--color-accent);
+  /**
+   * The one place the header resizes the shared button.
+   *
+   * `.button` sets no font-size, because in the flow of a section it should
+   * inherit the 18px body text it sits among. Up here there is no body text to
+   * agree with — it inherited 18px at 1.65 leading and came out 58px tall,
+   * next to 44px links and a wordmark shorter than itself.
+   *
+   * 1rem matches the links beside it; the leading comes off because a single
+   * word in a button has no second line to make room for. That lands at 44px
+   * of content, and `min-height: 48px` in global.css still holds the tap
+   * target — so this trims the button without touching what WCAG 2.5.8 asks
+   * for. Nothing else about the button is restated here: color, border and
+   * hover all stay in one place.
+   */
+  nav .button {
+    font-size: 1rem;
+    line-height: 1;
   }
 </style>

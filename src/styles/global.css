@@ -123,6 +123,17 @@
     --color-accent:          #d9b65f;  /* 9.8:1 on the dark bg */
     --color-accent-soft:     #232016;
     --color-focus:           #d9b65f;
+
+    /* Flips with the accent above, and has to.
+       The accent goes pale in dark mode, so the text drawn on it must go dark
+       — and this was missing, leaving the light mode's #fcfdfb in place. Every
+       filled `.button` on the page background rendered near-white on pale
+       brass, 1.9:1, against the 4.5:1 this site is held to. The home page's
+       "See everything we've done" was live in that state.
+       Only buttons on the page background were affected; `.band` sets its own
+       --color-on-accent and was always correct. Same value as the band's, and
+       the same 8.3:1. */
+    --color-on-accent:       #16241d;  /* 8.3:1 on the pale brass */
   }
 }
 
