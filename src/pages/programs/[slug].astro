@@ -11,10 +11,15 @@
  * fail because content has not been entered yet.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import NewsList from '../../components/NewsList.astro'
 import RichText from '../../components/RichText.astro'
 import SanityImage from '../../components/SanityImage.astro'
 import {client} from '../../lib/sanity.js'
-import {allProgramsQuery, programBySlugQuery} from '../../lib/queries.js'
+import {
+  allProgramsQuery,
+  programBySlugQuery,
+  recentNewsByProgramQuery,
+} from '../../lib/queries.js'
 
 export async function getStaticPaths() {
   const programs = await client.fetch(allProgramsQuery)
@@ -32,6 +37,15 @@ if (!program) {
 }
 
 const hasMissionOrVision = Boolean(program.mission || program.vision)
+
+/* Three is what fits on one row of cards at every width this page uses, and
+   the rest are one click away. The page is about the program, not its news. */
+const NEWS_LIMIT = 3
+
+const news =
+  program.newsCount > 0
+    ? await client.fetch(recentNewsByProgramQuery, {program: slug, limit: NEWS_LIMIT})
+    : []
 ---
 
 <BaseLayout
@@ -99,7 +113,7 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
 
             Only offered when there is something behind it — the page for a
             program with no write-ups is not generated at all, so linking
-            unconditionally would 404. See programRecapCountsQuery. */}
+            unconditionally would 404. See programCountsQuery. */}
         {program.recapCount > 0 && (
           <p class="archive-link">
             <a href={`/past-events/${program.slug}`}>
@@ -109,6 +123,34 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
         )}
       </div>
     </section>
+
+    {/**
+     * The program's own news (decision 037).
+     *
+     * Recent articles rather than all of them, with the address of the full
+     * list underneath. That link is offered whenever there is any news at all,
+     * even when everything is already on screen: /programs/greenworks/news is a
+     * page the board hands out, and it should be reachable from the program it
+     * belongs to rather than only from a filter on /news.
+     */}
+    {news.length > 0 && (
+      <section class="news-section">
+        <div class="wrap">
+          <h2>News</h2>
+
+          {/* Level 3: these sit under the "News" heading above, which is itself
+              under the page title. Skipping a level is what a screen reader
+              user hears as a missing section. */}
+          <NewsList items={news} level={3} />
+
+          <p class="news-link">
+            <a href={`/programs/${program.slug}/news`}>
+              All {program.name} news
+            </a>
+          </p>
+        </div>
+      </section>
+    )}
   </article>
 </BaseLayout>
 
@@ -180,6 +222,27 @@ const hasMissionOrVision = Boolean(program.mission || program.vision)
   }
 
   .archive-link a {
+    color: var(--color-accent);
+    text-underline-offset: 4px;
+  }
+
+  /* Tinted, like the photographs on an event page, so the news reads as its own
+     block rather than as more of the prose above it. */
+  .news-section {
+    background: var(--color-bg-alt);
+  }
+
+  .news-section h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin-bottom: var(--space-l);
+  }
+
+  .news-link {
+    margin-top: var(--space-xl);
+    font-weight: 700;
+  }
+
+  .news-link a {
     color: var(--color-accent);
     text-underline-offset: 4px;
   }

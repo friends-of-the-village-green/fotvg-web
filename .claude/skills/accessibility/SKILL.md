@@ -67,6 +67,16 @@ WCAG 2.2 AA is the standard. Treat it as the floor.
 - [ ] Nothing auto-plays, auto-advances, or auto-scrolls
 - [ ] No time limits on any interaction
 
+**One documented exception, and only one: the home page hero.** The board asked for a
+rotating set of photographs, and the site crossfades between them with no controls
+(decision 036). It is allowed to stand for three reasons together, not any one of them
+alone: the photographs carry no information — they are `aria-hidden` and decorative, so
+nothing is lost by not seeing a particular one — the text sitting over them never changes,
+and `prefers-reduced-motion` stops it dead on the first picture. WCAG 2.2.2 is about
+moving, blinking or scrolling *information*; this is a backdrop. Adding a pause control
+would mean JavaScript and a visible button, which is a decision to take deliberately
+rather than a line to add. **Do not treat this as a precedent for a carousel.**
+
 ## Testing
 
 Automated tooling catches roughly a third of real issues. Do both:

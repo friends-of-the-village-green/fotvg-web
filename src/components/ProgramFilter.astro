@@ -1,22 +1,29 @@
 ---
 /**
- * Filter the write-ups by program area.
+ * Filter a list by program area. Used by the write-up archive and by the news
+ * list, which is why the addresses are passed in rather than built here.
  *
  * These are ordinary links to ordinary pages, not a script that hides rows
- * (decision 031). It costs three more generated pages and buys: it works with
+ * (decision 031). It costs a few more generated pages and buys: it works with
  * JavaScript off and on a bad rural connection, every filter is a real address
  * that can go in a grant application, the back button behaves, and a screen
  * reader gets plain navigation rather than a list that silently changes under
  * it.
  *
- * Only programs that have something written up appear here — the page for a
+ * Only programs that have something behind them are passed in — the page for a
  * program with nothing in it is never generated, so no filter can lead
- * somewhere empty. See programRecapCountsQuery.
+ * somewhere empty. See programCountsQuery.
  *
  * `current` is the slug of the program being shown, or null on the unfiltered
- * page.
+ * page. The two href props default to the write-up archive, which is where this
+ * component started and still the only caller that does not pass them.
  */
-const {programs, current = null} = Astro.props
+const {
+  programs,
+  current = null,
+  allHref = '/past-events',
+  hrefFor = (program) => `/past-events/${program.slug}`,
+} = Astro.props
 ---
 
 <nav class="filter" aria-label="Filter by program area">
@@ -31,7 +38,7 @@ const {programs, current = null} = Astro.props
     {/* aria-current tells a screen reader which one is showing. The fill does
         the same job visually; neither is doing it alone. */}
     <li>
-      <a href="/past-events" aria-current={current === null ? 'page' : undefined}>
+      <a href={allHref} aria-current={current === null ? 'page' : undefined}>
         Everything
       </a>
     </li>
@@ -39,7 +46,7 @@ const {programs, current = null} = Astro.props
     {programs.map((program) => (
       <li>
         <a
-          href={`/past-events/${program.slug}`}
+          href={hrefFor(program)}
           aria-current={current === program.slug ? 'page' : undefined}
         >
           {program.name}

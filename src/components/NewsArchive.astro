@@ -1,0 +1,112 @@
+---
+/**
+ * The body of a news list page: the title, the filter, the articles, and the
+ * link out of the bottom.
+ *
+ * Two pages render this — /news and each program's own /programs/x/news — and
+ * this component exists so there is one of it rather than two files that have
+ * to be kept looking identical by hand. The write-up archive learned that the
+ * other way round (decision 031); there is no reason to learn it twice.
+ *
+ * The filter links are passed in from here rather than built inside
+ * ProgramFilter, because a program's news lives under the program and the
+ * write-ups live under /past-events. See decision 037.
+ */
+import NewsList from './NewsList.astro'
+import ProgramFilter from './ProgramFilter.astro'
+
+const {
+  /** The sentence under the heading. Says which list this is. */
+  lede,
+  items,
+  /** Programs that have at least one article, for the filter. */
+  programs,
+  /** The slug being shown, or null on the unfiltered list. */
+  current = null,
+  backHref,
+  backLabel,
+} = Astro.props
+
+/* Only worth offering the filter when there is more than one thing to filter
+   by. With a single program every link would show the same list. */
+const showFilter = programs.length > 1
+---
+
+<section class="intro">
+  <div class="wrap">
+    <div class="prose">
+      {/* The heading is the same word on every one of these pages. What changes
+          is the sentence under it and the filled-in filter, which is what a
+          reader actually looks at — and it keeps /programs/greenworks/news from
+          having a heading that argues with the filter sitting under it. */}
+      <h1 class="page-title">News</h1>
+      <p class="lede">{lede}</p>
+    </div>
+  </div>
+</section>
+
+{showFilter && (
+  <div class="wrap filter-row">
+    <ProgramFilter
+      programs={programs}
+      current={current}
+      allHref="/news"
+      hrefFor={(program) => `/programs/${program.slug}/news`}
+    />
+  </div>
+)}
+
+<section class="list">
+  <div class="wrap">
+    {items.length > 0 ? (
+      <NewsList items={items} />
+    ) : (
+      /* getStaticPaths only builds a program's page once it has an article, so
+         this is for /news before the first one is written — a new site, or a
+         restored-from-backup one. */
+      <p class="empty">
+        Nothing here just yet. We write something up when there is news worth
+        telling you about.
+      </p>
+    )}
+
+    {/* A button, matching the write-up archive and the event pages. It is the
+        one thing to do at the bottom of the page. */}
+    <p class="more">
+      <a class="button" href={backHref}>
+        {backLabel}
+        <span aria-hidden="true">→</span>
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .intro {
+    padding-block: var(--space-section) var(--space-l);
+  }
+
+  .lede {
+    margin-top: var(--space-m);
+    color: var(--color-text-muted);
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+  }
+
+  .filter-row {
+    padding-bottom: var(--space-l);
+  }
+
+  .list {
+    padding-top: 0;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+    max-width: var(--width-prose);
+  }
+
+  .more {
+    margin-top: var(--space-xl);
+    font-weight: 700;
+  }
+</style>

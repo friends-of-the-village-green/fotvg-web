@@ -1,0 +1,43 @@
+---
+/**
+ * Every news article, newest first (decision 037).
+ *
+ * News is the things worth telling people about that are not events: what a
+ * grant paid for, what got built, who has started helping. Anything that *is*
+ * about an event belongs in that event's write-up, so this list and
+ * /past-events never tell the same story twice.
+ *
+ * The filter links here point at /programs/x/news rather than at a filtered
+ * copy of this address, which is the one way news differs from the write-up
+ * archive. A program's news belongs to the program.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import NewsArchive from '../../components/NewsArchive.astro'
+import {client} from '../../lib/sanity.js'
+import {allNewsQuery, programCountsQuery} from '../../lib/queries.js'
+
+const [items, programs] = await Promise.all([
+  client.fetch(allNewsQuery),
+  client.fetch(programCountsQuery),
+])
+
+/* Only programs with an article get a filter link. A filter that leads to an
+   empty list is worse than not offering the filter, and the first article for a
+   program brings its page into being on the next build with nobody doing
+   anything. */
+const withNews = programs.filter((p) => p.newsCount > 0)
+---
+
+<BaseLayout
+  title="News"
+  description="News from Friends of the Village Green, the all-volunteer group supporting the arts program, the Greenworks community garden and community projects at the Village Green Community Center in Kingston, Washington."
+>
+  <NewsArchive
+    lede="Things worth telling you about between events — what a donation paid for, what got built, and who has been helping."
+    items={items}
+    programs={withNews}
+    current={null}
+    backHref="/events"
+    backLabel="See what's coming up"
+  />
+</BaseLayout>

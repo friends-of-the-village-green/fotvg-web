@@ -25,7 +25,7 @@ export default defineConfig({
           .title('Content')
           .items([
             S.documentTypeListItem('event').title('Events'),
-            S.documentTypeListItem('newsPost').title('News updates'),
+            S.documentTypeListItem('newsPost').title('News articles'),
             S.documentTypeListItem('program').title('Program areas'),
             S.documentTypeListItem('page').title('Pages'),
             S.documentTypeListItem('person').title('People'),
