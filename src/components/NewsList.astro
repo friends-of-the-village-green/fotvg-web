@@ -1,0 +1,96 @@
+---
+/**
+ * A list of news articles, as cards. Used by /news, by each program's own news
+ * list, and by the short run of recent articles on a program page — which is
+ * the reason it is a component rather than markup living in one of them.
+ *
+ * The same treatment as PastEventList, deliberately. An article and a write-up
+ * are read the same way — the headline and the summary decide whether somebody
+ * opens it — and giving them two different card designs would make the site
+ * look like two sites.
+ *
+ * `level` is the heading level for the titles. It defaults to 2, for a page
+ * where this sits directly under the h1 with nothing in between. On a program
+ * page it sits under a "News" heading of its own, so that page passes 3.
+ * Skipping a level is what a screen reader user hears as a missing section.
+ */
+import {formatEventDate, toDateAttribute} from '../lib/dates.js'
+
+const {items, level = 2} = Astro.props
+
+const Heading = `h${level}`
+---
+
+<ul class="news-list" role="list">
+  {items.map((item) => (
+    <li>
+      <p class="news-when">
+        <time datetime={toDateAttribute(item.publishedAt)}>
+          {formatEventDate(item.publishedAt)}
+        </time>
+        {item.program && (
+          <>
+            <span aria-hidden="true"> · </span>
+            {item.program.name}
+          </>
+        )}
+      </p>
+
+      <Heading><a href={`/news/${item.slug}`}>{item.title}</a></Heading>
+
+      {item.summary && <p class="news-summary">{item.summary}</p>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .news-list {
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  @media (min-width: 46rem) {
+    .news-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl);
+    }
+  }
+
+  .news-list > li {
+    border-top: 2px solid var(--color-accent);
+    padding-top: var(--space-m);
+  }
+
+  .news-when {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Both levels get the same size. Which tag it is says where the article sits
+     in the page's outline; it is not a request for different type. */
+  .news-list :global(h2),
+  .news-list :global(h3) {
+    font-size: 1.3rem;
+  }
+
+  .news-list :global(h2) a,
+  .news-list :global(h3) a {
+    text-decoration: none;
+  }
+
+  .news-list :global(h2) a:hover,
+  .news-list :global(h3) a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .news-summary {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.98rem;
+  }
+</style>

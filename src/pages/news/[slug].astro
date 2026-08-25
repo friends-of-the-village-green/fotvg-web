@@ -1,0 +1,207 @@
+---
+/**
+ * A news article (decision 037).
+ *
+ * Laid out like the second half of an event page, because that is what it is:
+ * a short piece of writing with photographs under it. An editor who has written
+ * up a concert already knows what this page will look like.
+ *
+ * These URLs are permanent, like the event ones. An article shared on Facebook
+ * is read for years afterwards, and a grant application may cite it.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import RichText from '../../components/RichText.astro'
+import SanityImage from '../../components/SanityImage.astro'
+import {client} from '../../lib/sanity.js'
+import {allNewsSlugsQuery, newsBySlugQuery} from '../../lib/queries.js'
+import {formatEventDate, toDateAttribute} from '../../lib/dates.js'
+
+export async function getStaticPaths() {
+  const slugs = await client.fetch(allNewsSlugsQuery)
+
+  return slugs.map((slug) => ({params: {slug}}))
+}
+
+const {slug} = Astro.params
+const article = await client.fetch(newsBySlugQuery, {slug})
+
+/* getStaticPaths only produces slugs that exist, so this should be
+   unreachable. Failing loudly beats rendering a page of blanks if it isn't. */
+if (!article) {
+  throw new Error(`No news article found for slug "${slug}".`)
+}
+
+const gallery = article.gallery || []
+---
+
+<BaseLayout
+  title={article.title}
+  description={article.seoDescription || article.summary}
+  shareImage={article.image}
+>
+  <article>
+    <section class="intro">
+      <div class="wrap">
+        <p class="eyebrow">
+          News
+          {article.program && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <a href={`/programs/${article.program.slug}`}>{article.program.name}</a>
+            </>
+          )}
+        </p>
+
+        <h1 class="page-title">{article.title}</h1>
+
+        <p class="when">
+          <time datetime={toDateAttribute(article.publishedAt)}>
+            {formatEventDate(article.publishedAt)}
+          </time>
+        </p>
+
+        <p class="summary">{article.summary}</p>
+      </div>
+    </section>
+
+    {article.image?.asset && (
+      <div class="wrap">
+        <figure>
+          <SanityImage
+            image={article.image}
+            width={1200}
+            aspect={3 / 2}
+            sizes="(min-width: 68rem) 68rem, 100vw"
+            loading="eager"
+          />
+          {article.image.credit && (
+            <figcaption>Photo: {article.image.credit}</figcaption>
+          )}
+        </figure>
+      </div>
+    )}
+
+    <section>
+      <div class="wrap">
+        <RichText value={article.body} />
+      </div>
+    </section>
+
+    {gallery.length > 0 && (
+      <section class="gallery-section">
+        <div class="wrap">
+          <h2>Photographs</h2>
+
+          <ul class="gallery" role="list">
+            {gallery.map((photo) => (
+              <li>
+                <figure>
+                  <SanityImage
+                    image={photo}
+                    width={800}
+                    aspect={3 / 2}
+                    sizes="(min-width: 52rem) 33vw, (min-width: 36rem) 50vw, 100vw"
+                  />
+                  {(photo.caption || photo.credit) && (
+                    <figcaption>
+                      {photo.caption}
+                      {photo.caption && photo.credit && <span aria-hidden="true"> · </span>}
+                      {photo.credit && `Photo: ${photo.credit}`}
+                    </figcaption>
+                  )}
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    {/* Back to the program's own news where the article has one, because
+        somebody reading about the garden wants the rest of the garden's news
+        rather than everything FotVG has ever posted. */}
+    <div class="wrap back">
+      <p>
+        {article.program ? (
+          <a class="button" href={`/programs/${article.program.slug}/news`}>
+            More {article.program.name} news
+            <span aria-hidden="true">→</span>
+          </a>
+        ) : (
+          <a class="button" href="/news">
+            Read the rest of our news
+            <span aria-hidden="true">→</span>
+          </a>
+        )}
+      </p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .intro {
+    padding-block: var(--space-section) var(--space-l);
+  }
+
+  .intro h1 {
+    max-width: 20ch;
+  }
+
+  .eyebrow a {
+    color: var(--color-accent);
+    text-underline-offset: 3px;
+  }
+
+  .when {
+    margin-top: var(--space-m);
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary {
+    margin-top: var(--space-m);
+    max-width: var(--width-prose);
+    font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+    color: var(--color-text-muted);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    border: 1px solid var(--color-rule);
+    background: var(--color-bg-alt);
+  }
+
+  figcaption {
+    margin-top: var(--space-xs);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+  }
+
+  .gallery-section {
+    background: var(--color-bg-alt);
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--space-l);
+    margin-top: var(--space-l);
+  }
+
+  @media (min-width: 36rem) {
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 52rem) {
+    .gallery { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .back {
+    padding-block: var(--space-xl);
+  }
+</style>

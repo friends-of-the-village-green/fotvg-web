@@ -100,19 +100,71 @@ export const siteSettings = defineType({
         Rule.max(2).warning('Longer than two paragraphs will crowd the photograph.'),
     }),
 
+    /**
+     * One field holding several photographs, rather than one photograph.
+     *
+     * Still chosen by hand — decision 022 stands, and its reasoning is
+     * unchanged: the most prominent picture on the site is worth a deliberate
+     * choice rather than whatever happened to be written up most recently. What
+     * changes is that the board can now choose more than one, and the home page
+     * fades between them. Decision 036.
+     *
+     * With a single photograph in here the behavior is exactly what it was
+     * before: one still picture, no motion, and its alt text read out as it
+     * always has been.
+     */
+    defineField({
+      name: 'heroImages',
+      title: 'Home page photographs',
+      type: 'array',
+      group: 'home',
+      fieldset: 'hero',
+      of: [{type: 'figure'}],
+      description:
+        'The large photograph across the top of the home page. Add one and it ' +
+        'sits there as it always has. Add several and the page fades slowly ' +
+        'from one to the next, in the order they are in here — drag to reorder. ' +
+        'Landscape, and the wider the better: they are cropped to a broad band ' +
+        'on a big screen, and the headline sits over the left-hand side, so ' +
+        'avoid anything with a face or a sign over there. Every photograph you ' +
+        'add is downloaded by every visitor, so three or four is much kinder to ' +
+        'someone on a phone than eight. Leave it empty and the top of the page ' +
+        'falls back to a plain green panel, which is tidy but much less inviting.',
+      validation: (Rule) =>
+        Rule.max(6).warning(
+          'More than six is a lot for a visitor to download, and nobody stays on a ' +
+            'home page long enough to reach the sixth.',
+        ),
+    }),
+
+    /**
+     * The single-photograph field this replaced, kept only so that deploying
+     * the change cannot blank the home page.
+     *
+     * The site reads it when `heroImages` is empty, so the photograph the board
+     * chose stays up until somebody moves it. It hides itself the moment there
+     * is anything in the field above, and that is the whole of the migration:
+     * no script, no dataset mutation, nothing for a volunteer to run.
+     *
+     * Delete this field — along with the fallback in src/lib/content.js and the
+     * line in siteSettingsQuery — once Site settings has been saved with a
+     * photograph in `heroImages`. It is on the launch checklist.
+     */
     defineField({
       name: 'heroImage',
-      title: 'Home page photograph',
+      title: 'Home page photograph — the old single one',
       type: 'figure',
       group: 'home',
       fieldset: 'hero',
+      hidden: ({document}) =>
+        Array.isArray(document?.heroImages) && document.heroImages.length > 0,
+      deprecated: {
+        reason: 'Use "Home page photographs" above, which holds more than one.',
+      },
       description:
-        'The large photograph across the top of the home page. Chosen by hand ' +
-        'rather than picked automatically from the newest event, so the board ' +
-        'controls the first thing a visitor sees. Landscape, and the wider the ' +
-        'better — it is cropped to a broad band on a big screen. Leave it empty ' +
-        'and the header falls back to a plain green panel, which is tidy but ' +
-        'much less inviting.',
+        'On its way out. Drag this photograph into "Home page photographs" ' +
+        'above and this box disappears for good. Until you do, the site still ' +
+        'uses it, so it is quite safe to leave alone.',
     }),
 
     /* ----------------------------------- home page — what we support note */

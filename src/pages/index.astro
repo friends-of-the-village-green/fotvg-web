@@ -84,6 +84,52 @@ const upcomingShown = upcoming.slice(0, 6)
  * intended behavior: the home page is never headless.
  */
 const hero = site.home
+
+/**
+ * The home page photographs, and the crossfade between them (decision 036).
+ *
+ * `HOLD` is how long each one is held at full strength; `FADE` is how long two
+ * of them overlap while one gives way to the next. Seven and a half seconds
+ * apart is slow enough that a reader is never chased down the page by movement,
+ * and the fade is long enough that the change registers as weather rather than
+ * as a slideshow advancing.
+ *
+ * With one photograph none of this applies: no class, no keyframes, no motion —
+ * exactly the still hero the site had before.
+ */
+const HERO_HOLD = 7
+const HERO_FADE = 1.5
+
+const heroImages = site.heroImages
+const heroRotates = heroImages.length > 1
+const heroCycle = heroImages.length * HERO_HOLD
+
+/**
+ * The keyframes, written here rather than in the stylesheet.
+ *
+ * They cannot be static. Each photograph is visible for one Nth of the cycle,
+ * and a keyframe stop is a percentage of that cycle — so the stops move every
+ * time the board adds or removes a picture. There is no way to say "one Nth"
+ * in a percentage.
+ *
+ * Each photograph runs this same animation, staggered by `animation-delay`. The
+ * first one's delay is negative, which starts it already faded in, so the top
+ * of the page is at full strength in the first frame rather than fading up
+ * while somebody is trying to read the headline.
+ */
+const stop = (seconds) => `${((seconds / heroCycle) * 100).toFixed(3)}%`
+
+const heroKeyframes = heroRotates
+  ? [
+      '@keyframes fotvg-hero-fade {',
+      '  0% { opacity: 0 }',
+      `  ${stop(HERO_FADE)} { opacity: 1 }`,
+      `  ${stop(HERO_HOLD)} { opacity: 1 }`,
+      `  ${stop(HERO_HOLD + HERO_FADE)} { opacity: 0 }`,
+      '  100% { opacity: 0 }',
+      '}',
+    ].join('\n')
+  : null
 ---
 
 <BaseLayout
@@ -95,19 +141,45 @@ const hero = site.home
         newest event — the board wanted control over the first thing a visitor
         sees. With none set, this falls back to mock-up 2's no-photo treatment,
         which is the reason that treatment exists. */}
-    {site.heroImage?.asset ? (
+    {heroImages.length > 0 ? (
       <>
-        {/* Wrapped, because scoped styles here cannot reach an <img> that
-            SanityImage renders. The wrapper is ours, so we can position it. */}
-        <div class="hero-photo">
-          <SanityImage
-            image={site.heroImage}
-            width={1600}
-            aspect={16 / 9}
-            sizes="100vw"
-            loading="eager"
-          />
+        {heroKeyframes && <style is:inline set:html={heroKeyframes}></style>}
+
+        {/**
+         * `aria-hidden` only once there is more than one photograph, and that
+         * is a judgment about what the picture *is* rather than a shortcut.
+         *
+         * A single hero photograph is a picture of something, and its alt text
+         * describes it — that is how this has always worked and it stays that
+         * way. A set that fades from one to the next is a backdrop: what a
+         * screen reader would announce depends on which one happened to be up
+         * when the page loaded, and reading out all four in a row describes
+         * nothing anybody can see. So the set is decorative and the alt text
+         * the Studio still requires goes unused here.
+         */}
+        <div
+          class:list={['hero-photos', heroRotates && 'is-rotating']}
+          aria-hidden={heroRotates ? 'true' : undefined}
+          style={heroRotates
+            ? `--hero-cycle: ${heroCycle}s; --hero-hold: ${HERO_HOLD}s; --hero-fade: ${HERO_FADE}s`
+            : undefined}
+        >
+          {heroImages.map((image, i) => (
+            /* Wrapped, because scoped styles here cannot reach an <img> that
+               SanityImage renders. The wrapper is ours, so we can position and
+               fade it. */
+            <div class="hero-photo" style={`--hero-index: ${i}`}>
+              <SanityImage
+                image={image}
+                width={1600}
+                aspect={16 / 9}
+                sizes="100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            </div>
+          ))}
         </div>
+
         <div class="hero-scrim" aria-hidden="true"></div>
       </>
     ) : (
@@ -267,9 +339,50 @@ const hero = site.home
       repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 22px);
   }
 
+  .hero-photos,
   .hero-photo {
     position: absolute;
     inset: 0;
+  }
+
+  /**
+   * The crossfade. The keyframes are generated in the frontmatter above,
+   * because their stops depend on how many photographs there are.
+   *
+   * Each photograph is laid on top of the last and holds `opacity: 0` until its
+   * turn comes round. The stagger is the delay: photograph N starts N holds in,
+   * less one fade, so it is coming up as the one before it is going down and
+   * there is never a gap where the green panel shows through.
+   *
+   * `linear`, not `ease`: the fade is a small slice of a long cycle, and easing
+   * a slice that thin makes the change arrive as a blink.
+   */
+  .hero-photos.is-rotating .hero-photo {
+    opacity: 0;
+    animation: fotvg-hero-fade var(--hero-cycle) linear infinite;
+    animation-delay: calc(var(--hero-index) * var(--hero-hold) - var(--hero-fade));
+  }
+
+  /**
+   * Reduced motion: the first photograph, held still. No fading, no cycling.
+   *
+   * This block is not optional and it is not merely polite. global.css collapses
+   * every animation on the site to 0.01ms with `!important`, which for this one
+   * would run it instantly to its last keyframe — `opacity: 0` — and leave the
+   * top of the home page a bare green panel for every reader who has asked their
+   * computer for less movement. Setting `animation` back to `none` is what stops
+   * that: the `!important` there is on the duration, not on the name, so naming
+   * no animation takes it out of play entirely.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-photos.is-rotating .hero-photo {
+      animation: none;
+      opacity: 0;
+    }
+
+    .hero-photos.is-rotating .hero-photo:first-child {
+      opacity: 1;
+    }
   }
 
   /* Overrides SanityImage's own width/height, which suit an image in the flow
@@ -294,9 +407,21 @@ const hero = site.home
       linear-gradient(to top, rgba(9, 26, 20, 0.7), transparent 55%);
   }
 
+  /**
+   * `position: relative` only. The padding that used to be here is gone.
+   *
+   * It was `clamp(4rem, 14vw, 8rem)` — and it stacked on top of the padding
+   * `section` already gives every band in global.css, because nothing here
+   * overrode it. The two together put 216px of green above the eyebrow on a
+   * laptop where every other band on the site has 88px, which is what the board
+   * was looking at when they said there was too much space above the text.
+   *
+   * Deleting it does not push the gap to the bottom of the hero: the band has no
+   * fixed height, so it simply gets shorter at both ends and the page below
+   * moves up. Decision 036.
+   */
   .hero .wrap {
     position: relative;
-    padding-block: clamp(4rem, 14vw, 8rem);
   }
 
   .hero-label {

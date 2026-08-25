@@ -1,0 +1,47 @@
+---
+/**
+ * One program's news, newest first (decision 037).
+ *
+ * It lives under the program rather than at /news/greenworks because an article
+ * already owns that shape of address: /news/the-new-raised-beds. Nesting it here
+ * keeps every article at a plain /news/… URL and still gives the board a single
+ * address — /programs/greenworks/news — that can go straight into a grant
+ * application, which is the same reason /past-events/greenworks exists.
+ *
+ * Only built for a program that has at least one article, so the link on the
+ * program page and the filter on /news can never lead somewhere empty.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import NewsArchive from '../../../components/NewsArchive.astro'
+import {client} from '../../../lib/sanity.js'
+import {newsByProgramQuery, programCountsQuery} from '../../../lib/queries.js'
+
+export async function getStaticPaths() {
+  const programs = await client.fetch(programCountsQuery)
+
+  const withNews = programs.filter((p) => p.newsCount > 0)
+
+  return withNews.map((p) => ({
+    params: {slug: p.slug},
+    props: {programs: withNews, program: p},
+  }))
+}
+
+const {programs, program} = Astro.props
+
+const items = await client.fetch(newsByProgramQuery, {program: program.slug})
+---
+
+<BaseLayout
+  title={`${program.name} news`}
+  description={`News about ${program.name}, one of the programs Friends of the Village Green supports at the Village Green Community Center in Kingston, Washington.`}
+>
+  <NewsArchive
+    lede={`What has been happening with ${program.name}, most recent first.`}
+    items={items}
+    programs={programs}
+    current={program.slug}
+    backHref={`/programs/${program.slug}`}
+    backLabel={`About ${program.name}`}
+  />
+</BaseLayout>

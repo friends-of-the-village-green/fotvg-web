@@ -21,11 +21,11 @@ import {client} from '../../lib/sanity.js'
 import {
   pastEventsByProgramQuery,
   pastEventsWithRecapQuery,
-  programRecapCountsQuery,
+  programCountsQuery,
 } from '../../lib/queries.js'
 
 export async function getStaticPaths() {
-  const programs = await client.fetch(programRecapCountsQuery)
+  const programs = await client.fetch(programCountsQuery)
 
   /* Only programs with something written up get a page. A filter link that
      leads to an empty list is worse than not offering the filter, and the

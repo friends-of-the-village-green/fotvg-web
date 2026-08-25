@@ -19,6 +19,12 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 - [ ] **Every `[TK]` marker gone.** Search the repository for `tk` *and* look through the
       Studio — some live in content, not code.
 - [ ] Copy read once end to end for American English. The board has asked twice.
+- [ ] **The home page photographs moved into `heroImages`,** and the old `heroImage` field
+      then deleted from `studio/schemaTypes/siteSettings.ts`, along with its fallback in
+      `src/lib/content.js` and its line in `siteSettingsQuery`. The old field is kept only
+      so that deploying decision 036 could not blank the home page; once the board has
+      saved Site settings with a photograph in the new field it is dead weight, and a
+      deprecated field nobody removes is one a future maintainer has to work out.
 
 ## The Donate button
 

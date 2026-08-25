@@ -24,7 +24,7 @@ Keep this list current. If you add a type, update `docs/content-model.md` too.
 | `page` | Standing pages: About, Get Involved, Contact | 5–10 |
 | `program` | The program areas FotVG supports, each with its own page | 3 today |
 | `event` | Concerts, work parties, garden tours, classes, sales — announcement *and* write-up in one document | Ongoing |
-| `newsPost` | Short updates not tied to an event | Ongoing |
+| `newsPost` | Articles about FotVG's work that are not events, with a program area and photographs | Ongoing |
 | `person` | Board members and named volunteers | ~10 |
 
 Plus two shared objects: `blockContent` (rich text) and `figure` (a photograph with

@@ -8,7 +8,16 @@ on the home page, in the order they appear on it; the other two are the organiza
 own details.
 
 - **Home page**, in three collapsible boxes:
-  - *The top of the page* — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImage`
+  - *The top of the page* — `heroEyebrow`, `heroHeading`, `heroLede`, `heroImages`
+
+    `heroImages` is a list, not a single picture. One photograph sits there still, as it
+    always has; several fade slowly from one to the next, in the order the editor drags
+    them into. Capped at six with a warning — every one of them is downloaded by every
+    visitor. The old single `heroImage` is still in the schema, deprecated and hidden as
+    soon as `heroImages` has anything in it, and read by the site as a fallback so that
+    deploying the change could not blank the home page. Delete it once Site settings has
+    been saved with a photograph in the new field; it is on the launch checklist.
+    Decision 036.
   - *What we support — the closing note* — `supportMoreHeading`, `supportMoreText`
   - *Three organizations share the name* — `disambiguationHeading`, `disambiguationText`
 - **Donate and volunteer** — `donateHeading`, `donateText`, `donateFeeText`,
@@ -110,7 +119,8 @@ on that constant, and decision 030.
 Dates are stored as datetime and always displayed in America/Los_Angeles.
 
 **Program** is a reference field on event, pointing at a `program` document. Still not a
-navigation concept — see decision 011.
+navigation concept — see decision 011. `newsPost` carries the same field, for the same
+reason.
 
 ## program
 The three areas FotVG supports: Village Green Arts Program, Greenworks, Community
@@ -118,6 +128,10 @@ building. Exactly three today; the board expects to add more.
 
 Fields: name, slug, summary, mission, vision, body (rich text), hero image + alt,
 accent color token, SEO description.
+
+A program page also shows its three most recent news articles and links to
+`/programs/<slug>/news` for the rest, and links to `/past-events/<slug>` for its
+write-ups. Both links appear only when there is something behind them.
 
 Each gets its own page. Where an event displays its program attribution — "Music at the
 Green · Village Green Arts Program" — that text links here. Greenworks' mission and
@@ -127,10 +141,31 @@ This is a new document type rather than an enum because the values now need page
 slugs, and prose of their own. Recorded as decision 011.
 
 ## newsPost
-Short updates that are not tied to an event.
-Fields: title, slug, publishedAt, summary, body, image + alt.
+Articles about FotVG's work that are not events — a grant, something built, a thank you.
 
-If a piece of news *is* about an event, it belongs in that event's recap instead.
+Fields: title, slug, **program** (reference, optional), publishedAt, summary, body,
+image + alt, **gallery**, seoDescription.
+
+Modeled on the second half of `event`, deliberately: a headline, a summary, the words,
+and the photographs underneath. An editor who has written up a concert already knows how
+this one works.
+
+**If a piece of news *is* about an event, it belongs in that event's recap instead.**
+Adding photographs to news makes the two look more alike, which is exactly why this rule
+is restated in the schema description. Two parallel histories of the same concert is the
+thing being avoided.
+
+`program` is optional, like the event's. An article with no program area appears on
+`/news` and on no program page, which is right — those pages are about one program's
+work.
+
+Three kinds of page come out of this: `/news` for everything, `/news/<slug>` for an
+article, and `/programs/<slug>/news` for one program's news. The filtered lists nest
+under the program rather than under `/news`, because an article already owns that shape
+of address. Decision 037.
+
+There is no `archived` here and no comparison against `now()`. `publishedAt` orders the
+list and does nothing else.
 
 ## person
 Board members and named volunteers.

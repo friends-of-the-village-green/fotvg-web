@@ -34,6 +34,24 @@ export async function getSiteSettings() {
 
   const settings = (await settingsPromise) || {}
 
+  /**
+   * The home page photographs, from the field that holds several — falling
+   * back to the single `heroImage` this replaced (decision 036).
+   *
+   * The fallback is the entire migration. Deploying the new field to a Studio
+   * whose settings document still has the old one filled in would otherwise
+   * take the photograph off the home page, and nobody would know until the
+   * board looked. It costs three lines here and no script at all.
+   *
+   * Delete this — and the schema field, and the line in siteSettingsQuery —
+   * once Site settings has been saved with a photograph in `heroImages`.
+   */
+  const heroImages = settings.heroImages?.length
+    ? settings.heroImages
+    : settings.heroImage
+      ? [settings.heroImage]
+      : []
+
   return {
     name: settings.organizationName || fallback.name,
     tagline: settings.tagline || fallback.location,
@@ -52,7 +70,7 @@ export async function getSiteSettings() {
     ).filter((link) => link?.program && link?.url),
 
     socialLinks: settings.socialLinks || [],
-    heroImage: settings.heroImage || null,
+    heroImages,
 
     /**
      * The blocks of copy on the home page.
@@ -88,16 +106,20 @@ export async function getSiteSettings() {
      * Falls back to the hero photograph.
      *
      * The order that matters is: a page's own picture, then an explicitly
-     * chosen sharing image, then the hero. The hero is already a landscape
-     * photograph the board picked deliberately, so it makes a far better link
-     * preview than nothing at all — and "nothing at all" is what the home page
-     * was serving, on a site whose traffic mostly arrives from Facebook and
-     * Nextdoor.
+     * chosen sharing image, then the first of the hero photographs. That one is
+     * already a landscape photograph the board picked deliberately, so it makes
+     * a far better link preview than nothing at all — and "nothing at all" is
+     * what the home page was serving, on a site whose traffic mostly arrives
+     * from Facebook and Nextdoor.
+     *
+     * The *first* of them, not a different one each build: a link preview that
+     * changed under a Facebook post already shared is a small mystery nobody
+     * needs.
      *
      * Setting a separate sharing image still wins, for when the hero crops
      * badly to a wide letterbox.
      */
-    shareImage: settings.shareImage || settings.heroImage || null,
+    shareImage: settings.shareImage || heroImages[0] || null,
     founded: fallback.founded,
   }
 }
@@ -126,6 +148,17 @@ export async function getNav() {
      than vanishing (decision 032) — so the #upcoming target always exists and
      the link can never point at a section that did not render. */
   items.push({label: "What's on", href: '/#upcoming'})
+
+  /* A page of its own rather than a section of the home page, so this link
+     leaves the home page where the three above it jump around inside it. It
+     sits here because it is the last of the "what is happening" items and
+     before the one that asks for money.
+
+     Conditional, like the sections above it and for the same reason: until
+     somebody writes the first article there is nothing behind it. The /news
+     page is still built and still says so — it is the menu item that would be
+     making a promise. */
+  if (sections.hasNews) items.push({label: 'News', href: '/news'})
 
   if (sections.hasPrograms) items.push({label: 'What we support', href: '/#support'})
 

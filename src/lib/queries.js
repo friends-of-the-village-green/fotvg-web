@@ -39,6 +39,17 @@ const LIVE_EVENT = `_type == "event" && defined(slug.current) && archived != tru
    the page a grant reviewer reads is worse than showing nothing. */
 const WRITTEN_UP = `coalesce(endDate, startDate) < now() && defined(recap)`
 
+/**
+ * The filter every news query begins with. Do not write a new one without it.
+ *
+ * There is no `archived` here, deliberately, and no comparison against `now()`
+ * either. News has no life cycle: an article is written, published, and then it
+ * is simply part of the record. `publishedAt` orders the list and nothing else,
+ * so an editor who mistypes a date gets an article in the wrong place rather
+ * than an article that has vanished and cannot be found.
+ */
+const LIVE_NEWS = `_type == "newsPost" && defined(slug.current)`
+
 /* ---------------------------------------------------------------- settings */
 
 export const siteSettingsQuery = `
@@ -51,6 +62,7 @@ export const siteSettingsQuery = `
     disambiguationHeading, disambiguationText,
     donateHeading, donateText, donateFeeText, donateByCheck,
     volunteerHeading, volunteerText,
+    "heroImages": heroImages[]${IMAGE},
     "heroImage": heroImage${IMAGE},
     "shareImage": shareImage${IMAGE}
   }
@@ -66,14 +78,15 @@ export const allProgramsQuery = `
 `
 
 /* `recapCount` decides whether the page offers a link to this program's own
-   archive. Zero write-ups, no link — see programRecapCountsQuery below, which
+   archive. Zero write-ups, no link — see programCountsQuery below, which
    is the same count and the reason the filtered pages exist at all. */
 export const programBySlugQuery = `
   *[_type == "program" && slug.current == $slug][0]{
     _id, name, "slug": slug.current, summary, mission, vision, body,
     seoDescription,
     "image": image${IMAGE},
-    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id])
+    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id]),
+    "newsCount": count(*[${LIVE_NEWS} && program._ref == ^._id])
   }
 `
 
@@ -137,20 +150,24 @@ export const pastEventsByProgramQuery = `
 `
 
 /**
- * Every program, with how many write-ups it has.
+ * Every program, with how much it has behind it: write-ups, and news articles.
  *
- * Drives both the filter links and the pages behind them: a program with
- * nothing written up yet gets no filter link and no page, so a filter can
- * never lead somewhere empty, and the first write-up for a program brings its
- * page into existence on the next build with nobody doing anything.
+ * Drives the filter links and the pages behind them, on both the write-up
+ * archive and the news list. A program with nothing written up yet gets no
+ * write-up filter and no write-up page; a program with no news gets no news
+ * link and no news page. So a filter can never lead somewhere empty, and the
+ * first article or write-up for a program brings its page into existence on the
+ * next build with nobody doing anything.
  *
  * Same principle as the navigation in content.js — build it from what exists,
- * rather than from what ought to.
+ * rather than from what ought to. One query rather than two nearly identical
+ * ones: the counts are cheap, and two would have drifted.
  */
-export const programRecapCountsQuery = `
+export const programCountsQuery = `
   *[_type == "program" && defined(slug.current)] | order(name asc){
     name, "slug": slug.current,
-    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id])
+    "recapCount": count(*[${LIVE_EVENT} && ${WRITTEN_UP} && program._ref == ^._id]),
+    "newsCount": count(*[${LIVE_NEWS} && program._ref == ^._id])
   }
 `
 
@@ -200,26 +217,79 @@ export const allEventSlugsQuery = `
  * The navigation is built from this. A menu item pointing at a section that
  * did not render is a link that silently does nothing — worse for someone
  * using a screen reader than not offering the link at all.
+ *
+ * `hasNews` drives the News link in the header. The /news page itself is always
+ * built and says so when it is empty — it is the menu item that would otherwise
+ * be making a promise the site cannot keep.
+ *
+ * Every comment in this file sits *outside* the backticks, and that is not a
+ * style preference. Whatever is between them is sent to Sanity verbatim, and
+ * GROQ has no block comments — a `/* … *\/` in here reaches the API as part of
+ * the query and comes back as "expected '}' following object body", from a
+ * stack trace that names `getNav` and not this line. GROQ does accept `//` to
+ * end of line, but there is no reason to rely on it when JSDoc is right here.
  */
 export const homeSectionsQuery = `{
   "hasRecaps": count(*[${LIVE_EVENT} && ${WRITTEN_UP}]) > 0,
   "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0,
-  "hasPeople": count(*[_type == "person"]) > 0
+  "hasPeople": count(*[_type == "person"]) > 0,
+  "hasNews": count(*[${LIVE_NEWS}]) > 0
 }`
 
 /* `hasUpcoming` used to be here and was dropped in decision 032: the What's on
    section now renders whether or not anything is on, so nothing needed to ask.
    A field nobody reads is a field the next person has to work out. */
 
-/* ------------------------------------------------------------- news, pages */
+/* -------------------------------------------------------------------- news */
 
-export const recentNewsQuery = `
-  *[_type == "newsPost" && defined(slug.current)]
-  | order(publishedAt desc)[0...$limit]{
-    _id, title, "slug": slug.current, publishedAt, summary,
-    "image": image${IMAGE}
+/**
+ * Shared shape for an article in a list. The same shape as EVENT_CARD above,
+ * minus the things only an event has.
+ */
+const NEWS_CARD = `
+  _id, title, "slug": slug.current, publishedAt, summary,
+  "program": program->{name, "slug": slug.current},
+  "image": image${IMAGE}
+`
+
+/** Every article, newest first. */
+export const allNewsQuery = `
+  *[${LIVE_NEWS}] | order(publishedAt desc){${NEWS_CARD}}
+`
+
+/**
+ * The same list, narrowed to one program area (decision 037).
+ *
+ * Note what this cannot reach, exactly as with the write-ups: an article with
+ * no program, which the Studio allows for news about FotVG as a whole. Those
+ * appear on /news and on no program's list, which is right — /news is the
+ * complete record.
+ */
+export const newsByProgramQuery = `
+  *[${LIVE_NEWS} && program->slug.current == $program]
+  | order(publishedAt desc){${NEWS_CARD}}
+`
+
+/** The handful shown on a program's own page, above the link to the rest. */
+export const recentNewsByProgramQuery = `
+  *[${LIVE_NEWS} && program->slug.current == $program]
+  | order(publishedAt desc)[0...$limit]{${NEWS_CARD}}
+`
+
+export const newsBySlugQuery = `
+  *[${LIVE_NEWS} && slug.current == $slug][0]{
+    ${NEWS_CARD},
+    body, seoDescription,
+    "gallery": gallery[]${IMAGE}
   }
 `
+
+/** Every article slug, for generating the static pages. */
+export const allNewsSlugsQuery = `
+  *[${LIVE_NEWS}].slug.current
+`
+
+/* ------------------------------------------------------------------- pages */
 
 export const pageBySlugQuery = `
   *[_type == "page" && slug.current == $slug][0]{

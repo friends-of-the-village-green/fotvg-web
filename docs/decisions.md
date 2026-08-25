@@ -789,3 +789,107 @@ faster remedy in a genuine emergency is the Netlify rollback in `docs/runbook.md
 bypass actor is a two-click change to the ruleset if the board ever wants one.
 **Revisit if:** a second maintainer appears, at which point required approvals of one
 becomes possible and worth having.
+
+## 036 — The hero is shorter, and it fades between photographs
+**Date:** 2026-08-25
+**Decision:** Two changes to the top of the home page, from the board's August review.
+The band's own `padding-block` in `src/pages/index.astro` is deleted, so the hero uses the
+same section padding as every other band on the site. And `heroImage` on Site settings
+becomes `heroImages`, an array, which the page crossfades with a CSS animation and no
+JavaScript.
+**Why the padding went:** the board said there was too much blank space above the text.
+There was, and it was an accident rather than a design: `section` in `global.css` already
+gives every band `clamp(3rem, 8vw, 5.5rem)`, and the hero added `clamp(4rem, 14vw, 8rem)`
+on top of it because nothing overrode the first. The two stacked. Measured on the built
+page, that put **216px** above the eyebrow on a 1440px screen where the Donate band — the
+other green band on the same page — has 88px, and 112px against 48px on a phone. Deleting
+the hero's own rule brings it to 88 and 48, and the band goes from 872px tall to 616px.
+**It was not the photograph, which was the first suspect.** The hero image is
+`position: absolute; inset: 0`. It fills whatever box the section makes and contributes
+nothing to its height; requesting a smaller crop would have changed the file size and not
+moved the text by a pixel.
+**And the space does not move to the bottom,** which was the worry. The band has no fixed
+height, so trimming the top makes it shorter rather than pushing the gap downward — the
+two ends are independent, and both now measure 88px.
+**Why a CSS crossfade rather than a carousel:** no arrows, no dots, no pause button, no
+JavaScript, nothing to keyboard-navigate and nothing to announce. The photographs are a
+backdrop behind fixed text, not content a visitor moves through, so a carousel's controls
+would be machinery around something nobody needs to operate. Seven seconds per photograph
+with a 1.5-second overlap; each transition's two opacities sum to 1, so the green band
+never shows through the join.
+**The keyframes are generated in the template, not written in the stylesheet.** Each
+photograph is visible for one Nth of the cycle and a keyframe stop is a percentage of that
+cycle, so the stops move whenever the board adds or removes a picture. There is no way to
+say "one Nth" in a percentage.
+**Reduced motion is handled explicitly, and it had to be.** `global.css` collapses every
+animation on the site to `0.01ms !important`, which for this one would have run it
+instantly to its final keyframe — `opacity: 0` — and left the top of the home page a bare
+green panel for every reader who has asked their computer for less movement. The hero sets
+`animation: none` under `prefers-reduced-motion` and shows the first photograph, still.
+**WCAG 2.2.2 (Pause, Stop, Hide) was considered and is judged not to apply,** which is a
+judgment worth writing down rather than leaving implicit. The criterion covers moving,
+blinking or scrolling *information* that runs for more than five seconds alongside other
+content. These photographs are a backdrop: `aria-hidden`, decorative, carrying nothing a
+reader could miss, with fixed text over them and no movement — only opacity. Combined with
+the reduced-motion stop above, that is the reasoning. It is recorded as the single
+documented exception in the `accessibility` skill, and it is not a precedent for a
+carousel. If the board ever wants a pause control, it needs JavaScript and a visible
+button, and that is a decision rather than a line of CSS.
+**Alt text:** a single hero photograph keeps its alt text and is announced, exactly as
+before. A rotating set is marked `aria-hidden` and treated as decorative — what a screen
+reader would otherwise announce depends on which photograph happened to be up when the
+page loaded, and reading all four out in a row describes nothing anybody can see.
+**Decision 022 stands.** The photographs are still chosen by hand in Site settings rather
+than pulled from the newest write-up. The board simply chooses more than one now.
+**Migration:** `heroImage` is kept in the schema, marked deprecated, hidden the moment
+`heroImages` has anything in it, and read by the site as a fallback. Deploying this cannot
+blank the home page, and there is no script for a volunteer to run. Removing it is on the
+launch checklist.
+**Tradeoff:** every photograph in the array is downloaded by every visitor. The field caps
+at six with a warning, and the field description says so in the editor's own terms.
+**Revisit if:** the board asks to control the photographs individually — a caption per
+picture, or a link out of one. That is a carousel, and it needs the machinery this
+deliberately avoids.
+
+## 037 — News gets program areas, photographs, and pages of its own
+**Date:** 2026-08-25
+**Decision:** `newsPost` gains a `program` reference and a `gallery`, and gets the same
+shape of pages the events already have: `/news` for everything, `/news/<slug>` for an
+article, and `/programs/<slug>/news` for one program's news. A program page shows its
+three most recent articles and links to the rest.
+**Why:** the board wanted somewhere for the things that are about FotVG's work but are not
+events — a grant, a build, a thank you. The type existed and nothing rendered it.
+**Why modeled on `event`:** an editor who has written up a concert already knows how this
+works, and a maintainer reading one of the two schema files has read most of the other.
+The article page is laid out like the second half of an event page, because that is what
+it is: a short piece of writing with photographs under it.
+**The boundary with event write-ups is unchanged and still matters.** News that is *about*
+an event — how it went, how many came — belongs in that event's write-up. Adding
+photographs to news makes the two look more alike, which is exactly why the rule is
+restated in the schema. Two parallel histories of the same concert is the failure being
+avoided.
+**Why the filtered lists live under `/programs/<slug>/news` rather than `/news/<slug>`:**
+they cannot share that shape. An article already owns `/news/six-new-raised-beds`, so
+`/news/greenworks` would be ambiguous the day somebody writes an article whose headline
+slugs to a program name. The events avoided this by splitting `/events/<slug>` from
+`/past-events/<program>`; news nests instead, which keeps every article at a plain
+`/news/…` address and still gives the board one address per program to put in a grant
+application. It costs one inconsistency: the write-up filters and the news filters have
+different URL shapes.
+**Ordinary links, not a script,** exactly as decision 031 settled for the write-ups. The
+`ProgramFilter` component now takes its addresses as props so both lists can use it.
+**`programRecapCountsQuery` becomes `programCountsQuery`** and returns both counts. A
+program with no articles gets no news link and no news page, so a filter can never lead
+somewhere empty — and the first article for a program brings its page into existence on
+the next build with nobody doing anything.
+**News is in the header navigation,** conditional on there being any, which makes five
+items. `SiteHeader` says it starts needing a menu at about five, so this is the last one
+that fits without a rethink.
+**No `archived` and no comparison against `now()`.** News has no life cycle: an article is
+written, published, and becomes part of the record. `publishedAt` orders the list and does
+nothing else, so an editor who mistypes a date gets an article in the wrong place rather
+than one that has vanished.
+**Not done:** news on the home page. That page is already long, and a "Latest news" block
+would compete with "What we've done", which is the section built for grant reviewers.
+**Revisit if:** news volume makes `/news` long enough to want paging, or the board wants
+an article featured on the home page the way write-ups are (decision 029).
