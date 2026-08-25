@@ -196,11 +196,11 @@ Publish makes your change live **in Sanity**. It does not put it on the website.
 The website is rebuilt from Sanity's content, and it only shows what was there at the
 moment of the last build. So there are two steps, and only the first is yours.
 
-**The site rebuilds once a day, at about 6am Pacific.** So something published on
-Tuesday afternoon appears on the website on Wednesday morning. That delay is
-deliberate — Netlify's free plan limits how many builds we get in a month, and building
-on every single publish would spend a month's allowance in one busy afternoon and take
-the site offline (decision 005).
+**The site rebuilds once a day, at 14:00 UTC — 7am Pacific in summer, 6am in winter.**
+So something published on Tuesday afternoon appears on the website on Wednesday
+morning. That delay is deliberate — Netlify's free plan limits how many builds we get
+in a month, and building on every single publish would spend a month's allowance in one
+busy afternoon and take the site offline (decision 005).
 
 The daily rebuild also does something less obvious but more important: it is what moves
 an event from *What's on* to *What we've done* once its date passes. Nothing else does
@@ -213,15 +213,16 @@ that.
 
 Either takes a couple of minutes.
 
-> ⚠️ **Setup still needed.** The daily rebuild runs from
-> `.github/workflows/daily-build.yml` and needs a Netlify build hook URL stored as a
-> GitHub secret called `NETLIFY_BUILD_HOOK_URL`. Until that exists, the scheduled run
-> fails every morning and nothing rebuilds on its own. See "Setting up the daily
-> rebuild" below.
+The daily rebuild runs from `.github/workflows/daily-build.yml`, which calls a Netlify
+build hook held in the GitHub secret `NETLIFY_BUILD_HOOK_URL`. That secret has been in
+place since 10 August 2026 and the scheduled run has been green every morning since.
+Nothing here is waiting to be set up.
 
-## Setting up the daily rebuild
+## Replacing the daily rebuild build hook
 
-One-off, and needs doing before editors are asked to rely on the site.
+**This is already set up — the steps below are kept for the day the hook has to be
+replaced** — because it was revoked, because the Netlify site was recreated, or because
+the Netlify account changed hands. They are the same steps that set it up originally.
 
 1. **Netlify** → the site → **Site configuration** → **Build & deploy** → **Build
    hooks** → **Add build hook**. Name it `Daily rebuild`, branch `main`. Save, then
