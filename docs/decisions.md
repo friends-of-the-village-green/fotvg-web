@@ -893,3 +893,35 @@ than one that has vanished.
 would compete with "What we've done", which is the section built for grant reviewers.
 **Revisit if:** news volume makes `/news` long enough to want paging, or the board wants
 an article featured on the home page the way write-ups are (decision 029).
+
+## 038 — Photographs are re-used through an unpublished draft, not a media library
+**Date:** 2026-08-25
+**Decision:** The way to build up a re-usable pool of photographs is an unpublished
+document — a News post titled `Photo library — do not publish` — with the batch uploaded
+into its Photographs field. Sanity's Media Library, which is the purpose-built answer,
+is not available to FotVG and is not being pursued.
+**Why anything was needed:** the board wanted to load photographs in after an event, while
+permissions are fresh, and pick from them weeks later when somebody finally writes the
+write-up. Re-use already worked — Sanity keeps every asset and any image field can pick
+one that is already there — but there was no way to get a batch *in* before there was a
+document to put it on.
+**Why a draft works:** the site reads with `perspective: 'published'` and no token
+(`src/lib/sanity.js`), so an unpublished document cannot reach the website even if a token
+is added later. Alt text is `Rule.required()`, which blocks publishing rather than saving,
+so a batch can go in unlabeled and be described at the point a picture is used.
+**Why not Media Library:** it is a paid add-on on certain Enterprise plans and is not
+self-serve. The organization record carries `mediaLibraryStatus: "enabled"`, which reads
+like an entitlement and is not one — it describes what the platform supports, not what the
+plan grants. `GET media-libraries?organizationId=…` returns an empty list, there is no
+endpoint in any published API that creates a library, and Sanity's own assistant confirms
+it needs a conversation with their sales team. **This is recorded because the flag is
+misleading and cost an afternoon; the next person to read it should not spend another
+one.**
+**What it costs:** the asset browser searches filenames and nothing else, so the renaming
+step in `docs/photos.md` is what makes the pool usable at all. And alt text, caption and
+credit are stored per *use* rather than per file, so re-using a photograph still means
+writing those again — the photographer credit in particular has already been got wrong
+once on this project.
+**Revisit if:** the nonprofit plan changes, Sanity makes Media Library self-serve, or the
+photograph count gets large enough that filename search stops being enough — which is
+probably somewhere north of a few hundred.

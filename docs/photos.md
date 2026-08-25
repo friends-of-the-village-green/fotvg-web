@@ -156,10 +156,12 @@ point somebody actually uses a picture.
 **Do not delete that draft to tidy up.** Deleting it would not delete the photos, but it
 would remove the one place they are listed together.
 
-> **This may be replaced.** Sanity's Media Library — a real asset library with tagging
-> and search that does not depend on filenames — is enabled for the FotVG organization
-> but has not been set up. If it gets set up, it supersedes this section. Until then,
-> the draft above is the way to do it, and it needs nothing switched on.
+> **This is the answer here, not a stopgap.** Sanity's Media Library would do the job
+> properly — tagging and search that do not depend on somebody having renamed a file —
+> but it is a paid add-on on certain Enterprise plans, it is not self-serve, and it is
+> not on FotVG's nonprofit plan. Getting it would mean a sales conversation and, in all
+> likelihood, money the organization would rather spend elsewhere. Checked 25 August
+> 2026, and recorded in decision 038 so nobody has to check again.
 
 ---
 
