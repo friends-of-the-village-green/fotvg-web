@@ -217,15 +217,22 @@ export const allEventSlugsQuery = `
  * The navigation is built from this. A menu item pointing at a section that
  * did not render is a link that silently does nothing — worse for someone
  * using a screen reader than not offering the link at all.
+ *
+ * `hasNews` drives the News link in the header. The /news page itself is always
+ * built and says so when it is empty — it is the menu item that would otherwise
+ * be making a promise the site cannot keep.
+ *
+ * Every comment in this file sits *outside* the backticks, and that is not a
+ * style preference. Whatever is between them is sent to Sanity verbatim, and
+ * GROQ has no block comments — a `/* … *\/` in here reaches the API as part of
+ * the query and comes back as "expected '}' following object body", from a
+ * stack trace that names `getNav` and not this line. GROQ does accept `//` to
+ * end of line, but there is no reason to rely on it when JSDoc is right here.
  */
 export const homeSectionsQuery = `{
   "hasRecaps": count(*[${LIVE_EVENT} && ${WRITTEN_UP}]) > 0,
   "hasPrograms": count(*[_type == "program" && defined(slug.current)]) > 0,
   "hasPeople": count(*[_type == "person"]) > 0,
-
-  /* The News link in the header appears only once there is news. The /news
-     page itself is always built and says so when it is empty — but a menu
-     item leading to "nothing yet" is a promise the site cannot keep. */
   "hasNews": count(*[${LIVE_NEWS}]) > 0
 }`
 
