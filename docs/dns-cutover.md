@@ -205,7 +205,25 @@ day of preparation to avoid.
 
 ## Cutover
 
-1. **In Netlify first.** Site → Domain management → add `fotvg.org`. Netlify will
+0. **Content first, then the merge, then everything else.** Clear the per-program
+   donation links in the Studio and **Publish** — not just save. The site reads the
+   public dataset with no token, so a draft is invisible to the build and the links
+   would still render with nobody any the wiser. Then wait a few minutes: the Sanity
+   client runs with `useCdn: true`, and a build started the instant after publishing
+   can capture the stale cached response. A build that does that looks exactly like a
+   successful one.
+
+   Then merge the switchover pull request. That build fetches content fresh, so it
+   carries the cleared links *and* the `fotvg.org` canonical URLs *and* the removed
+   `robots.txt` disallow together — one build, no window where one has landed and the
+   others have not. Confirm on the `.netlify.app` address that the "Or give to a
+   particular program" section has gone before moving on.
+
+   ⚠️ If a content-only deploy is ever wanted before the build hook is swapped,
+   trigger it from **Netlify → fotvg → Deploys → Trigger deploy**. The GitHub Action
+   still points at the prototype's hook until the `NETLIFY_BUILD_HOOK_URL` secret is
+   replaced, so "Run workflow" would rebuild the wrong site.
+1. **In Netlify.** Site → Domain management → add `fotvg.org`. Netlify will
    report that DNS is not pointing at it yet and offer the records it wants. That is
    expected. Set the primary domain to whichever address you chose above.
 2. ⚠️ **Set Production visibility to Public.** Project configuration → General →
