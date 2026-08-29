@@ -138,11 +138,27 @@ and drop the `_spfm` record entirely.
 - [ ] **FotVG's own Netlify account exists** and this repository is connected to it.
       Do not attach the real domain to a site running on John's personal build
       allowance — `SETUP.md` Phase 6, decision 015.
-- [ ] 🚨 **The domain is renewed.** `fotvg.org` comes up for renewal on **3 September
-      2026** and auto-renew is **not shown as on** (checked 29 August 2026). Nothing
-      else on this page matters if the registration lapses: the website and every
-      `@fotvg.org` mailbox go down together. **Renew before cutting over**, and turn
-      auto-renew on at the same time so this cannot recur. Only Catherine can pay it.
+- [ ] 🚨 **The domain is renewed.** The registry — not GoDaddy's screen, the `.org`
+      registry itself — gives the expiry as **2026-09-03 14:01 UTC, which is 07:01
+      Pacific on Thursday 3 September**. It was a one-year registration taken out on
+      3 September 2025, and auto-renew is not shown as on (checked 29 August 2026).
+      Nothing else on this page matters if it lapses: the website and every
+      `@fotvg.org` mailbox go down together, and a `.org` in redemption is expensive
+      and slow to recover. **Renew before cutting over**, and turn auto-renew on at the
+      same time so this cannot recur. Only Catherine can pay it.
+
+      Verify it independently rather than relying on a promise — after renewal the
+      registry should read **2027**-09-03:
+
+      ```
+      curl -s https://rdap.publicinterestregistry.org/rdap/domain/fotvg.org | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).events.find(e=>e.eventAction==='expiration').eventDate))"
+      ```
+
+      If renewal is refused, the likely cause is the registry status set — GoDaddy's
+      Domain Lock applies `clientRenewProhibited` along with the delete, transfer and
+      update locks. Renewing through the GoDaddy account normally works anyway, because
+      a registrar can lift its own status; if it does not, turning Domain Lock off,
+      renewing, and turning it back on is the fix.
 - [ ] **The GoDaddy account is FotVG's,** not a previous volunteer's, and at least two
       current board members can get into it. Record the answer in `docs/hosting.md`.
 - [x] **How Google Workspace is billed.** **Resolved 29 August 2026: Workspace is direct
