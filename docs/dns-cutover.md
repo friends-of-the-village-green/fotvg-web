@@ -195,12 +195,20 @@ day of preparation to avoid.
 2. ⚠️ **Set Production visibility to Public.** Project configuration → General →
    Visitor access → Project visibility → Edit visibility. New Netlify projects are
    created **Private**, meaning only logged-in team members can see them — useful
-   before launch, catastrophic after it. Netlify's own wording says a private project
-   is visible to the team "until it goes live", which suggests it lifts by itself when
-   a domain is attached. Do not rely on that. Check it, set it, and load the site in a
-   private browsing window to prove a stranger can see it. **The failure mode if this
-   is missed is that `fotvg.org` shows a login wall to every visitor** — including,
-   on the worst possible day, a grant reviewer.
+   before launch, catastrophic after it.
+
+   This is measured, not guessed. On 29 August 2026, with visibility Private,
+   `https://fotvg.netlify.app/` answered **HTTP 401** and a Netlify "Login Redirect"
+   page to an unauthenticated request — `robots.txt` included. The prototype, which is
+   public, answered 200. **Every path is gated, for everyone not signed in to the
+   team.**
+
+   Netlify's own wording says a private project is visible to the team "until it goes
+   live", which reads as though attaching a domain lifts it. It may well. Do not find
+   out on the morning. Set it, then load `https://fotvg.org` in a private browsing
+   window and confirm you get the site rather than a login screen. The failure this
+   prevents is the whole site showing a login wall to every visitor — including, on
+   the worst possible day, a grant reviewer.
 3. **Unpublish the old GoDaddy site.** Websites + Marketing → the site → unpublish, or
    point it back at its free `.godaddysites.com` address. This is what stops GoDaddy
    re-asserting the apex `A` record later, and it is safe because the old site is not
