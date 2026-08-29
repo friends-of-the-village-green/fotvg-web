@@ -35,8 +35,14 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 
 ## Accounts
 
-- [ ] **FotVG's own Netlify account exists** and the site is connected to this repository.
-      The prototype runs on John's personal account (decision 015).
+- [x] **FotVG's own Netlify account exists** and the site is connected to this
+      repository. Created 29 August 2026 on `tech@fotvg.org` via Google sign-in; team
+      **FotVG**, project **fotvg** at `fotvg.netlify.app`. The prototype stays on John's
+      personal account and keeps building (decisions 015 and 041).
+- [ ] ⚠️ **Netlify project visibility set to Public.** New projects are created
+      **Private** — visible only to logged-in team members. Useful before launch, and a
+      login wall in front of every visitor after it. Flip it as part of the cutover and
+      prove it in a private browsing window. See `docs/dns-cutover.md`.
 - [ ] Netlify open-source / public-good application approved, or the build allowance
       checked against about 32 builds a month.
 - [x] **Sanity nonprofit plan approved** and set up, 29 August 2026. The quota cliff on
@@ -54,11 +60,15 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       Invite **`tech@fotvg.org`** as an **Owner** (not a member): it is a shared mailbox
       that Catherine and John both reach, so access travels with the role rather than
       the person, which is the same reasoning used for the Studio invitations.
-      Two things to get right when doing it: a GitHub *user* account must exist on that
+      Two things to get right when doing it. A GitHub *user* account must exist on that
       address to accept the invitation — an organization cannot own another
-      organization — and GitHub requires two-factor authentication, so the TOTP seed
-      has to go in the password vault where both of them can reach it. A shared account
-      whose second factor lives on one person's phone is not shared.
+      organization. And **GitHub's two-factor is not Google's.** The Google account on
+      `tech@fotvg.org` already works as a shared login because both John's and
+      Catherine's phones are registered against it and whoever signs in picks their own
+      number. None of that carries over: GitHub does not accept Google sign-in for
+      personal accounts, so a GitHub account on that address enrolls its own second
+      factor. Register **both** phones as passkeys, or put the TOTP seed in the password
+      vault. A shared account whose second factor reaches only one person is not shared.
 - [ ] Two people can get into every account. Password vault current.
 
 ## The switchover itself ⚠️

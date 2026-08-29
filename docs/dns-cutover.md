@@ -192,21 +192,30 @@ day of preparation to avoid.
 1. **In Netlify first.** Site → Domain management → add `fotvg.org`. Netlify will
    report that DNS is not pointing at it yet and offer the records it wants. That is
    expected. Set the primary domain to whichever address you chose above.
-2. **Unpublish the old GoDaddy site.** Websites + Marketing → the site → unpublish, or
+2. ⚠️ **Set Production visibility to Public.** Project configuration → General →
+   Visitor access → Project visibility → Edit visibility. New Netlify projects are
+   created **Private**, meaning only logged-in team members can see them — useful
+   before launch, catastrophic after it. Netlify's own wording says a private project
+   is visible to the team "until it goes live", which suggests it lifts by itself when
+   a domain is attached. Do not rely on that. Check it, set it, and load the site in a
+   private browsing window to prove a stranger can see it. **The failure mode if this
+   is missed is that `fotvg.org` shows a login wall to every visitor** — including,
+   on the worst possible day, a grant reviewer.
+3. **Unpublish the old GoDaddy site.** Websites + Marketing → the site → unpublish, or
    point it back at its free `.godaddysites.com` address. This is what stops GoDaddy
    re-asserting the apex `A` record later, and it is safe because the old site is not
    in use and is not the rollback. **Unpublish only. Do not cancel the plan** — the
    Workspace billing and `pay.fotvg.org` questions are still open.
-3. **In GoDaddy** → `fotvg.org` → DNS → DNS Records:
+4. **In GoDaddy** → `fotvg.org` → DNS → DNS Records:
    - Edit the apex `A` row — the one reading `WebsiteBuilder Site`. Value
      **`75.2.60.5`**. TTL 600. All four fields on that row are editable; accept any
      warning about disconnecting the Website Builder site.
    - Edit the `www` `CNAME`: change the value from `fotvg.org` to the site's Netlify
      address, e.g. `fotvg.netlify.app`. TTL 600.
-4. **Touch nothing else.** Not the five MX records, not any of the four TXT records,
+5. **Touch nothing else.** Not the five MX records, not any of the four TXT records,
    not `_domainconnect`, and **not `pay`** — that one is taking money.
-5. **Wait.** Ten to thirty minutes is typical, up to 24 hours is possible.
-6. **Let the certificate issue.** Netlify requests a Let's Encrypt certificate only
+6. **Wait.** Ten to thirty minutes is typical, up to 24 hours is possible.
+7. **Let the certificate issue.** Netlify requests a Let's Encrypt certificate only
    once DNS actually resolves to it. "Certificate pending" or a browser warning for
    the first half hour is normal and not a fault. If it is still pending after a few
    hours, use Netlify's "Renew certificate" button before assuming anything is wrong.
