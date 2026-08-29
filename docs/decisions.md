@@ -1003,3 +1003,25 @@ the real site.
 would mean pointing it at a branch other than `main` and a separate Sanity dataset. That
 is a bigger change than it sounds and nobody has asked for it. Or simply delete it, which
 is `SETUP.md` Phase 6 step 9 as originally written.
+
+## 042 — Netlify access is a shared login, not team members, until the public-good plan lands
+**Date:** 2026-08-29
+**Decision:** FotVG's Netlify account is reached through the shared `tech@fotvg.org`
+Google sign-in, which John and Catherine both use. No second team member is invited.
+**Why:** Netlify's free plan allows one team member. Adding a second means paying per
+seat, and FotVG has no budget for it. The shared mailbox is a genuine shared credential
+rather than a workaround — both of them have their own phone registered against the
+Google account, so each signs in as themselves and approves with their own device.
+Nobody is passing a password around, and nobody is locked out if the other is away.
+**What this costs, stated plainly:** no per-person audit trail. Netlify will record that
+`tech@fotvg.org` changed a setting, not which of them did it. For a two-person volunteer
+operation that is an acceptable trade; for a larger group it would not be.
+**The route out is already on the checklist.** Netlify's open-source / public-good plan
+is what buys real named members, so that application is now worth filing for its own
+sake and not only for build credits.
+**Note the asymmetry with GitHub.** GitHub organizations allow unlimited free members, so
+there is no reason to share an account there — `tech@fotvg.org` gets a GitHub user
+account of its own as a second *owner*, and it enrolls its own second factor because
+GitHub does not accept Google sign-in. Same address, different mechanism.
+**Revisit if:** the public-good plan is approved, or a third person needs access — at
+which point a shared login stops being reasonable and starts being a liability.

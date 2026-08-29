@@ -28,8 +28,23 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 
 ## The Donate button
 
-- [ ] **Real Square URL in Site settings.** Until it is there the site renders a dead
-      placeholder reading "Donate — link pending", which must never reach the public.
+- [x] **Real Square URL in Site settings.** Done 29 August 2026, and a $1 test donation
+      went through cleanly. The "Donate — link pending" placeholder no longer renders.
+- [ ] 🚨 **Clear the program donation links until real Square links exist for them.**
+      As of 29 August 2026 the *Donate — links to a particular program* entries all
+      point at the **general** Square URL. That was the right way to prove the plumbing
+      works; it is the wrong thing to launch. A donor who clicks "Greenworks" believes
+      they have designated their gift, and in Square the treasurer sees an
+      undifferentiated donation with no way to tell what it was for — the exact problem
+      those per-program links exist to solve. For a 501(c)(3) that is a restricted-fund
+      obligation FotVG cannot trace or evidence, and unlike a typo it cannot be
+      corrected afterwards, because the money has already moved.
+      The `programDonateLinks` field description in `studio/schemaTypes/siteSettings.ts`
+      already says it: *add one here only when a matching link exists in Square.*
+      Empty the field. The band drops the whole section cleanly when the list is empty.
+      The treasurer then adds each entry as she creates its Square link, which is a
+      better exercise than adding them all up front — she sees each one appear on the
+      live site as she goes.
 - [ ] Tax-deductibility wording confirmed with the board.
 - [ ] Donation flow tested on an actual phone, not a desktop browser window.
 
@@ -43,8 +58,13 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       **Private** — visible only to logged-in team members. Useful before launch, and a
       login wall in front of every visitor after it. Flip it as part of the cutover and
       prove it in a private browsing window. See `docs/dns-cutover.md`.
-- [ ] Netlify open-source / public-good application approved, or the build allowance
-      checked against about 32 builds a month.
+- [ ] ⚠️ **Netlify open-source / public-good application filed and approved.** This
+      matters for more than build credits now. Netlify's free plan allows **one team
+      member**, so a second person cannot be added without paying per seat — which
+      FotVG has no budget for. The public-good plan is the only route to real,
+      individually-named team members. Until it lands, Netlify access is the shared
+      `tech@fotvg.org` login (decision 042), which works but gives no per-person audit
+      trail. Also check the build allowance against about 32 builds a month.
 - [x] **Sanity nonprofit plan approved** and set up, 29 August 2026. The quota cliff on
       the free plan — at 100% the public API stops serving and content vanishes from the
       live site — no longer applies.
