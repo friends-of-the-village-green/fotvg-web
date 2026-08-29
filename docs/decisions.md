@@ -925,3 +925,42 @@ once on this project.
 **Revisit if:** the nonprofit plan changes, Sanity makes Media Library self-serve, or the
 photograph count gets large enough that filename search stops being enough — which is
 probably somewhere north of a few hundred.
+
+## 039 — The header links are sentence case, and Donate is the site button
+**Date:** 2026-08-25
+**Decision:** The four section links in the header drop the uppercase treatment for
+sentence case at 1rem with a visible rule under each, and Donate becomes the site's
+existing `.button` rather than a colored text link. The labels themselves are unchanged.
+**Why:** the board said the top of the home page did not stand out and asked for more
+emphasis. The cause was never contrast — the links were already 15.1:1. It was that
+0.9rem capitals with 0.04em of letter spacing is the slowest setting there is to read at
+a glance, and it was the smallest text on a site whose body copy has an 18px floor
+*because* this audience skews older. Emphasis was being asked of a treatment that was
+working against legibility.
+**Why not boxes around all five:** that was the literal reading of "make them buttons"
+and it was shown to the board alongside this. Five buttons means no button — it would
+have made Donate less prominent, not more, on a site whose job is to earn a donation.
+It also put outlines in the header that compete with the brass rules marking each
+section further down.
+**Why the shared `.button`:** one definition of what a button looks like, in one file.
+It flips correctly on the dark band and in dark mode without this component knowing
+anything about either. The header restates only its size — `.button` deliberately sets
+no font-size so it can inherit the 18px body text it sits among in a section, and up
+here there is no body text to agree with; inherited, it came out 58px tall next to 44px
+links. `min-height: 48px` in global.css still holds the tap target.
+**What it costs:** the header is 4px taller on a laptop and 8px on a phone, where the
+nav now wraps to three rows rather than two. The nav itself is 29px *narrower* than
+before, because sentence case at 1rem is more compact than spaced capitals — so the
+point at which it drops below the wordmark has not moved. Sentence case in the header
+also no longer matches the small capitals used for eyebrows elsewhere; that is
+deliberate, and the board saw it before choosing.
+**One thing this fixed on the way past:** the dark-mode block in `global.css` redefined
+`--color-accent` to pale brass but never redefined `--color-on-accent`, so it kept light
+mode's near-white. Every filled `.button` on the page background rendered at 1.9:1
+against the 4.5:1 this site is held to, and the home page's "See everything we've done"
+was live in that state. Buttons on `.band` were always fine — it sets its own. Adding a
+button to the header would have put a second one in front of every dark-mode reader,
+which is how it was noticed.
+**Revisit if:** the navigation grows past five items, at which point the wrapping is
+worth solving properly rather than absorbing — see the note in `SiteHeader.astro` about
+a details/summary disclosure being cheaper than a script.
