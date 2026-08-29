@@ -46,6 +46,19 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       September 2026** and auto-renew is not shown as on. If the registration lapses the
       website and every `@fotvg.org` mailbox go down together. Catherine pays it. **This
       gates the switchover** — see `docs/dns-cutover.md`.
+- [ ] 🚨 **A second owner on the GitHub organization.** As of 29 August 2026
+      `friends-of-the-village-green` has exactly one member and one owner: John. The
+      repository *is* the asset — the whole design premise is that the repo plus a short
+      config list can rebuild the site from nothing — so a single owner is the sharpest
+      single point of failure on the project, sharper than any hosting account.
+      Invite **`tech@fotvg.org`** as an **Owner** (not a member): it is a shared mailbox
+      that Catherine and John both reach, so access travels with the role rather than
+      the person, which is the same reasoning used for the Studio invitations.
+      Two things to get right when doing it: a GitHub *user* account must exist on that
+      address to accept the invitation — an organization cannot own another
+      organization — and GitHub requires two-factor authentication, so the TOTP seed
+      has to go in the password vault where both of them can reach it. A shared account
+      whose second factor lives on one person's phone is not shared.
 - [ ] Two people can get into every account. Password vault current.
 
 ## The switchover itself ⚠️
