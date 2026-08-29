@@ -40,9 +40,9 @@ const pathname = Astro.url.pathname
   .replace(/index\.html$/, '')
   .replace(/\.html$/, '')
 
-/* Astro.site is set in astro.config.mjs. It is the test domain today and
-   becomes fotvg.org at switchover — decision 015. Canonical URLs and the
-   sitemap both follow it, so it is the one thing that must change then. */
+/* Astro.site is set in astro.config.mjs, and is fotvg.org. Canonical URLs and
+   the sitemap both follow it, so that one line governs what address this site
+   claims to live at. */
 const canonical = new URL(pathname, Astro.site)
 
 /**

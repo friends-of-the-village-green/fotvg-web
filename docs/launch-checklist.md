@@ -39,12 +39,19 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       The prototype runs on John's personal account (decision 015).
 - [ ] Netlify open-source / public-good application approved, or the build allowance
       checked against about 32 builds a month.
-- [ ] **Sanity nonprofit plan approved.** The Growth trial expires around 27 August 2026;
-      after that the project drops to the free plan, whose quotas have no overage — at
-      100% the public API stops serving and content vanishes from the live site.
+- [x] **Sanity nonprofit plan approved** and set up, 29 August 2026. The quota cliff on
+      the free plan — at 100% the public API stops serving and content vanishes from the
+      live site — no longer applies.
+- [ ] 🚨 **`fotvg.org` renewed, and auto-renew turned on.** Renewal falls on **3
+      September 2026** and auto-renew is not shown as on. If the registration lapses the
+      website and every `@fotvg.org` mailbox go down together. Catherine pays it. **This
+      gates the switchover** — see `docs/dns-cutover.md`.
 - [ ] Two people can get into every account. Password vault current.
 
 ## The switchover itself ⚠️
+
+The full procedure, with the zone as it stood in August 2026 and the rollback, is in
+`docs/dns-cutover.md`. Read that before starting. The boxes below are the summary.
 
 - [ ] **Record the full DNS zone before touching anything.** Screenshot it into
       `docs/hosting.md`.
@@ -52,11 +59,15 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       Workspace through this domain. Changing nameservers without carrying the MX records
       across breaks the organization's email. This is the single most damaging mistake
       available on this project.
-- [ ] `site:` in `astro.config.mjs` changed to `https://fotvg.org`. Canonical URLs, the
-      sitemap and every Open Graph tag derive from it.
-- [ ] **`public/robots.txt` disallow-all removed.** It exists to keep the prototype out of
-      search results; leaving it would keep the real site out too.
-- [ ] Trigger a build after both of the above — neither takes effect until then.
+- [x] `site:` in `astro.config.mjs` changed to `https://fotvg.org` — the apex, not `www`
+      (decision 040). Canonical URLs, the sitemap and every Open Graph tag derive from it.
+- [x] **`public/robots.txt` disallow-all removed**, replaced with an allow-all naming the
+      sitemap. The disallow existed to keep the prototype out of search results; leaving
+      it would have kept the real site out too.
+- [ ] **Merge the switchover branch on cutover morning, before changing DNS** — not
+      before. Both changes above are made but neither takes effect until a build runs,
+      and merging early would have the prototype advertising canonical URLs at a domain
+      that does not resolve yet. Merge first, let both sites build, then change DNS.
 - [ ] The old GoDaddy site retired only *after* the new one is confirmed serving.
 - [ ] **The editors' guide in Drive updated.** "Putting things on the FotVG website"
       names `fotvg-webtest.netlify.app` as the site address, which will be wrong.
