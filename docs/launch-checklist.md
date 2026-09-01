@@ -68,10 +68,11 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 - [x] **Sanity nonprofit plan approved** and set up, 29 August 2026. The quota cliff on
       the free plan — at 100% the public API stops serving and content vanishes from the
       live site — no longer applies.
-- [ ] 🚨 **`fotvg.org` renewed, and auto-renew turned on.** Renewal falls on **3
-      September 2026** and auto-renew is not shown as on. If the registration lapses the
-      website and every `@fotvg.org` mailbox go down together. Catherine pays it. **This
-      gates the switchover** — see `docs/dns-cutover.md`.
+- [x] **`fotvg.org` renewed**, 31 August 2026, one year, add-ons declined. The registry
+      now shows expiry **3 September 2027** (was 3 September 2026, two days away). This
+      no longer gates the switchover. Auto-renew status is still unconfirmed, but the
+      question follows the domain to the new registrar — see *Leaving GoDaddy* in
+      `docs/dns-cutover.md`.
 - [ ] 🚨 **A second owner on the GitHub organization.** As of 29 August 2026
       `friends-of-the-village-green` has exactly one member and one owner: John. The
       repository *is* the asset — the whole design premise is that the repo plus a short

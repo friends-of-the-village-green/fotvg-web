@@ -344,3 +344,82 @@ Not part of the cutover. Do not bundle them into it.
   without a decision is not.
 - **HSTS.** Netlify can send it. Do not enable it until the site has been stable for
   a good while — it is difficult to undo, because browsers cache the instruction.
+
+---
+
+## Leaving GoDaddy
+
+Not part of the switchover. Recorded here because the timing constraints are
+non-obvious and the traps are expensive.
+
+FotVG intends to move `fotvg.org` off GoDaddy entirely — the registration, not just
+the DNS. The trigger was the August 2026 renewal: $23.99 for the year plus a $14.99
+"domain protection" add-on that is bundled by default and, if bought, actively blocks
+transferring the domain out.
+
+**Status: renewed at GoDaddy 31 August 2026**, one year, protection declined. Registry
+expiry is now 3 September 2027, so there is no longer any deadline pressure.
+
+### Why the transfer could not happen in August 2026
+
+A registrar transfer takes 5–7 days — ICANN gives the losing registrar five days to
+approve before the registry force-completes it. On 31 August the domain had **two days**
+left. The same domain carries the Google Workspace `MX` records, so a transfer that
+overran the expiry would have taken the website and `president@`, `vicepresident@` and
+`tech@` down together. Renewing first was the only safe order. Nothing is lost by it:
+an inbound transfer adds a year on top of the existing expiry.
+
+### Do not start before mid-October 2026
+
+Two separate clocks, and waiting until mid-October clears both:
+
+- **Renewal grace.** A transfer completing too soon after a renewal causes the registry
+  to credit the renewal back — the expiry snaps to where it was and the $23.99 buys
+  nothing.
+- **A possible 60-day change-of-registrant lock.** RDAP shows the domain was last
+  changed **11 August 2026**. If that was a registrant-contact change, ICANN's 60-day
+  transfer lock runs to roughly 10 October. If it was only a DNS edit, it does not
+  apply. Check the domain's change history rather than assuming.
+
+### Sequencing trap: fix the registrant contact *after* the transfer
+
+*Loose ends* above wants the registrant contact moved from a personal Gmail to an
+`@fotvg.org` role address. **Do that at the new registrar, not at GoDaddy.** A change
+of registrant starts a fresh 60-day transfer lock, so doing it first would strand the
+domain at GoDaddy until December.
+
+### Where to go: Porkbun, not Cloudflare
+
+Cloudflare Registrar is at-cost and roughly a dollar a year cheaper, but it **requires
+the domain to use Cloudflare's nameservers, with no exceptions**. That would mean moving
+this entire zone — the Workspace `MX` records, both `SPF` records, `DMARC` — off GoDaddy
+as part of the registrar move. Porkbun places no such requirement, which keeps the
+registrar move and any future DNS move independent of each other. For a dollar, that
+separation is worth more than the saving. Not yet a formal decision — record it in
+`docs/decisions.md` when the move is actually scheduled.
+
+### The mechanics, when the time comes
+
+The transfer-out control is hidden while the domain is locked, which is what makes it
+hard to find. It is **not** under anything labelled DNS — a registrar transfer and a
+nameserver change are different operations, and GoDaddy's help only surfaces inbound
+transfer articles if you search for the latter.
+
+1. Domain Portfolio → `fotvg.org` → **Domain Settings** → **Transfer**.
+2. Turn **Domain Lock** off. Confirm paid **Domain Protection** is off too — if it was
+   ever purchased, disabling it needs 2FA on the account, which means involving whoever
+   holds the registrant email.
+3. **Transfer to Another Registrar** then becomes available and issues the auth code.
+4. Do `fotvgkingston.org` at the same time — it was registered the same day and will
+   otherwise repeat this every September.
+
+Registry state at renewal, for reference:
+
+```
+fotvg.org   created 2025-09-03   expires 2027-09-03   registrar GoDaddy (IANA 146)
+status: clientTransferProhibited clientUpdateProhibited
+        clientDeleteProhibited   clientRenewProhibited
+```
+
+Those four codes are what GoDaddy's free lock sets. They are also what the paid
+protection sets, so they do not by themselves tell you which is switched on.
