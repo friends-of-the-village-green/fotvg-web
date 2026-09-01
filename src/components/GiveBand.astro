@@ -28,6 +28,7 @@
  * paragraph they would otherwise have been buried in.
  */
 import RichText from './RichText.astro'
+import {newTabNote} from '../lib/links.js'
 
 const {site} = Astro.props
 
@@ -102,10 +103,10 @@ const showDonatePlaceholder = !hasDonate
             </div>
 
             {hasDonate ? (
-              <a class="button" href={site.donateUrl}>
+              <a class="button" href={site.donateUrl} target="_blank" rel="noopener">
                 Donate
                 <span aria-hidden="true">↗</span>
-                <span class="visually-hidden">(opens Square, our card processor)</span>
+                <span class="visually-hidden">{newTabNote('Square, our card processor')}</span>
               </a>
             ) : (
               <p class="button button--placeholder" aria-disabled="true">
@@ -124,9 +125,9 @@ const showDonatePlaceholder = !hasDonate
                 <ul aria-labelledby="give-programs">
                   {programLinks.map((link) => (
                     <li>
-                      <a href={link.url}>
+                      <a href={link.url} target="_blank" rel="noopener">
                         {link.program}
-                        <span class="visually-hidden">(opens Square, our card processor)</span>
+                        <span class="visually-hidden">{newTabNote('Square, our card processor')}</span>
                       </a>
                     </li>
                   ))}
@@ -180,13 +181,12 @@ const showDonatePlaceholder = !hasDonate
                 </p>
               )}
             </div>
-            {/* Opens in a new tab so the visitor keeps their place on the page.
-                When webmail is registered as the mailto handler — Gmail, most
-                commonly — a same-tab link navigates the whole window away to the
-                compose screen, and the only way back to the site is the browser's
-                back button. Nobody thinks to press it, so the visit simply ends.
-                The visually-hidden note is the warning the accessibility checklist
-                asks for whenever a link opens a new tab. */}
+            {/* New tab, like every other link that leaves the site. Why it
+                matters particularly here: when webmail is registered as the
+                mailto handler — Gmail, most commonly — a same-tab link navigates
+                the whole window away to the compose screen, and the only way
+                back is the browser's back button. Nobody thinks to press it, so
+                the visit simply ends. */}
             <a
               class="button button--ghost"
               href={`mailto:${site.email}?subject=Volunteering`}
@@ -194,7 +194,7 @@ const showDonatePlaceholder = !hasDonate
               rel="noopener"
             >
               Email us about volunteering
-              <span class="visually-hidden">(opens in a new tab)</span>
+              <span class="visually-hidden">{newTabNote()}</span>
             </a>
           </div>
         )}

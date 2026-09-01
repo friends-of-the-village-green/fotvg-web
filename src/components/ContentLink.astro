@@ -1,31 +1,32 @@
 ---
 /**
- * The link mark inside Portable Text, i.e. a link an editor made in the Studio.
+ * The link mark inside Portable Text — a link an editor made in the Studio.
  *
- * This exists for one narrow reason: an email link written into content should
- * behave the same way as the "Email us" links in GiveBand.astro and
- * SiteFooter.astro. When webmail is registered as the mailto handler — Gmail,
- * most commonly — a same-tab email link takes the whole window to a compose
- * screen, and the only way back to the site is the browser's back button.
- * Without this, whether an email link stranded the visitor depended on whether
- * it happened to be written in a component or typed into the Studio, which is
- * not a distinction a reader can see.
+ * Applies the site-wide rule to editor-written links: one that leaves the site
+ * opens in a new tab, one that stays within it does not. See `src/lib/links.js`,
+ * which is where that decision actually lives.
  *
- * Ordinary http links are deliberately left alone and render exactly as
- * astro-portabletext would render them. Forcing every outbound link in content
- * into a new tab takes a choice away from the reader, and it is a bigger
- * decision than this one — it has not been asked for and is not made here.
+ * Without this, the behavior of a link would depend on whether it happened to be
+ * written in a component or typed into the Studio — a distinction no reader can
+ * see, and not one an editor should have to think about.
+ *
+ * No visible arrow here. The `↗` on the Donate button is a deliberate exception
+ * for the site's one paid action; putting arrows on ordinary text links inside
+ * prose would clutter it (board decision, 1 September 2026). The
+ * visually-hidden note carries the same information for screen reader users.
  */
+import {isExternal, newTabNote} from '../lib/links.js'
+
 const {node} = Astro.props
 
 const href = node?.markDef?.href ?? ''
-const isEmail = href.startsWith('mailto:')
+const leavesSite = isExternal(href)
 ---
 
-{isEmail ? (
+{leavesSite ? (
   <a href={href} target="_blank" rel="noopener">
     <slot />
-    <span class="visually-hidden">(opens in a new tab)</span>
+    <span class="visually-hidden">{newTabNote()}</span>
   </a>
 ) : (
   <a href={href}><slot /></a>
