@@ -964,3 +964,64 @@ which is how it was noticed.
 **Revisit if:** the navigation grows past five items, at which point the wrapping is
 worth solving properly rather than absorbing — see the note in `SiteHeader.astro` about
 a details/summary disclosure being cheaper than a script.
+
+## 040 — `fotvg.org` is the canonical address, not `www.fotvg.org`
+**Date:** 2026-08-29
+**Decision:** The apex, `https://fotvg.org`, is the site's one address. `www.fotvg.org`
+permanently redirects to it. `site:` in `astro.config.mjs` is set to the apex, and every
+canonical URL, sitemap entry and Open Graph tag follows from that.
+**Why:** It is what the organization already uses everywhere else — the mailboxes are
+`@fotvg.org`, it is what is said aloud, and it is what a grant reviewer types from an
+application. A site this small gains nothing from the alternative, and consistency
+between the web address and the email domain is worth more than any of it.
+**The argument against, and why it lost:** Netlify suggests `www` as primary when DNS is
+external, because a `CNAME` follows them automatically while an apex `A` record pins the
+site to one address (`75.2.60.5`). Real, but thin: that address has been stable for
+years, and with a 600-second TTL a change is one record edit and ten minutes. Not worth
+making every printed mention of the site two words longer.
+**Tradeoff:** If Netlify ever moves that address, someone has to notice and edit the `A`
+record. Written down here so that someone knows where to look.
+**Revisit if:** never, realistically. Changing the canonical address after launch means
+re-pointing every inbound link and reprinting anything that carries the old one.
+
+## 041 — The prototype site keeps building after switchover
+**Date:** 2026-08-29
+**Decision:** `fotvg-webtest.netlify.app`, on John's personal Netlify account, is left
+connected to `main` rather than deleted at switchover. Its deploy previews are turned
+off, and the daily rebuild follows the build hook to FotVG's account.
+**Why:** John's call. It costs little once previews are off — a build per merge rather
+than a build per merge *plus* one per pull request *plus* one a day — and it keeps a
+second working copy of the site while the new account is still new.
+**Tradeoff, and the part to watch:** it serves the same content at a second public
+address. With the disallow-all `robots.txt` now gone, both addresses are crawlable. What
+stops that becoming duplicate content in search results is the canonical tag: every page
+on the prototype declares `https://fotvg.org` as its real address (decision 040), which
+is exactly what canonical tags are for. This works, but it depends on decision 040 —
+if `site:` is ever pointed back at the prototype, the prototype starts claiming to be
+the real site.
+**Revisit if:** the prototype is ever wanted as a genuine staging environment, which
+would mean pointing it at a branch other than `main` and a separate Sanity dataset. That
+is a bigger change than it sounds and nobody has asked for it. Or simply delete it, which
+is `SETUP.md` Phase 6 step 9 as originally written.
+
+## 042 — Netlify access is a shared login, not team members, until the public-good plan lands
+**Date:** 2026-08-29
+**Decision:** FotVG's Netlify account is reached through the shared `tech@fotvg.org`
+Google sign-in, which John and Catherine both use. No second team member is invited.
+**Why:** Netlify's free plan allows one team member. Adding a second means paying per
+seat, and FotVG has no budget for it. The shared mailbox is a genuine shared credential
+rather than a workaround — both of them have their own phone registered against the
+Google account, so each signs in as themselves and approves with their own device.
+Nobody is passing a password around, and nobody is locked out if the other is away.
+**What this costs, stated plainly:** no per-person audit trail. Netlify will record that
+`tech@fotvg.org` changed a setting, not which of them did it. For a two-person volunteer
+operation that is an acceptable trade; for a larger group it would not be.
+**The route out is already on the checklist.** Netlify's open-source / public-good plan
+is what buys real named members, so that application is now worth filing for its own
+sake and not only for build credits.
+**Note the asymmetry with GitHub.** GitHub organizations allow unlimited free members, so
+there is no reason to share an account there — `tech@fotvg.org` gets a GitHub user
+account of its own as a second *owner*, and it enrolls its own second factor because
+GitHub does not accept Google sign-in. Same address, different mechanism.
+**Revisit if:** the public-good plan is approved, or a third person needs access — at
+which point a shared login stops being reasonable and starts being a liability.

@@ -1,4 +1,12 @@
-# TEMPORARY — remove at switchover to FOTVG's Netlify account.
-# See SETUP.md Phase 6, step 7.
+# Everything on this site is public and we want it found. The event write-ups
+# exist so that a neighbor can see what happened and a grant reviewer can see
+# that it happened — neither works if search engines are kept out.
+#
+# This file used to say "Disallow: /". That was deliberate: it kept the
+# prototype out of search results while the site was being built (decision
+# 015). It came out at switchover, on the day the domain started pointing here.
+
 User-agent: *
-Disallow: /
+Disallow:
+
+Sitemap: https://fotvg.org/sitemap-index.xml
