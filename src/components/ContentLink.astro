@@ -1,0 +1,33 @@
+---
+/**
+ * The link mark inside Portable Text — a link an editor made in the Studio.
+ *
+ * Applies the site-wide rule to editor-written links: one that leaves the site
+ * opens in a new tab, one that stays within it does not. See `src/lib/links.js`,
+ * which is where that decision actually lives.
+ *
+ * Without this, the behavior of a link would depend on whether it happened to be
+ * written in a component or typed into the Studio — a distinction no reader can
+ * see, and not one an editor should have to think about.
+ *
+ * No visible arrow here. The `↗` on the Donate button is a deliberate exception
+ * for the site's one paid action; putting arrows on ordinary text links inside
+ * prose would clutter it (board decision, 1 September 2026). The
+ * visually-hidden note carries the same information for screen reader users.
+ */
+import {isExternal, newTabNote} from '../lib/links.js'
+
+const {node} = Astro.props
+
+const href = node?.markDef?.href ?? ''
+const leavesSite = isExternal(href)
+---
+
+{leavesSite ? (
+  <a href={href} target="_blank" rel="noopener">
+    <slot />
+    <span class="visually-hidden">{newTabNote()}</span>
+  </a>
+) : (
+  <a href={href}><slot /></a>
+)}

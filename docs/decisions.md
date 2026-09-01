@@ -1058,3 +1058,41 @@ alias. Redundant, and left alone deliberately. Anyone tidying it should remove t
 not the redirect, and re-check `www` afterwards.
 **Revisit if:** the canonical address ever changes, or Netlify starts including the `www`
 variant on the certificate without being asked.
+
+## 044 — External links open in a new tab; internal links do not
+**Date:** 2026-09-01
+**Decision:** A link that leaves this site opens in a new tab. A link within the site
+stays in the same one. `src/lib/links.js` is the single place that decides which is
+which, and every component asks it rather than deciding for itself.
+**Why:** Found by using the launched site. With Gmail registered as the `mailto:`
+handler — the common case — "Email us about volunteering" took the whole window to
+Gmail's compose screen. Once the message was sent there was nothing to return to but the
+browser's back button, which nobody presses. The visit simply ended, on one of the two
+links most likely to be clicked by somebody who wants to help.
+**Why it is a rule and not a fix:** the same thing was true of the **Donate** button,
+which is worse — it is the site's one paid action, and a donor who finishes at Square has
+no way back to the organization they just gave money to. Fixing email alone would have
+left the more expensive instance in place. Writing it as one rule in one file also stops
+the behavior drifting between a link written in a component and the same link typed into
+the Studio, which is not a distinction a reader can see.
+**What counts as internal:** relative paths and anchors, and — the exception worth
+having — an absolute URL back to `fotvg.org`. An editor who writes the full address in
+the Studio is still linking within the site and should not get a new tab for it.
+**The warning, and who gets it:** the `↗` on the Donate button stays, and no other link
+gets one. Arrows on ordinary text links inside prose would clutter them, and several
+links that now open a new tab — the per-program donate links, the footer email — are
+plain text rather than buttons. Screen reader users are told by a visually-hidden note,
+which merges destination and warning into one phrase rather than announcing two:
+*(opens Square, our card processor, in a new tab)*. That keeps the accessibility
+checklist's "links that open a new tab say so" true without changing the design.
+**Stated plainly, because it is a real cost:** sighted users get no warning before a new
+tab opens, except on Donate. The board weighed that against arrows everywhere and chose
+this. Revisit it if anyone reports being surprised by tabs piling up.
+**What is not tested by the build:** three of the five places this applies render nothing
+today, because their content is empty — the per-program donate links were cleared for
+launch, no social links are set, and no upcoming event carries a sign-up URL. The rule is
+covered by 20 direct cases against `isExternal` instead. Anyone adding content to those
+fields should confirm the new tab actually happens.
+**Revisit if:** the board decides they would rather everything stayed in one tab, which
+is a legitimate position and the one several accessibility practitioners take — the
+argument against new tabs is that they take a choice away from the reader.

@@ -13,6 +13,7 @@
  * than as an offcut. See decision 024.
  */
 import {getFooterLinks} from '../lib/content.js'
+import {newTabNote} from '../lib/links.js'
 
 const {site} = Astro.props
 
@@ -45,9 +46,15 @@ const socialLabels = {
 
         <p class="address">{site.address}</p>
 
+        {/* New tab, for the same reason as the volunteering button in
+            GiveBand.astro — a webmail handler would otherwise take the whole
+            window to a compose screen. */}
         <p class="contact">
           {site.email
-            ? <a href={`mailto:${site.email}`}>Email us</a>
+            ? <a href={`mailto:${site.email}`} target="_blank" rel="noopener">
+                Email us
+                <span class="visually-hidden">{newTabNote()}</span>
+              </a>
             : <span class="tk">[TK: public email address]</span>
           }
         </p>
@@ -56,7 +63,10 @@ const socialLabels = {
           <ul class="social" role="list">
             {site.socialLinks.map((link) => (
               <li>
-                <a href={link.url}>{socialLabels[link.platform] || link.platform}</a>
+                <a href={link.url} target="_blank" rel="noopener">
+                  {socialLabels[link.platform] || link.platform}
+                  <span class="visually-hidden">{newTabNote()}</span>
+                </a>
               </li>
             ))}
           </ul>

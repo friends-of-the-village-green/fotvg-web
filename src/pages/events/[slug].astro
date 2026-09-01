@@ -15,6 +15,7 @@ import SanityImage from '../../components/SanityImage.astro'
 import {client} from '../../lib/sanity.js'
 import {allEventSlugsQuery, eventBySlugQuery} from '../../lib/queries.js'
 import {formatDateAndTime, isPast, toDateAttribute} from '../../lib/dates.js'
+import {isExternal, newTabNote} from '../../lib/links.js'
 
 export async function getStaticPaths() {
   const slugs = await client.fetch(allEventSlugsQuery)
@@ -32,6 +33,12 @@ if (!event) {
 const past = isPast(event)
 const gallery = event.gallery || []
 const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
+
+/**
+ * Sign-up usually points at a ticketing site, but an editor could equally link
+ * to a page here, so this is decided rather than assumed.
+ */
+const signupLeavesSite = isExternal(event.signupUrl)
 ---
 
 <BaseLayout
@@ -78,7 +85,17 @@ const hasRecap = Array.isArray(event.recap) && event.recap.length > 0
         <p class="summary">{event.summary}</p>
 
         {!past && !event.cancelled && event.signupUrl && (
-          <a class="button" href={event.signupUrl}>Sign up</a>
+          <a
+            class="button"
+            href={event.signupUrl}
+            target={signupLeavesSite ? '_blank' : undefined}
+            rel={signupLeavesSite ? 'noopener' : undefined}
+          >
+            Sign up
+            {signupLeavesSite && (
+              <span class="visually-hidden">{newTabNote()}</span>
+            )}
+          </a>
         )}
       </div>
     </section>
