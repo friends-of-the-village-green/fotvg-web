@@ -30,8 +30,13 @@ the one place to look. Work top to bottom; the order roughly matches the depende
 
 - [x] **Real Square URL in Site settings.** Done 29 August 2026, and a $1 test donation
       went through cleanly. The "Donate — link pending" placeholder no longer renders.
-- [ ] 🚨 **Clear the program donation links until real Square links exist for them.**
-      As of 29 August 2026 the *Donate — links to a particular program* entries all
+- [x] 🚨 **Clear the program donation links until real Square links exist for them.**
+      **Done 1 September 2026**, cleared in the Studio and published before the
+      switchover merge, and confirmed absent from the live site at `https://fotvg.org`
+      rather than only in a build. The general Square link still renders. The treasurer
+      adds each program entry back as she creates its matching link in Square.
+      The reasoning, kept because it is the reason not to undo this:
+      as of 29 August 2026 the *Donate — links to a particular program* entries all
       point at the **general** Square URL. That was the right way to prove the plumbing
       works; it is the wrong thing to launch. A donor who clicks "Greenworks" believes
       they have designated their gift, and in Square the treasurer sees an
@@ -54,10 +59,16 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       repository. Created 29 August 2026 on `tech@fotvg.org` via Google sign-in; team
       **FotVG**, project **fotvg** at `fotvg.netlify.app`. The prototype stays on John's
       personal account and keeps building (decisions 015 and 041).
-- [ ] ⚠️ **Netlify project visibility set to Public.** New projects are created
-      **Private** — visible only to logged-in team members. Useful before launch, and a
-      login wall in front of every visitor after it. Flip it as part of the cutover and
-      prove it in a private browsing window. See `docs/dns-cutover.md`.
+- [x] ⚠️ **Netlify project visibility set to Public.** **Done 1 September 2026** and
+      proved from outside the account: `fotvg.netlify.app` answered **200** to an
+      unauthenticated request, where it had answered 401 and a Netlify login page on
+      29 August. New projects are created **Private** — visible only to logged-in team
+      members. Useful before launch, and a login wall in front of every visitor after
+      it. See `docs/dns-cutover.md`.
+- [x] 🚨 **`www.fotvg.org` added to Netlify as a domain alias.** Not the same as adding
+      the apex, and the failure is a full-page browser security warning rather than
+      anything that looks like a missing setting. Done 1 September 2026; the certificate
+      now carries both names. Decision 043.
 - [ ] ⚠️ **Netlify open-source / public-good application filed and approved.** This
       matters for more than build credits now. Netlify's free plan allows **one team
       member**, so a second person cannot be added without paying per seat — which
@@ -91,28 +102,52 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       factor. Register **both** phones as passkeys, or put the TOTP seed in the password
       vault. A shared account whose second factor reaches only one person is not shared.
 - [ ] Two people can get into every account. Password vault current.
+      🚨 **Known gap, 1 September 2026.** The GoDaddy Admin credential was not in the
+      vault and was sent by text message during the cutover, because the delegated
+      access already held did not carry the permission the work needed. That is the
+      whole of this checklist item happening in real time. Two things to fix, neither
+      urgent now that the domain is renewed to September 2027 and the cutover is done:
+      put the GoDaddy credential in the vault, and work out what level of delegated
+      access is actually required so it does not have to be borrowed again. Worth
+      settling before the registrar move — see *Leaving GoDaddy* in
+      `docs/dns-cutover.md`, which needs account access with 2FA to hand.
 
 ## The switchover itself ⚠️
 
 The full procedure, with the zone as it stood in August 2026 and the rollback, is in
 `docs/dns-cutover.md`. Read that before starting. The boxes below are the summary.
 
-- [ ] **Record the full DNS zone before touching anything.** Screenshot it into
-      `docs/hosting.md`.
-- [ ] **Confirm the MX records and preserve them.** FotVG's email runs on Google
+- [x] **Record the full DNS zone before touching anything.** Done 29 August 2026. The
+      zone table is in `docs/dns-cutover.md`; the screenshots stay out of the repository
+      because the Registration Settings page carries a board member's home address.
+- [x] **Confirm the MX records and preserve them.** FotVG's email runs on Google
       Workspace through this domain. Changing nameservers without carrying the MX records
       across breaks the organization's email. This is the single most damaging mistake
-      available on this project.
+      available on this project. **Verified repeatedly through the 1 September 2026
+      cutover and again after it** — all five Google records at the right priorities,
+      both halves of the SPF chain, `DMARC`, and the Google verification `TXT`, all
+      unchanged. Nameservers were never moved, which is what made this safe.
+      Note that record-level verification is not a delivery test: the round-trip mail
+      check under *Immediately after* in `docs/dns-cutover.md` is still outstanding.
 - [x] `site:` in `astro.config.mjs` changed to `https://fotvg.org` — the apex, not `www`
       (decision 040). Canonical URLs, the sitemap and every Open Graph tag derive from it.
 - [x] **`public/robots.txt` disallow-all removed**, replaced with an allow-all naming the
       sitemap. The disallow existed to keep the prototype out of search results; leaving
       it would have kept the real site out too.
-- [ ] **Merge the switchover branch on cutover morning, before changing DNS** — not
-      before. Both changes above are made but neither takes effect until a build runs,
-      and merging early would have the prototype advertising canonical URLs at a domain
-      that does not resolve yet. Merge first, let both sites build, then change DNS.
-- [ ] The old GoDaddy site retired only *after* the new one is confirmed serving.
+- [x] **Merge the switchover branch on cutover morning, before changing DNS** — not
+      before. **Done 1 September 2026**: pull request 35 merged as `2aa9640`, both sites
+      rebuilt, then DNS was changed. Both changes above are made but neither takes
+      effect until a build runs, and merging early would have the prototype advertising
+      canonical URLs at a domain that does not resolve yet.
+- [x] The old GoDaddy site retired only *after* the new one is confirmed serving.
+      **Done, though not in that order, and the order in this line was wrong.** The
+      GoDaddy site was unpublished *before* the DNS change, which is what the run sheet
+      asks for — it is what stops GoDaddy re-asserting the apex `A` record. Unpublishing
+      does not release the domain, so `fotvg.org` served GoDaddy's "Coming Soon"
+      placeholder for the gap between the two. Acceptable here because the old site was
+      never promoted; the lesson is to do the unpublish and the DNS edit back to back.
+      The plan itself is **not** cancelled — see *For a week or two afterwards* in
+      `docs/dns-cutover.md`.
 - [ ] **The editors' guide in Drive updated.** "Putting things on the FotVG website"
       names `fotvg-webtest.netlify.app` as the site address, which will be wrong.
 
