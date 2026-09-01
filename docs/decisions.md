@@ -1025,3 +1025,36 @@ account of its own as a second *owner*, and it enrolls its own second factor bec
 GitHub does not accept Google sign-in. Same address, different mechanism.
 **Revisit if:** the public-good plan is approved, or a third person needs access — at
 which point a shared login stops being reasonable and starts being a liability.
+
+## 043 — `www.fotvg.org` is an explicit Netlify domain alias
+**Date:** 2026-09-01
+**Decision:** `www.fotvg.org` is added to the Netlify project as a domain alias in its
+own right, alongside the apex. Decision 040 keeps the apex canonical and the `www`
+redirect follows from that; the alias is a separate thing, and it is what puts
+`www.fotvg.org` on the TLS certificate.
+**Why:** Found at cutover, on 1 September 2026. Adding only `fotvg.org` produced a
+Let's Encrypt certificate carrying a single name — `DNS:fotvg.org`, nothing else. DNS
+for `www` was correct, and Netlify's own panel already listed `www.fotvg.org` as
+"Redirects automatically to primary domain", so every visible signal said the job was
+finished. It was not: a TLS handshake for `www.fotvg.org` had no certificate to present,
+and the browser showed a full-page "Your connection is not private" warning instead of
+redirecting.
+**Why this matters more than it sounds:** plenty of visitors still type `www`, and a
+certificate warning is the most alarming failure a browser has. A 404 reads as a
+mistake; a certificate warning reads as a site that has been compromised. For an
+organization whose home page asks for donations, that is the wrong thing for a
+first-time visitor to meet — and the people most likely to type `www` are the older
+neighbors this site is largely for.
+**The fix:** Domain management → Add domain alias → `www.fotvg.org`. Netlify reissues
+within a few minutes and the certificate then reads
+`DNS:fotvg.org, DNS:www.fotvg.org`.
+**How to check it, since loading the site does not:**
+```
+echo | openssl s_client -connect 75.2.60.5:443 -servername fotvg.org 2>/dev/null \
+  | openssl x509 -noout -subject -ext subjectAltName
+```
+**Tradeoff:** the panel now lists `www.fotvg.org` twice — the automatic redirect and the
+alias. Redundant, and left alone deliberately. Anyone tidying it should remove the alias,
+not the redirect, and re-check `www` afterwards.
+**Revisit if:** the canonical address ever changes, or Netlify starts including the `www`
+variant on the certificate without being asked.

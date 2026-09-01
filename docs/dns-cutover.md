@@ -135,10 +135,15 @@ and drop the `_spfm` record entirely.
 
 ## Before cutover day
 
-- [ ] **FotVG's own Netlify account exists** and this repository is connected to it.
+- [x] **FotVG's own Netlify account exists** and this repository is connected to it.
+      Done 29 August 2026: team **FotVG**, project **fotvg**, on `tech@fotvg.org`.
       Do not attach the real domain to a site running on John's personal build
       allowance — `SETUP.md` Phase 6, decision 015.
-- [ ] 🚨 **The domain is renewed.** The registry — not GoDaddy's screen, the `.org`
+- [x] 🚨 **The domain is renewed.** **Done 31 August 2026** — one year, add-ons declined,
+      registry expiry now **3 September 2027**. Auto-renew was still not confirmed; that
+      question follows the domain to the new registrar. The original note is kept below,
+      because the verification command and the `clientRenewProhibited` trap both stay
+      useful. The registry — not GoDaddy's screen, the `.org`
       registry itself — gives the expiry as **2026-09-03 14:01 UTC, which is 07:01
       Pacific on Thursday 3 September**. It was a one-year registration taken out on
       3 September 2025, and auto-renew is not shown as on (checked 29 August 2026).
@@ -169,7 +174,12 @@ and drop the `_spfm` record entirely.
       on printed material, in the newsletter, or linked from another site — and add
       301 redirects to `netlify.toml` for any that will not exist on the new site.
       Cheap now, embarrassing later.
-- [ ] **Decide the canonical address.** `www.fotvg.org` or `fotvg.org`? Pick one; the
+- [x] **Decide the canonical address.** Decided: the apex, `https://fotvg.org`, with
+      `www` redirecting to it — decision 040. Note that choosing the apex does **not**
+      mean leaving `www` out of the Netlify configuration; it still has to be added as a
+      domain alias or no certificate is ever issued for it (decision 043).
+      The original question, and the reasoning:
+      `www.fotvg.org` or `fotvg.org`? Pick one; the
       other will permanently redirect to it. Netlify suggests `www` as primary when
       DNS is external, because an apex `A` record pins the site to a single address
       rather than using their full content network. For a site this size the
@@ -178,9 +188,12 @@ and drop the `_spfm` record entirely.
 - [x] **Screenshot the GoDaddy DNS page.** Done 29 August 2026, and the zone table
       above corrected from it. The screenshots stay out of the repository — the
       Registration Settings page shows a board member's home address.
-- [ ] **Find out what `pay.fotvg.org` is for**, and whether anything printed points at
-      it. See *Loose ends*.
-- [ ] **Pick the day.** Tuesday or Wednesday morning. Not a Friday, not the week of
+- [x] **Find out what `pay.fotvg.org` is for.** Answered 29 August 2026: it is debris
+      from the abandoned Website Builder site. The endpoint returns 503 with nothing
+      provisioned, and the treasurer — who would know — has never heard of it. No money
+      moves through it. Left untouched during the cutover and deleted later; see
+      *Loose ends*.
+- [x] **Pick the day.** Tuesday 1 September 2026. Not a Friday, not the week of
       an event, not while the person who understands it is away.
 
 ### About the TTLs
@@ -226,6 +239,16 @@ day of preparation to avoid.
 1. **In Netlify.** Site → Domain management → add `fotvg.org`. Netlify will
    report that DNS is not pointing at it yet and offer the records it wants. That is
    expected. Set the primary domain to whichever address you chose above.
+
+   🚨 **Then add `www.fotvg.org` as a domain alias as well** — Add domain alias →
+   `www.fotvg.org`. Adding the apex alone is not enough, and the way it fails is nasty.
+   Netlify will list `www.fotvg.org` by itself as "Redirects automatically to primary
+   domain", which looks like the job is done, but the certificate it issues carries a
+   single name: `DNS:fotvg.org`. A visitor typing `www.fotvg.org` then gets a full-page
+   browser security warning instead of a redirect, because there is no certificate to
+   present for that name. Measured on 1 September 2026; see *What happened on the day*.
+   With the alias added, the reissued certificate reads
+   `DNS:fotvg.org, DNS:www.fotvg.org` and the redirect works. Decision 043.
 2. ⚠️ **Set Production visibility to Public.** Project configuration → General →
    Visitor access → Project visibility → Edit visibility. New Netlify projects are
    created **Private**, meaning only logged-in team members can see them — useful
@@ -243,11 +266,22 @@ day of preparation to avoid.
    window and confirm you get the site rather than a login screen. The failure this
    prevents is the whole site showing a login wall to every visitor — including, on
    the worst possible day, a grant reviewer.
-3. **Unpublish the old GoDaddy site.** Websites + Marketing → the site → unpublish, or
-   point it back at its free `.godaddysites.com` address. This is what stops GoDaddy
-   re-asserting the apex `A` record later, and it is safe because the old site is not
-   in use and is not the rollback. **Unpublish only. Do not cancel the plan** — the
-   Workspace billing and `pay.fotvg.org` questions are still open.
+3. **Unpublish the old GoDaddy site.** This is what stops GoDaddy re-asserting the apex
+   `A` record later, and it is safe because the old site is not in use and is not the
+   rollback. **Unpublish only. Do not cancel the plan** — the Workspace billing and
+   `pay.fotvg.org` questions are still open.
+
+   **The control is not on the Website dashboard**, which is where everyone looks for
+   it. That page offers Preview, Edit Website and a large black **Publish Site** button
+   — the opposite of what you want. Unpublish lives *inside the builder*:
+   **Edit Website → Settings → Unpublish → confirm**.
+
+   **Unpublishing does not release the domain.** GoDaddy's own documentation is explicit
+   that the domain stays linked to the site; visitors get a "Coming Soon" page with the
+   site's header image. So from this moment until DNS propagates, `fotvg.org` serves
+   GoDaddy's placeholder rather than the old site. Harmless when the old site was never
+   promoted, but it argues for doing steps 3 and 4 back to back rather than leaving a
+   gap overnight.
 4. **In GoDaddy** → `fotvg.org` → DNS → DNS Records:
    - Edit the apex `A` row — the one reading `WebsiteBuilder Site`. Value
      **`75.2.60.5`**. TTL 600. All four fields on that row are editable; accept any
@@ -262,22 +296,75 @@ day of preparation to avoid.
    the first half hour is normal and not a fault. If it is still pending after a few
    hours, use Netlify's "Renew certificate" button before assuming anything is wrong.
 
+   When it has issued, **check which names are on it** rather than checking that the
+   site loads. The apex loading proves nothing about `www`:
+
+   ```
+   echo | openssl s_client -connect 75.2.60.5:443 -servername fotvg.org 2>/dev/null \
+     | openssl x509 -noout -subject -ext subjectAltName -dates
+   ```
+
+   You want `DNS:fotvg.org, DNS:www.fotvg.org`. One name means step 1's alias is
+   missing.
+
 Why an `A` record and not something tidier: a `CNAME` cannot legally sit at the apex
 of a domain. Some DNS providers offer `ALIAS` or `ANAME` records to work around this,
 and Netlify prefers them (`apex-loadbalancer.netlify.com`) — but GoDaddy's standard
 DNS does not offer one. Hence the fixed address.
 
+### Checking your work, without trusting a screen
+
+Two screens lied during the September 2026 cutover — GoDaddy's DNS panel showed a record
+it had not yet written, and the machine doing the work served a stale answer for the
+best part of an hour. Neither is a reason for alarm; both are a reason to check the
+domain from outside.
+
+**Query a public resolver over HTTPS.** This bypasses the local cache, the router and
+the ISP, and it is the closest thing to "what a stranger sees":
+
+```
+curl -s "https://dns.google/resolve?name=fotvg.org&type=A"
+curl -s "https://cloudflare-dns.com/dns-query?name=fotvg.org&type=A" -H "accept: application/dns-json"
+```
+
+**Do not trust `nslookup ... ns69.domaincontrol.com`.** Naming the nameserver looks
+authoritative and is not: a local resolver can answer anyway, and it will keep serving
+the old apex record for the full hour of its original TTL. The tell is the words
+`Non-authoritative answer` in the output, and a TTL counting down from 3600 rather than
+600. A cached record ages exactly the way a real one does, which is what makes it
+convincing.
+
+**Test the site by address rather than by name**, so a stale cache cannot mislead you:
+
+```
+curl -sI --resolve fotvg.org:443:75.2.60.5 https://fotvg.org/
+```
+
+**Do not judge the cutover from the machine that performed it.** Its answers are the
+most likely of anyone's to be stale, and `ipconfig /flushdns` will not help when the
+cached copy is held upstream on the network. A phone on cellular data is a better
+witness than any command on the laptop.
+
 ## Immediately after
 
-- [ ] `https://fotvg.org` and `https://www.fotvg.org` both load the new site, both
-      with a padlock, one redirecting to the other.
-- [ ] `http://` versions redirect to `https://`.
+- [x] `https://fotvg.org` and `https://www.fotvg.org` both load the new site, both
+      with a padlock, one redirecting to the other. Verified 1 September 2026:
+      `https://fotvg.org` 200 with a valid certificate; `https://www.fotvg.org` 301 to
+      it in one hop. The certificate carries both names.
+- [x] `http://` versions redirect to `https://`. Both hostnames, verified the same day.
+- [x] The live site serves the right content. `/`, `/about-us`, `/sitemap-index.xml` and
+      `/robots.txt` all 200 on the real domain; the "Or give to a particular program"
+      section is gone; the general Square link is present; canonical reads
+      `https://fotvg.org/`; no `[TK]` markers.
 - [ ] **Send an email to `president@fotvg.org` from an outside account and confirm it
       arrives.** Then send one *from* a `@fotvg.org` address to a Gmail or Outlook
       account and confirm it lands in the inbox rather than spam. This is the test
-      that actually matters.
+      that actually matters. **Still outstanding.** Every record has been verified
+      present and correct, which is not the same as a message having been delivered.
 - [ ] The contact form submits and the notification arrives.
-- [ ] Check it on a phone, on cellular data rather than home wi-fi.
+- [ ] Check it on a phone, on cellular data rather than home wi-fi. Note that the
+      cutover machine's own network served the old record for the best part of an hour
+      afterwards, so it is a poor judge of whether the site is up.
 - [ ] Tell the board it has happened, and what to do if they see something odd.
 
 ## For a week or two afterwards
@@ -292,6 +379,13 @@ DNS does not offer one. Hence the fixed address.
 - [ ] **Delete the `pay` `CNAME`** at the same time. It serves a 503 and belongs to the
       abandoned build. One change at a time — not during the cutover.
 - [ ] Put the TTLs back up to an hour or so, once nothing has needed changing.
+- [ ] **Tidy the duplicate `www` entry in Netlify**, or decide to leave it. Domain
+      management currently lists `www.fotvg.org` twice: once as "Redirects automatically
+      to primary domain", which Netlify created when the apex was made primary, and once
+      as a "Domain alias", which was added by hand to force the certificate to include
+      it (decision 043). Redundant, and working. If it is tidied, remove the **alias**
+      and keep the redirect, then check `www.fotvg.org` again — the alias is what the
+      certificate was reissued against, and this is not worth breaking for neatness.
 
 ## If it goes wrong
 
@@ -309,6 +403,53 @@ attempt.
 Email is untouched either way, because nothing in this procedure goes near it. If email
 *does* break, the cause is not this procedure — it is something else that changed.
 Compare the live zone against the table above, record by record.
+
+---
+
+## What happened on the day — 1 September 2026
+
+The cutover was done on Tuesday 1 September 2026 and the site went live the same
+afternoon. It worked, and nothing in the zone was damaged: the five Google Workspace
+`MX` records, both halves of the SPF chain, `DMARC`, the Google verification `TXT` and
+the `pay` `CNAME` were verified intact at every stage. Email never went down.
+
+Three things cost time, and none of them were in the procedure as written.
+
+**The GoDaddy DNS panel saved silently and then did not.** The first attempt at the apex
+`A` record hung on a spinner for several minutes and wrote nothing. A later attempt
+showed `75.2.60.5 / 600 seconds` in the record table while the change had genuinely gone
+through — the panel was right that time. In between there was no way to tell the two
+states apart from the screen alone. Verify from outside the account, not from the page
+that just accepted the edit.
+
+**The stale-cache trap cost the most time, and produced a wrong diagnosis.** Direct
+queries naming `ns69.domaincontrol.com` kept returning the old Global Accelerator
+addresses long after the record had propagated worldwide. The answers came from a
+resolver in front of this machine, not from GoDaddy. The countdown made it convincing:
+the TTL fell 2714 → 2668 → 2017 across successive checks, which reads exactly like a
+live record ageing, and it led to a confident and entirely wrong conclusion that the
+apex edit had failed while the `www` edit had succeeded. The two records differed only
+in how long their old values had left to live — `www` had already been re-cached at 600
+seconds and so refreshed quickly, while the apex sat on the original 3600. Public
+DoH resolvers had the correct answer the whole time. `ipconfig /flushdns` did not help,
+because the stale copy was upstream on the network rather than in Windows.
+
+**The `www` certificate was the one real defect, and nothing in the run sheet would have
+caught it.** See step 1 and decision 043. `fotvg.org` was serving correctly with a valid
+certificate while `www.fotvg.org` threw a full-page browser security warning, and every
+signal short of inspecting the certificate's names looked healthy — DNS was right, the
+panel listed the redirect, the apex loaded. Adding the alias fixed it in a few minutes.
+
+Also worth recording: **the certificate issued immediately**, not after the half hour the
+procedure warns about, and `http` → `https` redirects were live straight away.
+
+One assumption is now slightly in doubt, and it is written here rather than quietly
+corrected. GoDaddy's Website Builder dashboard reported **521 site visitors in twelve
+months, 28 in the last thirty days** for a site this document twice describes as never
+promoted and not in active use. Almost certainly crawlers, and it changed no decision on
+the day. But it is not zero, and the *Old URLs mapped* item — 301 redirects in
+`netlify.toml` for anything printed or linked elsewhere — was never completed. If anyone
+ever reports a dead link into the old site, that is the reason and that is the fix.
 
 ---
 
