@@ -180,8 +180,21 @@ const showDonatePlaceholder = !hasDonate
                 </p>
               )}
             </div>
-            <a class="button button--ghost" href={`mailto:${site.email}?subject=Volunteering`}>
+            {/* Opens in a new tab so the visitor keeps their place on the page.
+                When webmail is registered as the mailto handler — Gmail, most
+                commonly — a same-tab link navigates the whole window away to the
+                compose screen, and the only way back to the site is the browser's
+                back button. Nobody thinks to press it, so the visit simply ends.
+                The visually-hidden note is the warning the accessibility checklist
+                asks for whenever a link opens a new tab. */}
+            <a
+              class="button button--ghost"
+              href={`mailto:${site.email}?subject=Volunteering`}
+              target="_blank"
+              rel="noopener"
+            >
               Email us about volunteering
+              <span class="visually-hidden">(opens in a new tab)</span>
             </a>
           </div>
         )}

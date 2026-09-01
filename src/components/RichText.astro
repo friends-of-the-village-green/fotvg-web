@@ -8,6 +8,7 @@
  * takes the whole site down for a mistake that is not one.
  */
 import {PortableText} from 'astro-portabletext'
+import ContentLink from './ContentLink.astro'
 
 const {value, class: className} = Astro.props
 
@@ -16,7 +17,9 @@ const hasContent = Array.isArray(value) && value.length > 0
 
 {hasContent && (
   <div class:list={['rich-text', className]}>
-    <PortableText value={value} />
+    {/* Only the link mark is overridden — see ContentLink.astro. Everything
+        else keeps the library's default rendering. */}
+    <PortableText value={value} components={{mark: {link: ContentLink}}} />
   </div>
 )}
 

@@ -1,0 +1,32 @@
+---
+/**
+ * The link mark inside Portable Text, i.e. a link an editor made in the Studio.
+ *
+ * This exists for one narrow reason: an email link written into content should
+ * behave the same way as the "Email us" links in GiveBand.astro and
+ * SiteFooter.astro. When webmail is registered as the mailto handler — Gmail,
+ * most commonly — a same-tab email link takes the whole window to a compose
+ * screen, and the only way back to the site is the browser's back button.
+ * Without this, whether an email link stranded the visitor depended on whether
+ * it happened to be written in a component or typed into the Studio, which is
+ * not a distinction a reader can see.
+ *
+ * Ordinary http links are deliberately left alone and render exactly as
+ * astro-portabletext would render them. Forcing every outbound link in content
+ * into a new tab takes a choice away from the reader, and it is a bigger
+ * decision than this one — it has not been asked for and is not made here.
+ */
+const {node} = Astro.props
+
+const href = node?.markDef?.href ?? ''
+const isEmail = href.startsWith('mailto:')
+---
+
+{isEmail ? (
+  <a href={href} target="_blank" rel="noopener">
+    <slot />
+    <span class="visually-hidden">(opens in a new tab)</span>
+  </a>
+) : (
+  <a href={href}><slot /></a>
+)}

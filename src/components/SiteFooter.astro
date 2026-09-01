@@ -45,9 +45,15 @@ const socialLabels = {
 
         <p class="address">{site.address}</p>
 
+        {/* New tab, for the same reason as the volunteering button in
+            GiveBand.astro — a webmail handler would otherwise take the whole
+            window to a compose screen. */}
         <p class="contact">
           {site.email
-            ? <a href={`mailto:${site.email}`}>Email us</a>
+            ? <a href={`mailto:${site.email}`} target="_blank" rel="noopener">
+                Email us
+                <span class="visually-hidden">(opens in a new tab)</span>
+              </a>
             : <span class="tk">[TK: public email address]</span>
           }
         </p>
