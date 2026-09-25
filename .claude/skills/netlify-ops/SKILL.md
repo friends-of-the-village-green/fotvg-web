@@ -96,7 +96,7 @@ Keep configuration in the repo, not only in the UI, so it is reviewable and rest
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "24"
 
 [[headers]]
   for = "/*"
@@ -126,9 +126,12 @@ Check the current plan's form handling terms before assuming unlimited submissio
 
 ## DNS
 
-The domain may be registered anywhere; only DNS needs to point at Netlify. Prefer
-pointing DNS at Netlify while leaving registration where it is, unless there is a reason
-to move it.
+`fotvg.org` was cut over on September 1, 2026. GoDaddy is still both the registrar and
+the DNS host. Only the apex `A` record and the `www` `CNAME` point at Netlify, and every
+email record was left alone. The registration is due to move off GoDaddy, but **not
+before mid-October 2026**. Read `docs/dns-cutover.md` before touching any of this:
+"Leaving GoDaddy" covers the transfer and its sequencing traps, and "Why not move DNS to
+Netlify" covers why the nameservers stayed where they are.
 
 Before any DNS change: record the current records somewhere retrievable, confirm who
 owns the registrar account, and check whether MX records are in play. **Changing
