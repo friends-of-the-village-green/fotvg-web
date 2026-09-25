@@ -14,10 +14,16 @@ Not FOTVG. Not FoTVG. Not Fotvg. Not "the Friends."
 
 ## Who is speaking
 
-Friends of the Village Green are neighbors in Kingston, Washington who **fund and run
-the programs** at the Village Green Community Center — concerts and exhibitions, a
-community garden, monthly lunches, lectures, a newcomers series, and trail work in the
-woods above the upper parking lot.
+Friends of the Village Green are neighbors in Kingston, Washington who **support some of
+the programs** at the Village Green Community Center. There are three program areas
+today: the **Village Green Arts Program** (Sunday Sounds, Music at the Green, exhibitions
+in the Grand Hallway Gallery), **Greenworks** (the community garden and horticulture
+classes, workshops and lectures), and **Community building** (the NU2u sale and the
+Secret Garden Tour).
+
+Plenty else happens at the Village Green that FotVG has no hand in, including the senior
+luncheon, the newcomers series and the trail work in the woods. Never write those up as
+FotVG's.
 
 They do **not** own the building and they do **not** own the land. Two other
 organizations that share the "Village Green" name do:
@@ -33,8 +39,8 @@ Conflating the three organizations is the easiest mistake to make on this projec
 visitors, journalists, and grant reviewers do it constantly.
 
 They are a volunteer board, not a staffed nonprofit. FotVG employs nobody. Where
-`CLAUDE.md` and the mission statement say FotVG "staffs" programs, it means **finding
-the people to run them** — not employing them.
+FotVG's own documents say FotVG "staffs" programs, it means **finding the people to run
+them** — not employing them.
 
 The site should sound like one of them talking to a neighbor — informed, friendly,
 practical, not selling anything.
@@ -47,19 +53,20 @@ application, or a press release, rewrite it.
 **Not this:** "FotVG is dedicated to fostering community engagement through
 transformative programmatic initiatives."
 
-**This:** "We pay for the concerts, the garden, and the monthly lunch. Most of it is
-free, and everyone is welcome."
+**This:** "We help pay for the Sunday Sounds concerts and the Greenworks workshops. Most
+of it is free or low-cost, and everyone is welcome."
 
 ## Rules of thumb
 
 **Be concrete.** Name the event, the date, the program. Specifics are what make a small
 organization feel real.
 
-- "The 2026 garden beds sold out" beats "the garden continues to thrive."
-- "Attendance at the monthly luncheon has grown from the high twenties to about
-  forty-five" beats "our lunch program has seen strong growth."
-- "Volunteers build trails in the woods on Wednesday mornings" beats "we undertake
-  ongoing stewardship activities."
+- "The community garden now has 23 cedar raised beds" beats "the garden continues to
+  thrive."
+- "Six private Kingston gardens opened for the Secret Garden Tour" beats "our tour
+  program has seen strong growth."
+- "Plots rent for $60 a year, with priority to returning gardeners" beats "we offer
+  accessible gardening opportunities."
 
 **Lead with the useful thing.** Visitors want to know *what*, *when*, and *where*. Put
 that first; put the context second. Event pages especially: date, time, and location
@@ -100,10 +107,9 @@ Use these consistently:
 | Friends of the Village Green (first mention), FotVG after | FOTVG, FoTVG, Fotvg, the Friends |
 | the Village Green Community Center — the building | our building, our center, our facility |
 | the Village Green — the place, informally | the Green, the park, the site |
-| the programs we fund / the programs we run | our facility, our venue |
+| the programs we support, named | our facility, our venue |
 | donate / give | contribute, support us financially |
 | volunteers, supporters | members, membership, sign-up tiers |
-| work party | volunteer day, service event, workday |
 | Kingston | Kingston, WA (unless the audience may be out of state) |
 
 Name the other two organizations in full on first mention: **Village Green Metropolitan
@@ -131,7 +137,7 @@ which reads ambiguously to international visitors.
 Use verbs that say what happens next. Be specific about the commitment.
 
 - "Donate" — not "Support us" or "Learn more"
-- "Sign up for the March work party" — not "Get involved"
+- "Suggest a Greenworks workshop" — not "Get involved"
 - "Email us" — not "Contact"
 - "See all events" — not "Read more"
 
@@ -144,7 +150,7 @@ Every image needs alt text written for someone who cannot see it. Describe what 
 about the image in this context, not what is literally in frame.
 
 **Not this:** "Image of people in a garden"
-**This:** "Six volunteers spreading wood chips along the path at the October work party"
+**This:** "Two volunteers fitting a new cedar raised bed in the community garden"
 
 Decorative images (background textures, dividers) take `alt=""` so screen readers skip
 them. If you cannot tell whether an image is decorative, ask.
@@ -185,7 +191,7 @@ itself, not just an accessibility obligation. See the `accessibility` skill.
   both are safe to write. So is "all-volunteer."
 
   But do not write "nobody gets paid." FotVG's money does sometimes pay a person — a
-  musician's fee, an instructor — and that is rather the point of donating. The rule is
+  musician's fee, an instructor — and that is exactly what donations are for. The rule is
   that anyone paid to deliver a program is **not** a FotVG board member or volunteer.
 
   This is the strongest thing FotVG can say to a donor, so say it plainly: what you give
