@@ -128,10 +128,13 @@ Check the current plan's form handling terms before assuming unlimited submissio
 
 `fotvg.org` was cut over on September 1, 2026. GoDaddy is still both the registrar and
 the DNS host. Only the apex `A` record and the `www` `CNAME` point at Netlify, and every
-email record was left alone. The registration is due to move off GoDaddy, but **not
-before mid-October 2026**. Read `docs/dns-cutover.md` before touching any of this:
-"Leaving GoDaddy" covers the transfer and its sequencing traps, and "Why not move DNS to
-Netlify" covers why the nameservers stayed where they are.
+email record was left alone. The registration is due to move off GoDaddy; the October
+2026 waiting period has passed, and the move has not started. **Leaving GoDaddy as
+registrar means moving the DNS too** — GoDaddy's free DNS comes with the registration,
+and the zone carries FotVG's Google Workspace email. Read `docs/dns-cutover.md` before
+touching any of this: "The registrar move takes the DNS with it" gives the safe order,
+"Leaving GoDaddy" covers the transfer and its traps, and "Why not move DNS to Netlify"
+covers why the nameservers stayed where they are.
 
 Before any DNS change: record the current records somewhere retrievable, confirm who
 owns the registrar account, and check whether MX records are in play. **Changing
