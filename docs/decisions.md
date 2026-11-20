@@ -393,6 +393,7 @@ stack in the same column, and nothing needs revisiting.
 
 ## 025 — The remaining Dependabot alerts are Sanity's CLI, and we wait for Sanity
 **Date:** 2026-08-12
+**Superseded by decision 046** (2026-11-20). The rule stands; the reasoning was incomplete.
 **Decision:** Two of the thirteen open alerts are fixed by lockfile updates. The other
 eleven are left open deliberately. No `overrides` block, and no `npm audit fix --force`.
 **What was fixed:** `js-yaml` 4.3.0 → 4.3.1 in both trees — in the site via Astro, in the
@@ -1139,3 +1140,63 @@ worry in the workflow comment does not bite; GitHub runs the "14:00 UTC" schedul
 hours late; Netlify already sends HSTS; Netlify Forms is off and the site has no forms;
 the free plan's traffic view keeps only 24 hours. See `docs/hosting.md`,
 `docs/runbook.md` and `docs/dns-cutover.md`.
+
+## 046 — Security alerts: update within range, and the CLI leftovers wait on Vercel as well as Sanity
+**Date:** 2026-11-20
+**Supersedes:** decision 025. Its rule stands (no `overrides`, no `npm audit fix
+--force`), but its reason for waiting needed correcting, and the alerts had grown.
+**What happened:** GitHub's *Security* tab went from 77 open alerts to 100 on 20
+November 2026. Nothing in `package.json` had changed. New advisories are published
+against old versions all the time, and GitHub re-checks the lockfiles whenever `main`
+moves. `npm audit` on the two lockfiles found 27 advisories in the site and about 60 in
+the Studio. Nine of them appear in both, so they show up on GitHub twice.
+**Decision:** run `npm update` in each tree. That stays inside the existing `^` ranges,
+so `package.json` is untouched and only the lockfiles change. Site and Studio go in
+separate pull requests.
+- **Site:** Astro 7.1.5 → 7.4.13 and the Sanity client libraries to their latest 7.x and
+  2.x. **All 27 cleared.** The built output was compared page by page against the
+  previous lockfile's build. The only differences were Astro's version in a `<meta>` tag
+  and the sitemap writing the home page as `https://fotvg.org/` rather than
+  `https://fotvg.org`, which is the same address.
+- **Studio:** `sanity` and `@sanity/vision` 6.9.2 → 6.24.0. **About 60 down to 9.**
+  `undici`, `adm-zip`, `uuid`, `dompurify`, `markdown-it`, `vite`, `zod` and the others
+  all cleared.
+**Who could have been harmed, before the update:** no visitor. The website is static
+HTML and CSS. The build output has no JavaScript files and no `<script>` tags, and it
+does not use Astro's image optimizer, because every photo is served by Sanity's image
+CDN. Every site advisory, including the one GitHub marks *critical* (Astro's AVIF image
+optimizer), could only have touched Netlify's build machine, and only through files in
+this repository. The Studio advisories were on a maintainer's laptop, with one
+exception: `dompurify` runs in an editor's browser. That one was already patched for
+editors anyway, which is the point of the next paragraph.
+**What decision 025 missed about the Studio:** `studio/sanity.cli.ts` has
+`autoUpdates: true`. The deployed Studio at fotvg.sanity.studio loads the `sanity`
+editor code from Sanity's own CDN, at the latest 6.x, every time it opens. The
+lockfile does not decide what editors run in the browser. What `sanity build` uploads is
+FotVG's schema and configuration (about 640K). So Studio alerts are, in practice,
+alerts about the command-line tool a maintainer runs. Browser-side fixes reach editors
+through Sanity whether or not this repository is updated.
+**What is left, and why it waits:** nine alerts, three packages, all inside `@sanity/cli`:
+- `js-yaml` 3.13.1 (five advisories) and `smol-toml` 1.5.2 (three) come from
+  `@vercel/frameworks`. The Sanity CLI uses it to recognize what kind of project a
+  folder is. `@sanity/cli` 8.33.0 pins `@vercel/frameworks` at exactly 3.29.0, and
+  **even Vercel's latest, 3.35.0, still pins both old versions.** So this is waiting on
+  Vercel first and then on Sanity. Decision 025 said "wait for Sanity", which was only
+  half of it.
+- `minimatch` 10.2.6 (one) comes from `@oclif/core`, the CLI's command parser. It needs
+  `minimatch` 11, and `@oclif/core` asks for `^10`.
+
+Every one of the nine is a denial-of-service or parsing bug, triggered by feeding the
+tool hostile YAML, TOML or glob patterns. The only files it reads are this repository's
+own, on a maintainer's laptop. None of the three appears in the Studio build output, and
+none is in the site's dependency tree.
+**Why still no `overrides`:** forcing `js-yaml` 4 into code written for 3.x changes its
+API, and the code that would break is `sanity deploy`, which `sanity build` does not
+exercise. Decision 025's other reasons still apply. **Why still no `--force`:** it
+still proposes downgrading to `sanity` 5.14.1.
+**Revisit if:** an alert appears in the site's tree that `npm update` cannot clear; an
+alert lands on something in the Studio's browser bundle; `autoUpdates` is ever turned
+off (the lockfile then becomes what editors run); or the nine are still open in
+**May 2027**. At that point, check `npm view @vercel/frameworks dependencies` and
+`npm view @sanity/cli dependencies` to see who is still holding them back. The routine
+for next time is in `docs/runbook.md`, *Triaging security alerts*.

@@ -316,6 +316,34 @@ Short version:
 
 Upload the full-size original. Do not shrink it first — Sanity does that better.
 
+## Triaging security alerts
+
+GitHub's **Security** tab lists alerts against the packages in `package-lock.json` (the
+website) and `studio/package-lock.json` (the Studio). The count goes up on its own as new
+problems are published against old versions. A jump after a merge doesn't mean the
+merge broke anything. Every few months, or when the count jumps:
+
+1. **Update within range, one tree per pull request.** On a branch, run `npm update`,
+   then `npm audit`, at the repository root. In a separate branch, do the same in
+   `studio/`. Only the lockfile should change. If `package.json` changes, stop and
+   find out why.
+2. **Check it still builds.** At the root: `npm ci && npm run build`. In `studio/`:
+   `npx sanity build`. Merge the site pull request first. Each merge to `main` costs a
+   Netlify build, so don't merge them one dependency at a time.
+3. **Read what's left, and ask who it can reach.** The website is plain HTML and CSS,
+   so an alert in its tree can only touch the build, never a visitor. The Studio
+   editors use is loaded from Sanity's servers (`autoUpdates`), so an alert in
+   `studio/` is almost always about the command-line tool on your own laptop.
+   `npm explain <package>` shows what pulled a package in.
+4. **Never run `npm audit fix --force`**, and don't add `overrides`, without reading
+   decision 046 first. The last time `--force` was offered, it would have downgraded
+   the Studio by a major version.
+5. **After the Studio pull request merges**, run `npx sanity deploy` from `studio/`
+   (see *Updating the Studio after a schema change*), so the deployed Studio matches
+   the versions in the lockfile.
+6. If the reasoning in decision 046 no longer fits what's left, write a new decision
+   that replaces it.
+
 ## Rolling back a bad change
 
 **A bad content change:** open the document in the Studio, and use the version history
