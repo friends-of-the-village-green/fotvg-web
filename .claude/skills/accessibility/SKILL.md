@@ -90,8 +90,9 @@ npx pa11y-ci --sitemap http://localhost:4321/sitemap-index.xml
 **Manual** — the part that actually finds things:
 1. Unplug the mouse. Tab through the whole page. Can you do everything?
 2. Zoom the browser to 200% and then 400%. Does the layout hold?
-3. Turn on VoiceOver (Cmd+F5 on macOS) or NVDA and listen to one page top to bottom.
-4. View the page in greyscale. Is anything now ambiguous?
+3. Turn on a screen reader and listen to one page top to bottom. On Windows, use NVDA
+   (free) or the built-in Narrator (Ctrl+Win+Enter). On a Mac, use VoiceOver (Cmd+F5).
+4. View the page in grayscale. Is anything now ambiguous?
 
 ## Common fixes
 
