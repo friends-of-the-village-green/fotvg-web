@@ -11,7 +11,8 @@ Operational procedures. Written for someone who is not the person who built this
 | Thing | Where |
 |---|---|
 | Editing content | https://fotvg.sanity.studio |
-| The prototype website | https://fotvg-webtest.netlify.app |
+| The website | https://fotvg.org — Netlify project **fotvg**, team **FotVG**, signed in as `tech@fotvg.org` |
+| The prototype website | https://fotvg-webtest.netlify.app — John's personal Netlify account. Rebuilds only when something is merged; not the real site |
 | The code | https://github.com/friends-of-the-village-green/fotvg-web |
 
 ## Adding or editing an event
@@ -196,9 +197,11 @@ Publish makes your change live **in Sanity**. It does not put it on the website.
 The website is rebuilt from Sanity's content, and it only shows what was there at the
 moment of the last build. So there are two steps, and only the first is yours.
 
-**The site rebuilds once a day, at 14:00 UTC — 7am Pacific in summer, 6am in winter.**
-So something published on Tuesday afternoon appears on the website on Wednesday
-morning. That delay is deliberate — Netlify's free plan limits how many builds we get
+**The site rebuilds once a day, usually in the early afternoon Pacific time.** The
+schedule asks for 14:00 UTC (6am Pacific in winter), but GitHub runs scheduled jobs
+late when it is busy, and in practice the rebuild has landed between about 11am and
+3pm Pacific. So something published on Tuesday evening appears on the website some time
+on Wednesday. That delay is deliberate — Netlify's free plan limits how many builds we get
 in a month, and building on every single publish would spend a month's allowance in one
 busy afternoon and take the site offline (decision 005).
 
@@ -214,9 +217,31 @@ that.
 Either takes a couple of minutes.
 
 The daily rebuild runs from `.github/workflows/daily-build.yml`, which calls a Netlify
-build hook held in the GitHub secret `NETLIFY_BUILD_HOOK_URL`. That secret has been in
-place since 10 August 2026 and the scheduled run has been green every morning since.
-Nothing here is waiting to be set up.
+build hook held in the GitHub secret `NETLIFY_BUILD_HOOK_URL`. The hook belongs to the
+**fotvg** project in FotVG's own Netlify team, the one that serves `fotvg.org`.
+
+> ⚠️ **A green check mark in GitHub does not prove the real site was rebuilt.** It only
+> proves that *a* Netlify site accepted the request. From 1 September to 20 November
+> 2026 the secret still held the hook for the prototype, `fotvg-webtest.netlify.app`.
+> The job went green every day for eighty days while `fotvg.org` was never rebuilt:
+> five finished events sat under *What's on*, and three write-ups the editors had
+> published never appeared (decision 045). The check that matters is the one below,
+> and it takes a minute.
+
+### Checking the real site is being rebuilt
+
+Do this once a month, and any time the hook or the Netlify account changes.
+
+1. **Netlify**, signed in as `tech@fotvg.org` → team **FotVG** → project **fotvg** →
+   **Deploys**.
+2. The newest entries should read **Deploy triggered by hook: Daily rebuild**, branch
+   `main`, **Published**, roughly one per day. If the newest is days or weeks old, the
+   rebuild is going somewhere else.
+3. Cross-check on the site itself: open https://fotvg.org/events. Nothing on it should
+   have a date in the past.
+
+If step 2 fails, replace the hook as described in the next section. To fix the site
+straight away, use **Trigger deploy** on the same Deploys page.
 
 ## Replacing the daily rebuild build hook
 
@@ -224,14 +249,17 @@ Nothing here is waiting to be set up.
 replaced** — because it was revoked, because the Netlify site was recreated, or because
 the Netlify account changed hands. They are the same steps that set it up originally.
 
-1. **Netlify** → the site → **Site configuration** → **Build & deploy** → **Build
-   hooks** → **Add build hook**. Name it `Daily rebuild`, branch `main`. Save, then
-   copy the URL it gives you.
+1. **Netlify**, signed in as `tech@fotvg.org` → project **fotvg** (*not* the
+   `fotvg-webtest` prototype on John's personal account) → **Site configuration** →
+   **Build & deploy** → **Build hooks** → **Add build hook**. Name it `Daily rebuild`,
+   branch `main`. Save, then copy the URL it gives you.
 2. **GitHub** → the repository → **Settings** → **Secrets and variables** → **Actions**
    → **New repository secret**. Name it exactly `NETLIFY_BUILD_HOOK_URL`, paste the URL
    as the value, and save.
-3. Test it: **Actions** → **Rebuild the website** → **Run workflow**. A green check mark, and
-   a new deploy appearing in Netlify, means it works.
+3. Test it: **Actions** → **Rebuild the website** → **Run workflow**. Then check that a
+   new deploy titled **Deploy triggered by hook: Daily rebuild** has appeared under the
+   **fotvg** project's Deploys. The green check mark on its own proves nothing — see
+   the warning above.
 
 **That URL is a credential.** Anyone who has it can trigger builds and exhaust the
 month's allowance. It goes in the GitHub secret and the password vault, and nowhere

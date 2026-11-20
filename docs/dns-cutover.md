@@ -236,6 +236,10 @@ day of preparation to avoid.
    trigger it from **Netlify → fotvg → Deploys → Trigger deploy**. The GitHub Action
    still points at the prototype's hook until the `NETLIFY_BUILD_HOOK_URL` secret is
    replaced, so "Run workflow" would rebuild the wrong site.
+   **The swap itself was then missed, and nothing in this run sheet listed it as a
+   step.** It was not done until 20 November 2026, eighty days later — decision 045.
+   If this procedure is ever reused, swapping the hook is a step of its own, checked
+   by looking for a hook-triggered deploy on the new project.
 1. **In Netlify.** Site → Domain management → add `fotvg.org`. Netlify will
    report that DNS is not pointing at it yet and offer the records it wants. That is
    expected. Set the primary domain to whichever address you chose above.
@@ -361,7 +365,9 @@ witness than any command on the laptop.
       account and confirm it lands in the inbox rather than spam. This is the test
       that actually matters. **Still outstanding.** Every record has been verified
       present and correct, which is not the same as a message having been delivered.
-- [ ] The contact form submits and the notification arrives.
+- [x] ~~The contact form submits and the notification arrives.~~ **Does not apply.**
+      The site has no form of any kind — volunteering and contact are email links — and
+      Netlify Forms is switched off on the **fotvg** project. Confirmed 20 November 2026.
 - [ ] Check it on a phone, on cellular data rather than home wi-fi. Note that the
       cutover machine's own network served the old record for the best part of an hour
       afterwards, so it is a poor judge of whether the site is up.
@@ -483,8 +489,12 @@ Not part of the cutover. Do not bundle them into it.
   to `fotvg.org` — GoDaddy's domain forwarding does this without touching this
   zone — or stays dormant as a defensive registration. Either is fine; drifting
   without a decision is not.
-- **HSTS.** Netlify can send it. Do not enable it until the site has been stable for
-  a good while — it is difficult to undo, because browsers cache the instruction.
+- **HSTS — already on, and not by our choice.** Netlify sends
+  `Strict-Transport-Security: max-age=31536000` on `fotvg.org` by itself; nothing in
+  `netlify.toml` asks for it. Found 20 November 2026. The caution that used to sit
+  here — wait until the site has been stable, because browsers cache the instruction
+  for a year — is moot. In practice it means `fotvg.org` must keep serving HTTPS
+  wherever it is hosted, which any move to another host would have needed anyway.
 
 ---
 
@@ -500,6 +510,9 @@ transferring the domain out.
 
 **Status: renewed at GoDaddy 31 August 2026**, one year, protection declined. Registry
 expiry is now 3 September 2027, so there is no longer any deadline pressure.
+**As of 20 November 2026 the waiting period below has passed** and the transfer can be
+scheduled. It has not been started. Read *The registrar move takes the DNS with it*
+before planning it — the zone has to move too.
 
 ### Why the transfer could not happen in August 2026
 
@@ -510,7 +523,7 @@ overran the expiry would have taken the website and `president@`, `vicepresident
 `tech@` down together. Renewing first was the only safe order. Nothing is lost by it:
 an inbound transfer adds a year on top of the existing expiry.
 
-### Do not start before mid-October 2026
+### Do not start before mid-October 2026 *(passed — kept for the reasoning)*
 
 Two separate clocks, and waiting until mid-October clears both:
 
@@ -538,6 +551,50 @@ as part of the registrar move. Porkbun places no such requirement, which keeps t
 registrar move and any future DNS move independent of each other. For a dollar, that
 separation is worth more than the saving. Not yet a formal decision — record it in
 `docs/decisions.md` when the move is actually scheduled.
+
+**That argument is weaker than it reads — see the next section.** The separation it
+values only exists while GoDaddy keeps hosting the zone, and GoDaddy's free DNS comes
+with being registered there. Porkbun is still a sound choice: it leaves the choice of
+DNS host open. But "Cloudflare would force a zone move" no longer counts against
+Cloudflare, because leaving GoDaddy forces one anyway. Weigh the two again when the
+move is scheduled.
+
+### The registrar move takes the DNS with it
+
+Added 20 November 2026. **Verify this with GoDaddy before starting; plan as if it is
+true.**
+
+The zone — every record in the table at the top of this file, including the five
+Google Workspace `MX` records — lives on GoDaddy's nameservers (`ns69`/`ns70.domaincontrol.com`)
+as a perk of the domain being registered at GoDaddy. Once the registration transfers
+out, GoDaddy can be expected to stop serving that zone. The nameserver entries carry
+over to the new registrar unchanged, so for a while everything keeps working, and then
+the records behind them disappear. The website goes, and so does FotVG's email.
+
+So "leaving GoDaddy" is **two** moves, not one, and the DNS move is the dangerous one.
+The order that keeps email up:
+
+1. **Before anything else:** put the GoDaddy Admin credential in the password vault,
+   and make sure whoever does this can reach the 2FA and the registrant's inbox.
+2. **Copy the zone to the new DNS host first**, record by record, from the table at
+   the top of this file — but with the apex `A` record and `www` as they were changed
+   on 1 September (`75.2.60.5`, and `www` → the Netlify site), and checked against
+   GoDaddy's own DNS screen on the day. Use the
+   flattened SPF record from *The SPF trap, written down* — do **not** copy the
+   `_spfm` indirection. Drop the dead `pay` `CNAME`. Leave out `_domainconnect`.
+   If the chosen host will not accept records for a domain it does not yet register,
+   this step has to wait until the transfer completes — in which case do step 3
+   the same day the transfer completes, not later.
+3. **Switch the nameservers** to the new host. Then verify from outside, not from the
+   new host's screen: the apex `A` record, `www`, all five `MX` records, both SPF
+   halves (now one), `DMARC`, and the Google verification `TXT`.
+4. **Send real mail both ways** — the round-trip test under *Immediately after*,
+   still outstanding from September — and only then consider the zone moved.
+5. **Then transfer the registration**, using *The mechanics* below.
+6. **Then** change the registrant contact to a role address, at the new registrar.
+
+Lower the TTLs a day ahead, exactly as for the September cutover. Do it on a quiet
+weekday with a free afternoon; it is the same order of risk as the switchover was.
 
 ### The mechanics, when the time comes
 

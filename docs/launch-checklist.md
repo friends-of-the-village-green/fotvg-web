@@ -59,6 +59,13 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       repository. Created 29 August 2026 on `tech@fotvg.org` via Google sign-in; team
       **FotVG**, project **fotvg** at `fotvg.netlify.app`. The prototype stays on John's
       personal account and keeps building (decisions 015 and 041).
+- [x] 🚨 **The daily rebuild points at the production project, not the prototype.**
+      **Done 20 November 2026 — eighty days late.** The `NETLIFY_BUILD_HOOK_URL` secret
+      kept the prototype's hook after switchover, so the GitHub job went green every day
+      and `fotvg.org` was never rebuilt: finished events stayed under *What's on* and three
+      write-ups never appeared. Check it by looking for a *Deploy triggered by hook* entry
+      in the **fotvg** project's Deploys, not at the green check mark. Decision 045, and
+      the monthly check in `docs/runbook.md`.
 - [x] ⚠️ **Netlify project visibility set to Public.** **Done 1 September 2026** and
       proved from outside the account: `fotvg.netlify.app` answered **200** to an
       unauthenticated request, where it had answered 401 and a Netlify login page on
@@ -75,7 +82,8 @@ the one place to look. Work top to bottom; the order roughly matches the depende
       FotVG has no budget for. The public-good plan is the only route to real,
       individually-named team members. Until it lands, Netlify access is the shared
       `tech@fotvg.org` login (decision 042), which works but gives no per-person audit
-      trail. Also check the build allowance against about 32 builds a month.
+      trail. Build credits are no longer the pressing reason: on 20 November 2026 the team had
+      used 6.2 of its 300 monthly credits, so about 32 builds a month fits.
 - [x] **Sanity nonprofit plan approved** and set up, 29 August 2026. The quota cliff on
       the free plan — at 100% the public API stops serving and content vanishes from the
       live site — no longer applies.

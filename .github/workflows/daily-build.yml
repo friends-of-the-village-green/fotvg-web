@@ -23,9 +23,18 @@
 # BUILDS THIS COSTS: about 30 a month, one per day.
 # On top of merges to main and one preview per pull request. During active
 # development that is roughly 45-50 builds a month; once the site settles it
-# is about 32. At a minute or two each, comfortably inside the free plan's
-# monthly build minutes — but check Netlify → Billing → Usage rather than
-# trusting this comment, and remember this account also hosts other projects.
+# is about 32. In November 2026 FotVG's team had used 6.2 of its 300 monthly
+# credits after a production deploy and a preview, so a deploy costs a few
+# credits at most — but check Netlify → Billing → Usage after a full month of
+# daily builds rather than trusting this comment.
+#
+# WHICH SITE THE HOOK REBUILDS
+#
+# The secret must hold a hook from the "fotvg" project in FotVG's own Netlify
+# team — the one serving fotvg.org. A green run here proves only that SOME
+# Netlify site accepted the request. From September to November 2026 it held
+# the prototype's hook, went green every day, and fotvg.org was never rebuilt
+# (decision 045). Check the fotvg project's Deploys list, not this page.
 #
 # URGENT CHANGES
 #
@@ -49,7 +58,9 @@ on:
   schedule:
     # 14:00 UTC — 6am Pacific in winter, 7am in summer. GitHub cron does not
     # observe daylight saving, and an hour either way does not matter here.
-    # The point is that the site is current before anyone looks at it.
+    # In practice GitHub starts scheduled jobs late when it is busy: in
+    # November 2026 they ran between about 19:00 and 23:00 UTC, early to mid
+    # afternoon Pacific. Harmless for a daily rebuild; the runbook says so.
     - cron: '0 14 * * *'
 
   # Adds a "Run workflow" button in the Actions tab, for when something needs
