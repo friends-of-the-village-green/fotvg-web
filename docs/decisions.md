@@ -1003,6 +1003,8 @@ the real site.
 would mean pointing it at a branch other than `main` and a separate Sanity dataset. That
 is a bigger change than it sounds and nobody has asked for it. Or simply delete it, which
 is `SETUP.md` Phase 6 step 9 as originally written.
+**Note, 2026-11-20:** "the daily rebuild follows the build hook to FotVG's account" did
+not happen until 20 November 2026. See decision 045.
 
 ## 042 — Netlify access is a shared login, not team members, until the public-good plan lands
 **Date:** 2026-08-29
@@ -1096,3 +1098,44 @@ fields should confirm the new tab actually happens.
 **Revisit if:** the board decides they would rather everything stayed in one tab, which
 is a legitimate position and the one several accessibility practitioners take — the
 argument against new tabs is that they take a choice away from the reader.
+
+## 045 — A green rebuild is checked on the site it rebuilds, not in GitHub
+**Date:** 2026-11-20
+**What happened:** decision 041 said the daily rebuild would follow the build hook to
+FotVG's Netlify account at switchover. It did not. The `NETLIFY_BUILD_HOOK_URL` secret
+kept the hook created on 10 August for the prototype, `fotvg-webtest.netlify.app`, on
+John's personal account. For eighty days — 1 September to 20 November 2026 — the
+*Rebuild the website* workflow went green every day while `fotvg.org` was not rebuilt
+once. Netlify's deploy log for the **fotvg** project shows no production deploy between
+the merge of pull request 37 on 1 September and a manual one on 20 November.
+**What it cost:** every finished event stayed under *What's on*, five of them by
+November, including a concert in mid-September — which is also what the home page
+shows a first-time visitor. Three write-ups the editors published in the fall (Grand
+Hallway Gallery Shows, Ben Gage, Billy Stapleton and Powerhouse) were on the prototype
+and nowhere on the real site. Those write-ups are the evidence grant makers read; the
+site exists partly to show them.
+**Why nobody noticed:** every signal anyone looked at was healthy. The workflow was
+green, because a build hook answers success to any valid request and does not say which
+site it built. The prototype rebuilt daily and looked right. The real site served
+normally — just from 1 September. The cutover run sheet even warned that the hook still
+pointed at the prototype, but listed swapping it as a caution rather than as a step, so
+it never got a checkbox.
+**Decision:** the hook now belongs to the **fotvg** project in FotVG's team (replaced 20
+November 2026; the first hook-triggered production deploy followed within minutes). And
+the evidence that the rebuild works is a deploy titled *Deploy triggered by hook: Daily
+rebuild* in **that project's** deploy list — never the green check mark in GitHub.
+`docs/runbook.md` has a monthly check, *Checking the real site is being rebuilt*, that
+says so, and the workflow file's comments repeat it for whoever reads the code first.
+**Considered and not done:** making the workflow check `fotvg.org` itself after asking
+for a build, for example by comparing a build timestamp printed into the page. That
+would turn this failure into a red run and an email. It was not done because it needs
+a change to the site's markup, a delay or polling step in the workflow, and something
+for the next volunteer to understand — more moving parts for a failure that is now
+written down and checked by hand monthly. **Revisit if** the monthly check is not
+actually being done, which is the likeliest way this happens again.
+**Also found the same day, recorded where they belong:** a deploy costs only a few
+Netlify credits (6.2 of 300 used after a production deploy and a preview), so the cost
+worry in the workflow comment does not bite; GitHub runs the "14:00 UTC" schedule several
+hours late; Netlify already sends HSTS; Netlify Forms is off and the site has no forms;
+the free plan's traffic view keeps only 24 hours. See `docs/hosting.md`,
+`docs/runbook.md` and `docs/dns-cutover.md`.
